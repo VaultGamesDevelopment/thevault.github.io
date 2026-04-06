@@ -3,59 +3,69 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Vault Games v2</title>
-
-  <link rel="stylesheet" href="./styles.css"/>
+  <title>The Vault</title>
+  <link rel="stylesheet" href="styles.css"/>
 </head>
 <body>
 
-  <div id="weather-bg"></div>
+<div class="app">
 
-  <header class="topbar">
-    <div class="logo">Vault Games v2</div>
-    <div class="actions">
-      <button onclick="openSettings()">Settings</button>
-      <button onclick="toggleFullscreen()">Fullscreen</button>
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <h1 class="logo">The Vault</h1>
+
+    <input id="searchInput" type="text" placeholder="Search games..." />
+
+    <button id="settingsBtn">⚙ Settings</button>
+  </aside>
+
+  <!-- Main -->
+  <main class="main">
+
+    <div class="header">
+      <h2>Welcome to The Vault</h2>
+      <p>Secure access to unblocked games</p>
     </div>
-  </header>
 
-  <main id="gameContainer"></main>
+    <div id="gamesContainer" class="games-grid"></div>
 
-  <!-- SETTINGS MODAL -->
-  <div id="settingsModal" class="modal hidden">
-    <div class="modal-content">
-      <h2>Settings</h2>
+  </main>
 
-      <label>Theme</label>
-      <select id="themeSelect"></select>
+</div>
 
-      <label>Weather</label>
-      <select id="weatherSelect"></select>
+<!-- Settings Modal -->
+<div id="settingsModal" class="modal hidden">
+  <div class="modal-content">
+    <h2>Settings</h2>
 
-      <label>Tab Cloak</label>
-      <select id="cloakSelect"></select>
-
-      <label>UI Density</label>
-      <select id="densitySelect">
-        <option value="comfortable">Comfortable</option>
-        <option value="compact">Compact</option>
+    <label>
+      Theme:
+      <select id="themeSelect">
+        <option value="dark">Dark</option>
+        <option value="light">Light</option>
       </select>
+    </label>
 
-      <label>Animations</label>
-      <select id="animationSelect">
-        <option value="on">On</option>
-        <option value="off">Off</option>
+    <label>
+      Grid Size:
+      <select id="gridSizeSelect">
+        <option value="small">Small</option>
+        <option value="medium" selected>Medium</option>
+        <option value="large">Large</option>
       </select>
+    </label>
 
-      <button onclick="applySettings()">Apply</button>
-      <button onclick="closeSettings()">Close</button>
-    </div>
+    <label>
+      Show Descriptions:
+      <input type="checkbox" id="toggleDesc" checked />
+    </label>
+
+    <button id="closeSettings">Close</button>
   </div>
+</div>
 
-  <script src="./games.js"></script>
-  <script src="./ui.js"></script>
-  <script src="./settings.js"></script>
-  <script src="./app.js"></script>
+<script src="games.js"></script>
+<script src="app.js"></script>
 
 </body>
 </html>

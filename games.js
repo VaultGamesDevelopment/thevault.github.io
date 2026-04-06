@@ -1,3 +1,5 @@
+const BASE_URL = "https://biology.science.geometry.project.computer.archivomemoria-audiovisualcsb.org/";
+
 const games = [
       { title: "A Bite at Freddy's", desc: "A tense horror survival game where you must monitor security cameras and manage power to survive the night against animatronic threats.", url: "games/412.html", image: "images/412.jpg" },
       { title: "Wheely", desc: "A charming physics-based puzzle game where you help a small red car named Wheely overcome obstacles and reach his goal.", url: "games/402.html", image: "images/402.jpg" },

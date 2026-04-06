@@ -1,147 +1,85 @@
-// app.js
+const container = document.getElementById("gamesContainer");
+const searchInput = document.getElementById("searchInput");
+const settingsBtn = document.getElementById("settingsBtn");
+const modal = document.getElementById("settingsModal");
 
-// ---------- INIT ----------
-document.addEventListener("DOMContentLoaded", () => {
-  try {
-    // Load UI
-    if (typeof renderGames === "function") {
-      renderGames();
-    }
+const themeSelect = document.getElementById("themeSelect");
+const gridSizeSelect = document.getElementById("gridSizeSelect");
+const toggleDesc = document.getElementById("toggleDesc");
+const closeSettings = document.getElementById("closeSettings");
 
-    // Initialize settings dropdowns
-    if (typeof initSettingsUI === "function") {
-      initSettingsUI();
-    }
+let settings = {
+  theme: localStorage.getItem("theme") || "dark",
+  gridSize: localStorage.getItem("gridSize") || "medium",
+  showDesc: localStorage.getItem("showDesc") !== "false"
+};
 
-    // Apply saved settings (if any)
-    loadSavedSettings();
+/* Apply Settings */
+function applySettings() {
+  document.body.className = settings.theme;
+  container.className = `games-grid ${settings.gridSize}`;
 
-    // Register keyboard shortcuts
-    registerHotkeys();
-
-  } catch (err) {
-    console.error("App initialization error:", err);
-  }
-});
-
-
-// ---------- SETTINGS LOADING ----------
-function loadSavedSettings(){
-  const theme = localStorage.getItem("theme");
-  const weather = localStorage.getItem("weather");
-
-  if (theme && document.getElementById("themeSelect")) {
-    document.getElementById("themeSelect").value = theme;
-  }
-
-  if (weather && typeof setWeather === "function") {
-    setWeather(weather);
-    if (document.getElementById("weatherSelect")) {
-      document.getElementById("weatherSelect").value = weather;
-    }
-  }
+  localStorage.setItem("theme", settings.theme);
+  localStorage.setItem("gridSize", settings.gridSize);
+  localStorage.setItem("showDesc", settings.showDesc);
 }
 
+/* Render Games */
+function renderGames(filter = "") {
+  container.innerHTML = "";
 
-// ---------- APPLY SETTINGS ----------
-window.applySettings = function(){
-  const themeSelect = document.getElementById("themeSelect");
-  const weatherSelect = document.getElementById("weatherSelect");
+  const filtered = games.filter(g =>
+    g.title.toLowerCase().includes(filter.toLowerCase())
+  );
 
-  const theme = themeSelect ? themeSelect.value : "dark";
-  const weather = weatherSelect ? weatherSelect.value : "none";
+  filtered.forEach(game => {
+    const card = document.createElement("div");
+    card.className = "game-card";
 
-  // Save
-  localStorage.setItem("theme", theme);
-  localStorage.setItem("weather", weather);
+    card.innerHTML = `
+      <img src="${game.image}" />
+      <div class="content">
+        <h3>${game.title}</h3>
+        ${settings.showDesc ? `<p>${game.desc}</p>` : ""}
+      </div>
+    `;
 
-  // Apply theme
-  if (typeof THEMES !== "undefined") {
-    const t = THEMES[theme];
-    if (t) {
-      document.documentElement.style.setProperty("--bg", t.bg);
-      document.documentElement.style.setProperty("--card", t.card);
-    }
-  }
+    card.onclick = () => {
+      window.location.href = game.url;
+    };
 
-  // Apply weather
-  if (typeof setWeather === "function") {
-    setWeather(weather);
-  }
-
-  // Close modal
-  if (typeof closeSettings === "function") {
-    closeSettings();
-  }
-};
-
-
-// ---------- FULLSCREEN ----------
-window.toggleFullscreen = function(){
-  if (!document.fullscreenElement) {
-    document.documentElement.requestFullscreen().catch(err => {
-      console.warn("Fullscreen failed:", err);
-    });
-  } else {
-    document.exitFullscreen();
-  }
-};
-
-
-// ---------- SETTINGS MODAL ----------
-window.openSettings = function(){
-  const modal = document.getElementById("settingsModal");
-  if (modal) modal.classList.remove("hidden");
-};
-
-window.closeSettings = function(){
-  const modal = document.getElementById("settingsModal");
-  if (modal) modal.classList.add("hidden");
-};
-
-
-// ---------- HOTKEYS ----------
-function registerHotkeys(){
-  document.addEventListener("keydown", (e) => {
-    // ESC exits fullscreen or closes modal
-    if (e.key === "Escape") {
-      if (document.fullscreenElement) {
-        document.exitFullscreen();
-      } else {
-        closeSettings();
-      }
-    }
-
-    // Alt + R = reset settings
-    if (e.altKey && e.key.toLowerCase() === "r") {
-      resetSettings();
-    }
+    container.appendChild(card);
   });
 }
 
+/* Events */
+searchInput.addEventListener("input", e => {
+  renderGames(e.target.value);
+});
 
-// ---------- RESET SETTINGS ----------
-function resetSettings(){
-  localStorage.removeItem("theme");
-  localStorage.removeItem("weather");
-  localStorage.removeItem("density");
-  localStorage.removeItem("animation");
+settingsBtn.onclick = () => modal.classList.remove("hidden");
+closeSettings.onclick = () => modal.classList.add("hidden");
 
-  // Reset UI selections if they exist
-  const themeSelect = document.getElementById("themeSelect");
-  const weatherSelect = document.getElementById("weatherSelect");
+/* Settings Controls */
+themeSelect.value = settings.theme;
+gridSizeSelect.value = settings.gridSize;
+toggleDesc.checked = settings.showDesc;
 
-  if (themeSelect) themeSelect.selectedIndex = 0;
-  if (weatherSelect) weatherSelect.selectedIndex = 0;
+themeSelect.onchange = e => {
+  settings.theme = e.target.value;
+  applySettings();
+};
 
-  // Reapply defaults
-  if (typeof setWeather === "function") {
-    setWeather("none");
-  }
+gridSizeSelect.onchange = e => {
+  settings.gridSize = e.target.value;
+  applySettings();
+};
 
-  // Reset theme to default
-  document.documentElement.style.setProperty("--bg", "#0b0f1a");
-  document.documentElement.style.setProperty("--card", "rgba(255,255,255,0.05)");
+toggleDesc.onchange = e => {
+  settings.showDesc = e.target.checked;
+  applySettings();
+};
 
-  console.log("Settings reset via Alt+R");
-}
+/* Init */
+applySettings();
+renderGames();
