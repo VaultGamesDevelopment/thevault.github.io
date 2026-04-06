@@ -7,10 +7,9 @@
 
   <link rel="stylesheet" href="styles.css" />
 
-  <!-- CLOAK -->
   <script>
+    // CLOAK
     document.title = "Google Docs";
-
     const link = document.createElement("link");
     link.rel = "icon";
     link.href = "https://www.google.com/favicon.ico";
@@ -20,24 +19,45 @@
 
 <body class="dark">
 
+  <!-- Sidebar -->
   <div class="sidebar">
     <h1>The Vault</h1>
 
     <input id="searchInput" placeholder="Search games..." />
 
-    <button id="toggleDesc">Toggle Descriptions</button>
-    <button id="toggleTheme">Toggle Theme</button>
+    <button id="openSettings">Settings</button>
   </div>
 
+  <!-- Main -->
   <div class="main">
     <div id="gamesContainer"></div>
   </div>
 
-  <!-- ✅ MUST LOAD FIRST -->
-  <script src="games.js"></script>
+  <!-- Settings Modal -->
+  <div id="settingsModal" class="modal hidden">
+    <div class="modal-content">
+      <h2>Settings</h2>
 
-  <!-- Then app -->
+      <label>Theme:</label>
+      <select id="themeSelect">
+        <option value="dark">Dark</option>
+        <option value="light">Light</option>
+      </select>
+
+      <label>Weather FX:</label>
+      <select id="fxSelect">
+        <option value="none">None</option>
+        <option value="rain">Rain</option>
+        <option value="snow">Snow</option>
+      </select>
+
+      <button id="closeSettings">Close</button>
+    </div>
+  </div>
+
+  <!-- FX Canvas -->
+  <canvas id="fxCanvas"></canvas>
+
   <script src="app.js"></script>
-
 </body>
 </html>

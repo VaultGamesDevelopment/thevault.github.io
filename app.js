@@ -1,16 +1,37 @@
 const container = document.getElementById("gamesContainer");
 const searchInput = document.getElementById("searchInput");
-const toggleDescBtn = document.getElementById("toggleDesc");
-const toggleThemeBtn = document.getElementById("toggleTheme");
 
-let showDescriptions = true;
+const modal = document.getElementById("settingsModal");
+const openSettings = document.getElementById("openSettings");
+const closeSettings = document.getElementById("closeSettings");
 
-/* Safety check */
-if (!window.games || !window.BASE_URL) {
-  console.error("games.js failed to load properly.");
+const themeSelect = document.getElementById("themeSelect");
+const fxSelect = document.getElementById("fxSelect");
+
+const canvas = document.getElementById("fxCanvas");
+const ctx = canvas.getContext("2d");
+
+let gamesData = [];
+let fxMode = "none";
+
+/* Resize canvas */
+function resizeCanvas() {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+}
+window.onresize = resizeCanvas;
+resizeCanvas();
+
+/* Fetch Gamepix games */
+async function loadGames() {
+  const res = await fetch("https://feeds.gamepix.com/v2/json?sid=1&pagination=24&order=quality");
+  const data = await res.json();
+
+  gamesData = data.items;
+  renderGames(gamesData);
 }
 
-/* Render */
+/* Render games */
 function renderGames(list) {
   container.innerHTML = "";
 
@@ -18,51 +39,102 @@ function renderGames(list) {
     const card = document.createElement("div");
     card.className = "game-card";
 
-    const img = window.BASE_URL + game.image;
-    const url = window.BASE_URL + game.path;
-
     card.innerHTML = `
-      <img src="${img}" onerror="this.style.display='none'" />
-      <div class="game-content">
-        <h3>${game.title}</h3>
-        ${showDescriptions ? `<p>${game.desc}</p>` : ""}
-      </div>
+      <img src="${game.image}" width="100%" />
+      <h3>${game.title}</h3>
     `;
 
     card.onclick = () => {
-  const fullUrl = window.BASE_URL + game.path;
-
-  // open in iframe page
-  window.location.href = `play.html?url=${encodeURIComponent(fullUrl)}`;
-};
+      openGame(game);
+    };
 
     container.appendChild(card);
   });
+}
+
+/* Open game in iframe */
+function openGame(game) {
+  container.innerHTML = "";
+
+  const iframe = document.createElement("iframe");
+  iframe.src = game.url;
+  iframe.style.width = "100%";
+  iframe.style.height = "90vh";
+  iframe.style.border = "none";
+
+  container.appendChild(iframe);
 }
 
 /* Search */
 searchInput.addEventListener("input", () => {
   const q = searchInput.value.toLowerCase();
 
-  const filtered = window.games.filter(g =>
+  const filtered = gamesData.filter(g =>
     g.title.toLowerCase().includes(q) ||
-    g.desc.toLowerCase().includes(q)
+    g.description.toLowerCase().includes(q)
   );
 
   renderGames(filtered);
 });
 
-/* Toggle descriptions */
-toggleDescBtn.onclick = () => {
-  showDescriptions = !showDescriptions;
-  renderGames(window.games);
+/* Settings modal */
+openSettings.onclick = () => modal.classList.remove("hidden");
+closeSettings.onclick = () => modal.classList.add("hidden");
+
+/* Theme */
+themeSelect.onchange = (e) => {
+  document.body.className = e.target.value;
 };
 
-/* Theme toggle */
-toggleThemeBtn.onclick = () => {
-  document.body.classList.toggle("dark");
-  document.body.classList.toggle("light");
+/* Weather FX toggle */
+fxSelect.onchange = (e) => {
+  fxMode = e.target.value;
 };
+
+/* FX System */
+let particles = [];
+
+function spawnParticles() {
+  particles = [];
+  for (let i = 0; i < 100; i++) {
+    particles.push({
+      x: Math.random() * canvas.width,
+      y: Math.random() * canvas.height,
+      speed: Math.random() * 2 + 1
+    });
+  }
+}
+
+function animateFX() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  if (fxMode === "rain") {
+    particles.forEach(p => {
+      p.y += p.speed * 4;
+      if (p.y > canvas.height) p.y = 0;
+
+      ctx.fillRect(p.x, p.y, 2, 10);
+    });
+  }
+
+  if (fxMode === "snow") {
+    particles.forEach(p => {
+      p.y += p.speed;
+      p.x += Math.sin(p.y * 0.01);
+
+      if (p.y > canvas.height) p.y = 0;
+
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, 2, 0, Math.PI * 2);
+      ctx.fill();
+    });
+  }
+
+  requestAnimationFrame(animateFX);
+}
+
+spawnParticles();
+animateFX();
 
 /* Init */
-renderGames(window.games);
+loadGames();

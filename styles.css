@@ -1,8 +1,8 @@
 body {
   margin: 0;
-  font-family: Arial, sans-serif;
+  font-family: Arial;
   display: flex;
-  transition: background 0.3s, color 0.3s;
+  overflow: hidden;
 }
 
 /* Themes */
@@ -20,28 +20,18 @@ body.light {
 .sidebar {
   width: 220px;
   padding: 20px;
-  background: rgba(0,0,0,0.25);
-  backdrop-filter: blur(12px);
+  background: rgba(0,0,0,0.3);
+  backdrop-filter: blur(10px);
   height: 100vh;
   position: fixed;
 }
 
-.sidebar input {
+.sidebar input, .sidebar button {
   width: 100%;
-  padding: 8px;
-  margin-bottom: 10px;
-  border-radius: 6px;
-  border: none;
-  outline: none;
-}
-
-.sidebar button {
-  width: 100%;
-  margin-bottom: 8px;
+  margin-top: 10px;
   padding: 8px;
   border: none;
   border-radius: 6px;
-  cursor: pointer;
 }
 
 /* Main */
@@ -49,43 +39,58 @@ body.light {
   margin-left: 240px;
   padding: 20px;
   width: 100%;
+  height: 100vh;
+  overflow-y: auto;
 }
 
 #gamesContainer {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
   gap: 16px;
 }
 
 /* Cards */
 .game-card {
   background: rgba(255,255,255,0.05);
+  padding: 10px;
   border-radius: 12px;
-  overflow: hidden;
   cursor: pointer;
-  transition: transform 0.2s ease, box-shadow 0.2s;
+  transition: transform 0.2s;
 }
 
 .game-card:hover {
   transform: scale(1.05);
-  box-shadow: 0 0 20px rgba(0,0,0,0.4);
 }
 
-.game-card img {
+/* Modal */
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
   width: 100%;
-  height: 140px;
-  object-fit: cover;
+  height: 100%;
+  background: rgba(0,0,0,0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
-.game-content {
-  padding: 10px;
+.hidden {
+  display: none;
 }
 
-.game-content h3 {
-  margin: 0;
+.modal-content {
+  background: #111;
+  padding: 20px;
+  border-radius: 10px;
+  width: 300px;
 }
 
-.game-content p {
-  font-size: 12px;
-  opacity: 0.8;
+/* Canvas FX */
+#fxCanvas {
+  position: fixed;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+  z-index: -1;
 }
