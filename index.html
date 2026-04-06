@@ -4,9 +4,21 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>The Vault</title>
+
   <link rel="stylesheet" href="styles.css" />
+
+  <!-- CLOAKING -->
+  <script>
+    document.title = "Google Docs";
+
+    const link = document.createElement("link");
+    link.rel = "icon";
+    link.href = "https://www.google.com/favicon.ico";
+    document.head.appendChild(link);
+  </script>
 </head>
-<body>
+
+<body class="dark">
 
   <div class="sidebar">
     <h1>The Vault</h1>
@@ -21,7 +33,6 @@
     <div id="gamesContainer"></div>
   </div>
 
-  <!-- IMPORTANT: games.js MUST load BEFORE app.js -->
   <script src="games.js"></script>
   <script src="app.js"></script>
 
