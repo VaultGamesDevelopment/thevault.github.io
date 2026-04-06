@@ -1,202 +1,39 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
+<meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-
 <title>Vault Games</title>
 
-<style>
-:root {
-  --bg: #0b0f1a;
-  --card: rgba(255,255,255,0.06);
-  --text: #ffffff;
-  --accent: #7c5cff;
-  --blur: blur(20px);
-}
-
-body.light {
-  --bg: #f4f6fb;
-  --card: rgba(0,0,0,0.05);
-  --text: #111;
-  --accent: #4f46e5;
-}
-
-body.ocean {
-  --bg: linear-gradient(135deg, #001f3f, #0074d9);
-  --accent: #00d4ff;
-}
-
-body.fire {
-  --bg: linear-gradient(135deg, #1a0000, #ff4500);
-  --accent: #ff7a00;
-}
-
-body {
-  margin: 0;
-  font-family: system-ui, sans-serif;
-  background: var(--bg);
-  color: var(--text);
-  overflow-x: hidden;
-}
-
-/* Layout */
-.header {
-  display: flex;
-  justify-content: space-between;
-  padding: 16px;
-  backdrop-filter: var(--blur);
-}
-
-.title {
-  font-size: 20px;
-  font-weight: bold;
-}
-
-.btn {
-  background: var(--accent);
-  border: none;
-  padding: 8px 12px;
-  border-radius: 8px;
-  color: white;
-  cursor: pointer;
-}
-
-/* Grid */
-.grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-  gap: 16px;
-  padding: 20px;
-}
-
-.card {
-  background: var(--card);
-  border-radius: 16px;
-  padding: 10px;
-  backdrop-filter: blur(10px);
-  cursor: pointer;
-  transition: 0.2s;
-}
-
-.card:hover {
-  transform: scale(1.05);
-}
-
-.card img {
-  width: 100%;
-  border-radius: 12px;
-  height: 120px;
-  object-fit: cover;
-}
-
-.card h3 {
-  font-size: 14px;
-  margin: 8px 0 0;
-}
-
-/* Modal */
-.modal {
-  position: fixed;
-  inset: 0;
-  background: rgba(0,0,0,0.6);
-  display: none;
-  align-items: center;
-  justify-content: center;
-}
-
-.modal-content {
-  background: var(--bg);
-  padding: 20px;
-  border-radius: 12px;
-  width: 320px;
-}
-
-/* Game Viewer */
-.game-viewer {
-  position: fixed;
-  inset: 0;
-  background: black;
-  display: none;
-  flex-direction: column;
-}
-
-iframe {
-  flex: 1;
-  border: none;
-}
-
-.topbar {
-  display: flex;
-  justify-content: space-between;
-  padding: 10px;
-  background: rgba(0,0,0,0.5);
-}
-
-.weather-bg {
-  position: fixed;
-  inset: 0;
-  z-index: -1;
-  pointer-events: none;
-}
-
-/* Simple FX */
-.rain::before {
-  content: "";
-  position: absolute;
-  width: 100%;
-  height: 200%;
-  background: repeating-linear-gradient(
-    to bottom,
-    rgba(255,255,255,0.2),
-    rgba(255,255,255,0.2) 2px,
-    transparent 2px,
-    transparent 6px
-  );
-  animation: rain 0.5s linear infinite;
-}
-
-@keyframes rain {
-  from { transform: translateY(-50%); }
-  to { transform: translateY(0); }
-}
-
-.snow::before {
-  content: "";
-  position: absolute;
-  width: 100%;
-  height: 200%;
-  background: radial-gradient(circle, white 2px, transparent 3px);
-  background-size: 20px 20px;
-  animation: snow 5s linear infinite;
-}
-
-@keyframes snow {
-  from { transform: translateY(-50%); }
-  to { transform: translateY(0); }
-}
-</style>
+<link rel="stylesheet" href="styles.css"/>
 </head>
 
 <body>
 
-<div class="weather-bg" id="weatherFx"></div>
+<div id="weatherFx" class="weather-bg"></div>
 
-<div class="header">
+<header class="header">
   <div class="title">Vault Games</div>
-  <div>
-    <button class="btn" onclick="openSettings()">Settings</button>
+  <button class="btn" onclick="openSettings()">Settings</button>
+</header>
+
+<main id="gameGrid" class="grid"></main>
+
+<!-- GAME VIEW -->
+<div id="gameViewer" class="game-viewer">
+  <div class="topbar">
+    <button class="btn" onclick="closeGame()">Exit</button>
+    <button class="btn" onclick="toggleFullscreen()">Fullscreen</button>
   </div>
+  <iframe id="gameFrame"></iframe>
 </div>
 
-<div class="grid" id="gameGrid"></div>
-
 <!-- SETTINGS -->
-<div class="modal" id="settingsModal">
+<div id="settingsModal" class="modal">
   <div class="modal-content">
     <h3>Settings</h3>
 
-    <label>Theme:</label>
+    <label>Theme</label>
     <select id="themeSelect">
       <option value="dark">Dark</option>
       <option value="light">Light</option>
@@ -206,7 +43,7 @@ iframe {
 
     <br><br>
 
-    <label>Weather FX:</label>
+    <label>Weather FX</label>
     <select id="weatherSelect">
       <option value="none">None</option>
       <option value="rain">Rain</option>
@@ -215,7 +52,7 @@ iframe {
 
     <br><br>
 
-    <label>Cloaking:</label>
+    <label>Cloaking</label>
     <select id="cloakSelect">
       <option value="none">None</option>
       <option value="about">about:blank</option>
@@ -228,122 +65,10 @@ iframe {
   </div>
 </div>
 
-<!-- GAME VIEW -->
-<div class="game-viewer" id="gameViewer">
-  <div class="topbar">
-    <button class="btn" onclick="closeGame()">Exit</button>
-    <button class="btn" onclick="toggleFullscreen()">Fullscreen</button>
-  </div>
-  <iframe id="gameFrame"></iframe>
-</div>
-
-<script>
-const games = [
-  { title: "Wheely", url: "games/402.html", image: "https://biology.science.geometry.project.computer.archivomemoria-audiovisualcsb.org/images/402.jpg" },
-  { title: "World Hardest Game", url: "games/403.html", image: "https://biology.science.geometry.project.computer.archivomemoria-audiovisualcsb.org/images/403.jpg" }
-];
-
-let currentGame = null;
-
-/* Render games */
-function loadGames() {
-  const grid = document.getElementById("gameGrid");
-  grid.innerHTML = "";
-
-  games.forEach(game => {
-    const div = document.createElement("div");
-    div.className = "card";
-    div.onclick = () => openGame(game);
-
-    div.innerHTML = `
-      <img src="${game.image}" onerror="this.src='https://via.placeholder.com/300x150'"/>
-      <h3>${game.title}</h3>
-    `;
-
-    grid.appendChild(div);
-  });
-}
-
-/* Open game */
-function openGame(game) {
-  currentGame = game;
-
-  const viewer = document.getElementById("gameViewer");
-  const frame = document.getElementById("gameFrame");
-
-  const cloak = localStorage.getItem("cloak") || "none";
-
-  if (cloak === "about") {
-    const w = window.open("about:blank");
-    w.document.write(`<iframe src="${game.url}" style="border:none;width:100%;height:100%"></iframe>`);
-    return;
-  }
-
-  if (cloak === "blob") {
-    const blob = new Blob([`<iframe src="${game.url}" style="border:none;width:100%;height:100%"></iframe>`], { type: "text/html" });
-    const url = URL.createObjectURL(blob);
-    window.open(url);
-    return;
-  }
-
-  frame.src = game.url;
-  viewer.style.display = "flex";
-}
-
-/* Close game */
-function closeGame() {
-  document.getElementById("gameViewer").style.display = "none";
-}
-
-/* Fullscreen */
-function toggleFullscreen() {
-  const iframe = document.getElementById("gameFrame");
-  iframe.requestFullscreen();
-}
-
-/* Settings */
-function openSettings() {
-  document.getElementById("settingsModal").style.display = "flex";
-}
-
-function applySettings() {
-  const theme = document.getElementById("themeSelect").value;
-  const weather = document.getElementById("weatherSelect").value;
-  const cloak = document.getElementById("cloakSelect").value;
-
-  document.body.className = theme;
-  localStorage.setItem("theme", theme);
-
-  document.getElementById("weatherFx").className = "weather-bg " + weather;
-
-  localStorage.setItem("weather", weather);
-  localStorage.setItem("cloak", cloak);
-
-  document.getElementById("settingsModal").style.display = "none";
-}
-
-/* Load saved settings */
-(function init() {
-  const theme = localStorage.getItem("theme");
-  const weather = localStorage.getItem("weather");
-
-  if (theme) document.body.className = theme;
-  if (weather) document.getElementById("weatherFx").className = "weather-bg " + weather;
-
-  loadGames();
-})();
-
-/* ESC closes modal/game */
-document.addEventListener("keydown", (e) => {
-  if (e.key === "Escape") {
-    closeGame();
-    document.getElementById("settingsModal").style.display = "none";
-  }
-  if (e.key === "f") {
-    toggleFullscreen();
-  }
-});
-</script>
+<script src="games.js"></script>
+<script src="ui.js"></script>
+<script src="settings.js"></script>
+<script src="app.js"></script>
 
 </body>
 </html>
