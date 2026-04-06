@@ -1,343 +1,348 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Vault Games</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 
-<script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
-<script src="https://cdn.tailwindcss.com"></script>
+<title>Vault Games</title>
 
 <style>
 :root {
-  --accent: #7c3aed;
-  --bg: #070a12;
+  --bg: #0b0f1a;
+  --card: rgba(255,255,255,0.06);
+  --text: #ffffff;
+  --accent: #7c5cff;
+  --blur: blur(20px);
+}
+
+body.light {
+  --bg: #f4f6fb;
+  --card: rgba(0,0,0,0.05);
+  --text: #111;
+  --accent: #4f46e5;
+}
+
+body.ocean {
+  --bg: linear-gradient(135deg, #001f3f, #0074d9);
+  --accent: #00d4ff;
+}
+
+body.fire {
+  --bg: linear-gradient(135deg, #1a0000, #ff4500);
+  --accent: #ff7a00;
 }
 
 body {
   margin: 0;
+  font-family: system-ui, sans-serif;
   background: var(--bg);
-  color: white;
-  font-family: system-ui;
+  color: var(--text);
+  overflow-x: hidden;
 }
 
-.bg {
-  position: fixed;
-  inset: 0;
-  z-index: -1;
-  background:
-    radial-gradient(circle at 20% 20%, rgba(124,58,237,0.25), transparent 40%),
-    radial-gradient(circle at 80% 80%, rgba(6,182,212,0.15), transparent 40%);
-}
-
-/* NAVBAR */
-.navbar {
-  position: sticky;
-  top: 0;
-  z-index: 50;
-  padding: 12px 20px;
+/* Layout */
+.header {
   display: flex;
   justify-content: space-between;
-  align-items: center;
-  background: rgba(0,0,0,0.5);
-  backdrop-filter: blur(12px);
-  border-bottom: 1px solid rgba(255,255,255,0.05);
+  padding: 16px;
+  backdrop-filter: var(--blur);
 }
 
-/* BUTTON */
+.title {
+  font-size: 20px;
+  font-weight: bold;
+}
+
 .btn {
   background: var(--accent);
-  padding: 6px 12px;
+  border: none;
+  padding: 8px 12px;
   border-radius: 8px;
-  font-size: 13px;
+  color: white;
+  cursor: pointer;
 }
 
-/* GRID */
-.grid-container {
-  max-width: 1400px;
-  margin: auto;
+/* Grid */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 16px;
   padding: 20px;
 }
 
 .card {
-  position: relative;
+  background: var(--card);
   border-radius: 16px;
-  overflow: hidden;
+  padding: 10px;
+  backdrop-filter: blur(10px);
   cursor: pointer;
   transition: 0.2s;
-  aspect-ratio: 1/1;
-  background: #111;
 }
 
 .card:hover {
-  transform: scale(1.04);
+  transform: scale(1.05);
 }
 
 .card img {
   width: 100%;
-  height: 100%;
+  border-radius: 12px;
+  height: 120px;
   object-fit: cover;
 }
 
-.overlay {
-  position: absolute;
-  bottom: 0;
-  width: 100%;
-  padding: 8px;
-  background: linear-gradient(to top, rgba(0,0,0,0.85), transparent);
+.card h3 {
+  font-size: 14px;
+  margin: 8px 0 0;
 }
 
-/* MODAL */
-.modal-bg {
+/* Modal */
+.modal {
   position: fixed;
   inset: 0;
   background: rgba(0,0,0,0.6);
-  backdrop-filter: blur(8px);
-  z-index: 60;
-  display: flex;
-  justify-content: center;
+  display: none;
   align-items: center;
+  justify-content: center;
 }
 
-.modal {
-  width: 400px;
-  background: #111;
+.modal-content {
+  background: var(--bg);
+  padding: 20px;
   border-radius: 12px;
-  padding: 16px;
-  border: 1px solid rgba(255,255,255,0.1);
+  width: 320px;
 }
 
-/* GAME VIEW */
-.game-view {
+/* Game Viewer */
+.game-viewer {
   position: fixed;
   inset: 0;
-  z-index: 100;
-  display: flex;
-  flex-direction: column;
   background: black;
+  display: none;
+  flex-direction: column;
 }
 
 iframe {
   flex: 1;
   border: none;
 }
+
+.topbar {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px;
+  background: rgba(0,0,0,0.5);
+}
+
+.weather-bg {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+}
+
+/* Simple FX */
+.rain::before {
+  content: "";
+  position: absolute;
+  width: 100%;
+  height: 200%;
+  background: repeating-linear-gradient(
+    to bottom,
+    rgba(255,255,255,0.2),
+    rgba(255,255,255,0.2) 2px,
+    transparent 2px,
+    transparent 6px
+  );
+  animation: rain 0.5s linear infinite;
+}
+
+@keyframes rain {
+  from { transform: translateY(-50%); }
+  to { transform: translateY(0); }
+}
+
+.snow::before {
+  content: "";
+  position: absolute;
+  width: 100%;
+  height: 200%;
+  background: radial-gradient(circle, white 2px, transparent 3px);
+  background-size: 20px 20px;
+  animation: snow 5s linear infinite;
+}
+
+@keyframes snow {
+  from { transform: translateY(-50%); }
+  to { transform: translateY(0); }
+}
 </style>
 </head>
 
 <body>
-<div class="bg"></div>
 
-<div x-data="app()" x-init="init()">
+<div class="weather-bg" id="weatherFx"></div>
 
-<!-- NAVBAR -->
-<div class="navbar">
-  <div class="font-semibold text-lg">Vault Games</div>
-  <div class="flex gap-2">
-    <button class="btn" @click="favOpen = true">⭐ Favorites</button>
-    <button class="btn" @click="panelOpen = true">⚙ Settings</button>
+<div class="header">
+  <div class="title">Vault Games</div>
+  <div>
+    <button class="btn" onclick="openSettings()">Settings</button>
   </div>
 </div>
 
-<!-- SEARCH -->
-<div class="grid-container">
-  <input 
-    class="w-full p-3 rounded text-black mb-4"
-    placeholder="Search games..."
-    x-model="search"
-    @input="filterGames()"
-  />
-</div>
+<div class="grid" id="gameGrid"></div>
 
-<!-- GRID -->
-<div class="grid-container">
-  <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-5">
-    <template x-for="g in filteredGames" :key="g.title">
-      <div class="card" @click="playGame(g)">
-        
-        <img 
-          :src="resolveImage(g.image)"
-          @error="$el.src='https://placehold.co/300x300'"
-        >
+<!-- SETTINGS -->
+<div class="modal" id="settingsModal">
+  <div class="modal-content">
+    <h3>Settings</h3>
 
-        <div class="overlay">
-          <div x-text="g.title"></div>
-        </div>
+    <label>Theme:</label>
+    <select id="themeSelect">
+      <option value="dark">Dark</option>
+      <option value="light">Light</option>
+      <option value="ocean">Ocean</option>
+      <option value="fire">Fire</option>
+    </select>
 
-        <div class="absolute top-2 right-2 cursor-pointer"
-             @click.stop="toggleFavorite(g)">
-          ⭐
-        </div>
+    <br><br>
 
-      </div>
-    </template>
+    <label>Weather FX:</label>
+    <select id="weatherSelect">
+      <option value="none">None</option>
+      <option value="rain">Rain</option>
+      <option value="snow">Snow</option>
+    </select>
+
+    <br><br>
+
+    <label>Cloaking:</label>
+    <select id="cloakSelect">
+      <option value="none">None</option>
+      <option value="about">about:blank</option>
+      <option value="blob">blob:null</option>
+    </select>
+
+    <br><br>
+
+    <button class="btn" onclick="applySettings()">Apply</button>
   </div>
 </div>
 
 <!-- GAME VIEW -->
-<div x-show="showGame" class="game-view">
-  <div class="flex justify-between p-3">
-    <button class="btn" @click="closeGame()">Exit</button>
-    <button class="btn" @click="toggleFullscreen()">Fullscreen</button>
-    <span x-text="activeGame?.title"></span>
+<div class="game-viewer" id="gameViewer">
+  <div class="topbar">
+    <button class="btn" onclick="closeGame()">Exit</button>
+    <button class="btn" onclick="toggleFullscreen()">Fullscreen</button>
   </div>
-  <iframe 
-  id="gameFrame"
-  :src="resolveGameUrl(activeGame?.url)">
-</iframe>
-</div>
-
-<!-- SETTINGS -->
-<div x-show="panelOpen" class="modal-bg">
-  <div class="modal">
-    <h2 class="text-lg mb-4">Settings</h2>
-
-    <label>Accent Color</label>
-    <input type="color" x-model="accentColor" @input="applyAccent()" class="w-full mb-4">
-
-    <div class="text-right">
-      <button class="btn" @click="panelOpen=false">Close</button>
-    </div>
-  </div>
-</div>
-
-<!-- FAVORITES -->
-<div x-show="favOpen" class="modal-bg">
-  <div class="modal">
-    <h2 class="text-lg mb-4">Favorites</h2>
-
-    <template x-for="g in favorites" :key="g.title">
-      <div class="p-2 border-b cursor-pointer hover:bg-white/5"
-           @click="playGame(g)">
-        <span x-text="g.title"></span>
-      </div>
-    </template>
-
-    <div class="text-right mt-4">
-      <button class="btn" @click="favOpen=false">Close</button>
-    </div>
-  </div>
-</div>
-
+  <iframe id="gameFrame"></iframe>
 </div>
 
 <script>
-function app() {
+const games = [
+  { title: "Wheely", url: "games/402.html", image: "https://biology.science.geometry.project.computer.archivomemoria-audiovisualcsb.org/images/402.jpg" },
+  { title: "World Hardest Game", url: "games/403.html", image: "https://biology.science.geometry.project.computer.archivomemoria-audiovisualcsb.org/images/403.jpg" }
+];
 
-const IMAGE_BASE = "https://biology.science.geometry.project.computer.archivomemoria-audiovisualcsb.org/";
-const GAME_BASE  = "https://biology.science.geometry.project.computer.archivomemoria-audiovisualcsb.org/";
-const BASE_PATH  = "https://vaultgamesdevelopment.github.io/thevault.github.io/";
+let currentGame = null;
 
-return {
+/* Render games */
+function loadGames() {
+  const grid = document.getElementById("gameGrid");
+  grid.innerHTML = "";
 
-games: [],
-filteredGames: [],
-favoritesMap: {},
-favorites: [],
+  games.forEach(game => {
+    const div = document.createElement("div");
+    div.className = "card";
+    div.onclick = () => openGame(game);
 
-search: '',
-showGame: false,
-activeGame: null,
+    div.innerHTML = `
+      <img src="${game.image}" onerror="this.src='https://via.placeholder.com/300x150'"/>
+      <h3>${game.title}</h3>
+    `;
 
-panelOpen: false,
-favOpen: false,
-
-accentColor: '#7c3aed',
-
-init() {
-  this.loadFavorites();
-  this.loadGames();
-
-  document.addEventListener("keydown", (e) => {
-    if (e.key === "Escape") this.closeGame();
-    if (e.key === "f") this.toggleFullscreen();
+    grid.appendChild(div);
   });
-},
+}
 
-/* LOAD GAMES */
-loadGames() {
-  const script = document.createElement("script");
-  script.src = BASE_PATH + "g/assets/js/games.js";
-  script.onload = () => {
-    if (typeof games !== "undefined") {
-      this.games = games;
-      this.filteredGames = games;
-    } else {
-      console.error("games.js did not define games");
-    }
-  };
-  document.body.appendChild(script);
-},
+/* Open game */
+function openGame(game) {
+  currentGame = game;
 
-/* SEARCH */
-filterGames() {
-  let s = this.search.toLowerCase();
-  this.filteredGames = this.games.filter(g =>
-    g.title.toLowerCase().includes(s)
-  );
-},
+  const viewer = document.getElementById("gameViewer");
+  const frame = document.getElementById("gameFrame");
 
-/* IMAGE */
-resolveImage(src) {
-  if (!src) return "https://placehold.co/300x300";
-  if (src.startsWith("http")) return src;
-  return IMAGE_BASE.replace(/\/$/, '') + "/" + src.replace(/^\//, '');
-},
+  const cloak = localStorage.getItem("cloak") || "none";
 
-/* GAME URL */
-resolveGameUrl(url) {
-  if (!url) return "#";
-  if (url.startsWith("http")) return url;
-  return GAME_BASE.replace(/\/$/, '') + "/" + url.replace(/^\//, '');
-},
-
-/* FAVORITES */
-toggleFavorite(g) {
-  if (this.favoritesMap[g.title]) {
-    delete this.favoritesMap[g.title];
-  } else {
-    this.favoritesMap[g.title] = g;
+  if (cloak === "about") {
+    const w = window.open("about:blank");
+    w.document.write(`<iframe src="${game.url}" style="border:none;width:100%;height:100%"></iframe>`);
+    return;
   }
-  localStorage.setItem("fav", JSON.stringify(this.favoritesMap));
-  this.loadFavorites();
-},
 
-loadFavorites() {
-  this.favoritesMap = JSON.parse(localStorage.getItem("fav") || "{}");
-  this.favorites = Object.values(this.favoritesMap);
-},
+  if (cloak === "blob") {
+    const blob = new Blob([`<iframe src="${game.url}" style="border:none;width:100%;height:100%"></iframe>`], { type: "text/html" });
+    const url = URL.createObjectURL(blob);
+    window.open(url);
+    return;
+  }
 
-/* GAME */
-playGame(g) {
-  this.activeGame = g;
-  this.showGame = true;
-},
+  frame.src = game.url;
+  viewer.style.display = "flex";
+}
 
-closeGame() {
-  this.showGame = false;
-},
+/* Close game */
+function closeGame() {
+  document.getElementById("gameViewer").style.display = "none";
+}
 
-/* FULLSCREEN */
-toggleFullscreen() {
+/* Fullscreen */
+function toggleFullscreen() {
   const iframe = document.getElementById("gameFrame");
+  iframe.requestFullscreen();
+}
 
-  if (!iframe) return;
+/* Settings */
+function openSettings() {
+  document.getElementById("settingsModal").style.display = "flex";
+}
 
-  if (iframe.requestFullscreen) {
-    iframe.requestFullscreen();
-  } else if (iframe.webkitRequestFullscreen) {
-    iframe.webkitRequestFullscreen(); // Safari
-  } else if (iframe.msRequestFullscreen) {
-    iframe.msRequestFullscreen(); // IE/Edge legacy
+function applySettings() {
+  const theme = document.getElementById("themeSelect").value;
+  const weather = document.getElementById("weatherSelect").value;
+  const cloak = document.getElementById("cloakSelect").value;
+
+  document.body.className = theme;
+  localStorage.setItem("theme", theme);
+
+  document.getElementById("weatherFx").className = "weather-bg " + weather;
+
+  localStorage.setItem("weather", weather);
+  localStorage.setItem("cloak", cloak);
+
+  document.getElementById("settingsModal").style.display = "none";
+}
+
+/* Load saved settings */
+(function init() {
+  const theme = localStorage.getItem("theme");
+  const weather = localStorage.getItem("weather");
+
+  if (theme) document.body.className = theme;
+  if (weather) document.getElementById("weatherFx").className = "weather-bg " + weather;
+
+  loadGames();
+})();
+
+/* ESC closes modal/game */
+document.addEventListener("keydown", (e) => {
+  if (e.key === "Escape") {
+    closeGame();
+    document.getElementById("settingsModal").style.display = "none";
   }
-},
-
-/* SETTINGS */
-applyAccent() {
-  document.documentElement.style.setProperty('--accent', this.accentColor);
-}
-
-};
-}
+  if (e.key === "f") {
+    toggleFullscreen();
+  }
+});
 </script>
 
 </body>
