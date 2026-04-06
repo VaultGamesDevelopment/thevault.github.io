@@ -8,16 +8,23 @@ function renderGames() {
 
     const img = document.createElement("img");
 
-    img.src = game.image;
-
-    // Prevent infinite fallback loop
     let fallbackUsed = false;
+
+    img.src = game.image;
 
     img.onerror = () => {
       if (fallbackUsed) return;
       fallbackUsed = true;
 
-      img.src = "assets/images/fallback.png"; // local fallback recommended
+      // Inline SVG fallback (NEVER fails)
+      img.src = `data:image/svg+xml;charset=UTF-8,
+        <svg xmlns='http://www.w3.org/2000/svg' width='300' height='150'>
+          <rect width='100%' height='100%' fill='#111'/>
+          <text x='50%' y='50%' dominant-baseline='middle' text-anchor='middle'
+            fill='white' font-size='14' font-family='Arial'>
+            No Image
+          </text>
+        </svg>`;
     };
 
     const title = document.createElement("h3");
