@@ -1,30 +1,43 @@
-const container = document.getElementById("gamesContainer");
-const searchInput = document.getElementById("searchInput");
-const settingsBtn = document.getElementById("settingsBtn");
-const modal = document.getElementById("settingsModal");
+const BASE_URL = "https://biology.science.geometry.project.computer.archivomemoria-audiovisualcsb.org/";
 
-const themeSelect = document.getElementById("themeSelect");
-const gridSizeSelect = document.getElementById("gridSizeSelect");
-const toggleDesc = document.getElementById("toggleDesc");
-const closeSettings = document.getElementById("closeSettings");
-
-let settings = {
-  theme: localStorage.getItem("theme") || "dark",
-  gridSize: localStorage.getItem("gridSize") || "medium",
-  showDesc: localStorage.getItem("showDesc") !== "false"
+// ------------------------
+// SETTINGS
+// ------------------------
+const settings = {
+  showDesc: true,
+  darkMode: true
 };
 
-/* Apply Settings */
-function applySettings() {
-  document.body.className = settings.theme;
-  container.className = `games-grid ${settings.gridSize}`;
-
-  localStorage.setItem("theme", settings.theme);
-  localStorage.setItem("gridSize", settings.gridSize);
-  localStorage.setItem("showDesc", settings.showDesc);
+// Load settings from localStorage
+function loadSettings() {
+  const saved = localStorage.getItem("vault_settings");
+  if (saved) {
+    Object.assign(settings, JSON.parse(saved));
+  }
 }
 
-/* Render Games */
+// Save settings
+function saveSettings() {
+  localStorage.setItem("vault_settings", JSON.stringify(settings));
+}
+
+// ------------------------
+// IMAGE FIX
+// ------------------------
+function getImageUrl(path) {
+  if (!path) return "";
+  if (path.startsWith("http")) return path;
+  return BASE_URL + path;
+}
+
+// ------------------------
+// RENDER UI
+// ------------------------
+const container = document.getElementById("gamesContainer");
+const searchInput = document.getElementById("searchInput");
+const toggleDescBtn = document.getElementById("toggleDesc");
+const toggleThemeBtn = document.getElementById("toggleTheme");
+
 function renderGames(filter = "") {
   container.innerHTML = "";
 
@@ -36,13 +49,29 @@ function renderGames(filter = "") {
     const card = document.createElement("div");
     card.className = "game-card";
 
-    card.innerHTML = `
-      <img src="${game.image}" />
-      <div class="content">
-        <h3>${game.title}</h3>
-        ${settings.showDesc ? `<p>${game.desc}</p>` : ""}
-      </div>
-    `;
+    const img = document.createElement("img");
+    img.src = getImageUrl(game.image);
+
+    img.onerror = () => {
+      img.src = "https://via.placeholder.com/300x150?text=No+Image";
+    };
+
+    const content = document.createElement("div");
+    content.className = "game-content";
+
+    const title = document.createElement("h3");
+    title.textContent = game.title;
+
+    content.appendChild(title);
+
+    if (settings.showDesc) {
+      const desc = document.createElement("p");
+      desc.textContent = game.desc;
+      content.appendChild(desc);
+    }
+
+    card.appendChild(img);
+    card.appendChild(content);
 
     card.onclick = () => {
       window.location.href = game.url;
@@ -52,34 +81,35 @@ function renderGames(filter = "") {
   });
 }
 
-/* Events */
-searchInput.addEventListener("input", e => {
+// ------------------------
+// EVENTS
+// ------------------------
+searchInput.addEventListener("input", (e) => {
   renderGames(e.target.value);
 });
 
-settingsBtn.onclick = () => modal.classList.remove("hidden");
-closeSettings.onclick = () => modal.classList.add("hidden");
+toggleDescBtn.addEventListener("click", () => {
+  settings.showDesc = !settings.showDesc;
+  saveSettings();
+  renderGames(searchInput.value);
+});
 
-/* Settings Controls */
-themeSelect.value = settings.theme;
-gridSizeSelect.value = settings.gridSize;
-toggleDesc.checked = settings.showDesc;
+toggleThemeBtn.addEventListener("click", () => {
+  settings.darkMode = !settings.darkMode;
+  saveSettings();
+  applyTheme();
+});
 
-themeSelect.onchange = e => {
-  settings.theme = e.target.value;
-  applySettings();
-};
+// ------------------------
+// THEME
+// ------------------------
+function applyTheme() {
+  document.body.className = settings.darkMode ? "dark" : "light";
+}
 
-gridSizeSelect.onchange = e => {
-  settings.gridSize = e.target.value;
-  applySettings();
-};
-
-toggleDesc.onchange = e => {
-  settings.showDesc = e.target.checked;
-  applySettings();
-};
-
-/* Init */
-applySettings();
+// ------------------------
+// INIT
+// ------------------------
+loadSettings();
+applyTheme();
 renderGames();
