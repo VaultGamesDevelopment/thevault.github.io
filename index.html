@@ -289,30 +289,35 @@
           });
         },
 
-        async loadGames() {
-          try {
-            const res = await fetch(BASE + "g/assets/js/games.js");
-            const text = await res.text();
+        async loadGames(){
+try{
+console.log("Loading games...");
 
-            const loadedGames = new Function(`
-              ${text}
-              return typeof games !== 'undefined'
-                ? games
-                : (typeof window !== 'undefined' && Array.isArray(window.games) ? window.games : []);
-            `)();
+const res = await fetch("./g/assets/js/games.js");
 
-            if (!Array.isArray(loadedGames)) {
-              throw new Error("games.js did not produce a games array");
-            }
+if(!res.ok){
+throw new Error("games.js failed to load: " + res.status);
+}
 
-            this.allGames = loadedGames.map(g => ({ ...g }));
-            this.filterGames();
-          } catch (e) {
-            console.error("Failed loading games:", e);
-            this.allGames = [];
-            this.games = [];
-          }
-        },
+const text = await res.text();
+
+console.log("games.js loaded:", text.slice(0,100));
+
+eval(text);
+
+if(typeof games === "undefined"){
+throw new Error("games variable not found in games.js");
+}
+
+this.games = games.map(g=>({...g}));
+
+console.log("Games loaded:", this.games.length);
+
+}catch(e){
+console.error("LOAD ERROR:", e);
+this.games = [];
+}
+},
 
         resolveImage(src) {
           if (!src) return "https://placehold.co/300x300";
