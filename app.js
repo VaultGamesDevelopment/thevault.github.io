@@ -1,82 +1,147 @@
-window.BASE="https://biology.science.geometry.project.computer.archivomemoria-audiovisualcsb.org/";
+// app.js
 
-let debounce;
-
-function renderGames(){
-  const grid=document.getElementById("gameGrid");
-  grid.innerHTML="";
-
-  let filtered=games.filter(g =>
-    g.title.toLowerCase().includes(State.search.toLowerCase())
-  );
-
-  filtered.forEach(g=>{
-    grid.innerHTML+=Components.gameCard(g);
-  });
-}
-
-/* SEARCH */
-document.addEventListener("DOMContentLoaded",()=>{
-  document.getElementById("searchInput").addEventListener("input",e=>{
-    clearTimeout(debounce);
-    debounce=setTimeout(()=>{
-      State.search=e.target.value;
+// ---------- INIT ----------
+document.addEventListener("DOMContentLoaded", () => {
+  try {
+    // Load UI
+    if (typeof renderGames === "function") {
       renderGames();
-    },200);
+    }
+
+    // Initialize settings dropdowns
+    if (typeof initSettingsUI === "function") {
+      initSettingsUI();
+    }
+
+    // Apply saved settings (if any)
+    loadSavedSettings();
+
+    // Register keyboard shortcuts
+    registerHotkeys();
+
+  } catch (err) {
+    console.error("App initialization error:", err);
+  }
+});
+
+
+// ---------- SETTINGS LOADING ----------
+function loadSavedSettings(){
+  const theme = localStorage.getItem("theme");
+  const weather = localStorage.getItem("weather");
+
+  if (theme && document.getElementById("themeSelect")) {
+    document.getElementById("themeSelect").value = theme;
+  }
+
+  if (weather && typeof setWeather === "function") {
+    setWeather(weather);
+    if (document.getElementById("weatherSelect")) {
+      document.getElementById("weatherSelect").value = weather;
+    }
+  }
+}
+
+
+// ---------- APPLY SETTINGS ----------
+window.applySettings = function(){
+  const themeSelect = document.getElementById("themeSelect");
+  const weatherSelect = document.getElementById("weatherSelect");
+
+  const theme = themeSelect ? themeSelect.value : "dark";
+  const weather = weatherSelect ? weatherSelect.value : "none";
+
+  // Save
+  localStorage.setItem("theme", theme);
+  localStorage.setItem("weather", weather);
+
+  // Apply theme
+  if (typeof THEMES !== "undefined") {
+    const t = THEMES[theme];
+    if (t) {
+      document.documentElement.style.setProperty("--bg", t.bg);
+      document.documentElement.style.setProperty("--card", t.card);
+    }
+  }
+
+  // Apply weather
+  if (typeof setWeather === "function") {
+    setWeather(weather);
+  }
+
+  // Close modal
+  if (typeof closeSettings === "function") {
+    closeSettings();
+  }
+};
+
+
+// ---------- FULLSCREEN ----------
+window.toggleFullscreen = function(){
+  if (!document.fullscreenElement) {
+    document.documentElement.requestFullscreen().catch(err => {
+      console.warn("Fullscreen failed:", err);
+    });
+  } else {
+    document.exitFullscreen();
+  }
+};
+
+
+// ---------- SETTINGS MODAL ----------
+window.openSettings = function(){
+  const modal = document.getElementById("settingsModal");
+  if (modal) modal.classList.remove("hidden");
+};
+
+window.closeSettings = function(){
+  const modal = document.getElementById("settingsModal");
+  if (modal) modal.classList.add("hidden");
+};
+
+
+// ---------- HOTKEYS ----------
+function registerHotkeys(){
+  document.addEventListener("keydown", (e) => {
+    // ESC exits fullscreen or closes modal
+    if (e.key === "Escape") {
+      if (document.fullscreenElement) {
+        document.exitFullscreen();
+      } else {
+        closeSettings();
+      }
+    }
+
+    // Alt + R = reset settings
+    if (e.altKey && e.key.toLowerCase() === "r") {
+      resetSettings();
+    }
   });
-});
-
-/* GAME */
-function openGame(game){
-  document.getElementById("gameFrame").src=BASE+game.url;
-  document.getElementById("gameViewer").style.display="flex";
 }
 
-function closeGame(){
-  document.getElementById("gameViewer").style.display="none";
-}
 
-function toggleFullscreen(){
-  document.getElementById("gameFrame").requestFullscreen();
-}
+// ---------- RESET SETTINGS ----------
+function resetSettings(){
+  localStorage.removeItem("theme");
+  localStorage.removeItem("weather");
+  localStorage.removeItem("density");
+  localStorage.removeItem("animation");
 
-/* CLOAK */
-function launchCloak(){
-  const cloak=localStorage.getItem("cloak");
-  if(!cloak||cloak==="none") return;
+  // Reset UI selections if they exist
+  const themeSelect = document.getElementById("themeSelect");
+  const weatherSelect = document.getElementById("weatherSelect");
 
-  const url=location.href;
+  if (themeSelect) themeSelect.selectedIndex = 0;
+  if (weatherSelect) weatherSelect.selectedIndex = 0;
 
-  if(cloak==="about"){
-    const w=window.open("about:blank");
-    w.document.write(`<iframe src="${url}" style="width:100%;height:100%;border:none"></iframe>`);
+  // Reapply defaults
+  if (typeof setWeather === "function") {
+    setWeather("none");
   }
 
-  if(cloak==="blob"){
-    const blob=new Blob([`<iframe src="${url}" style="width:100%;height:100%;border:none"></iframe>`],{type:"text/html"});
-    window.open(URL.createObjectURL(blob));
-  }
+  // Reset theme to default
+  document.documentElement.style.setProperty("--bg", "#0b0f1a");
+  document.documentElement.style.setProperty("--card", "rgba(255,255,255,0.05)");
 
-  document.body.innerHTML="";
+  console.log("Settings reset via Alt+R");
 }
-
-/* ALT+R RESET */
-document.addEventListener("keydown",e=>{
-  if(e.altKey && e.key.toLowerCase()==="r"){
-    localStorage.clear();
-    alert("Vault reset.");
-    location.reload();
-  }
-
-  if(e.key==="Escape") closeGame();
-  if(e.key==="f") toggleFullscreen();
-});
-
-/* INIT */
-document.addEventListener("DOMContentLoaded",()=>{
-  UI.init();
-  renderGames();
-  UI.renderFavorites();
-
-  setTimeout(launchCloak,300);
-});
