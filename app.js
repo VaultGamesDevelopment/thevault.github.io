@@ -6,12 +6,27 @@ function renderGames() {
     const el = document.createElement("div");
     el.className = "card";
 
-    el.innerHTML = `
-      <img src="${game.image}" onerror="this.src='https://via.placeholder.com/300x150'"/>
-      <h3>${game.title}</h3>
-    `;
+    const img = document.createElement("img");
+
+    img.src = game.image;
+
+    // Prevent infinite fallback loop
+    let fallbackUsed = false;
+
+    img.onerror = () => {
+      if (fallbackUsed) return;
+      fallbackUsed = true;
+
+      img.src = "assets/images/fallback.png"; // local fallback recommended
+    };
+
+    const title = document.createElement("h3");
+    title.textContent = game.title;
 
     el.onclick = () => openGame(game);
+
+    el.appendChild(img);
+    el.appendChild(title);
 
     grid.appendChild(el);
   });
