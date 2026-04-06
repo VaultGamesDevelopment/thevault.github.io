@@ -1,342 +1,335 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Vault Games</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vault Games</title>
 
-  <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
-  <script src="https://cdn.tailwindcss.com"></script>
+<script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+<script src="https://cdn.tailwindcss.com"></script>
 
-  <style>
-    :root {
-      --accent: #7c3aed;
-      --bg: #070a12;
-    }
+<style>
+:root {
+  --accent: #7c3aed;
+  --bg: #070a12;
+}
 
-    body {
-      margin: 0;
-      background: var(--bg);
-      color: white;
-      font-family: system-ui;
-    }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: white;
+  font-family: system-ui;
+}
 
-    .bg {
-      position: fixed;
-      inset: 0;
-      z-index: -2;
-      background:
-        radial-gradient(circle at 20% 20%, rgba(124,58,237,0.25), transparent 40%),
-        radial-gradient(circle at 80% 80%, rgba(6,182,212,0.15), transparent 40%);
-    }
+.bg {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background:
+    radial-gradient(circle at 20% 20%, rgba(124,58,237,0.25), transparent 40%),
+    radial-gradient(circle at 80% 80%, rgba(6,182,212,0.15), transparent 40%);
+}
 
-    .navbar {
-      position: sticky;
-      top: 0;
-      z-index: 40;
-      padding: 12px 20px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      background: rgba(0,0,0,0.5);
-      backdrop-filter: blur(12px);
-      border-bottom: 1px solid rgba(255,255,255,0.05);
-    }
+/* NAVBAR */
+.navbar {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  padding: 12px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: rgba(0,0,0,0.5);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+}
 
-    .btn {
-      background: var(--accent);
-      padding: 6px 12px;
-      border-radius: 8px;
-      font-size: 13px;
-    }
+/* BUTTON */
+.btn {
+  background: var(--accent);
+  padding: 6px 12px;
+  border-radius: 8px;
+  font-size: 13px;
+}
 
-    .grid-container {
-      max-width: 1400px;
-      margin: auto;
-      padding: 20px;
-    }
+/* GRID */
+.grid-container {
+  max-width: 1400px;
+  margin: auto;
+  padding: 20px;
+}
 
-    .card {
-      position: relative;
-      border-radius: 16px;
-      overflow: hidden;
-      cursor: pointer;
-      transition: 0.2s;
-      aspect-ratio: 1/1;
-      background: #111;
-    }
+.card {
+  position: relative;
+  border-radius: 16px;
+  overflow: hidden;
+  cursor: pointer;
+  transition: 0.2s;
+  aspect-ratio: 1/1;
+  background: #111;
+}
 
-    .card:hover {
-      transform: scale(1.04);
-    }
+.card:hover {
+  transform: scale(1.04);
+}
 
-    .card img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
+.card img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
 
-    .overlay {
-      position: absolute;
-      bottom: 0;
-      width: 100%;
-      padding: 8px;
-      background: linear-gradient(to top, rgba(0,0,0,0.85), transparent);
-    }
+.overlay {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  padding: 8px;
+  background: linear-gradient(to top, rgba(0,0,0,0.85), transparent);
+}
 
-    .modal-bg {
-      position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,0.6);
-      backdrop-filter: blur(8px);
-      z-index: 60;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-    }
+/* MODAL */
+.modal-bg {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.6);
+  backdrop-filter: blur(8px);
+  z-index: 60;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
 
-    .modal {
-      width: 400px;
-      background: #111;
-      border-radius: 12px;
-      padding: 16px;
-      border: 1px solid rgba(255,255,255,0.1);
-    }
+.modal {
+  width: 400px;
+  background: #111;
+  border-radius: 12px;
+  padding: 16px;
+  border: 1px solid rgba(255,255,255,0.1);
+}
 
-    .game-view {
-      position: fixed;
-      inset: 0;
-      z-index: 100;
-      display: flex;
-      flex-direction: column;
-      background: black;
-    }
+/* GAME VIEW */
+.game-view {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+  background: black;
+}
 
-    iframe {
-      flex: 1;
-      border: none;
-    }
-  </style>
+iframe {
+  flex: 1;
+  border: none;
+}
+</style>
 </head>
 
 <body>
-  <div class="bg"></div>
+<div class="bg"></div>
 
-  <div x-data="app()" x-init="init()">
-    <!-- NAVBAR -->
-    <div class="navbar">
-      <div class="font-semibold text-lg">Vault Games</div>
-      <div class="flex gap-2">
-        <button class="btn" @click="favOpen = true">⭐ Favorites</button>
-        <button class="btn" @click="panelOpen = true">⚙ Settings</button>
-      </div>
-    </div>
+<div x-data="app()" x-init="init()">
 
-    <!-- SEARCH -->
-    <div class="grid-container">
-      <input 
-        class="w-full p-3 rounded text-black mb-4"
-        placeholder="Search games..."
-        x-model="search"
-        @input="filterGames()"
-      />
-    </div>
+<!-- NAVBAR -->
+<div class="navbar">
+  <div class="font-semibold text-lg">Vault Games</div>
+  <div class="flex gap-2">
+    <button class="btn" @click="favOpen = true">⭐ Favorites</button>
+    <button class="btn" @click="panelOpen = true">⚙ Settings</button>
+  </div>
+</div>
 
-    <!-- GRID -->
-    <div class="grid-container">
-      <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-5">
-        <template x-for="g in paginatedGames()" :key="g.title">
-          <div class="card" @click="playGame(g)">
-            <img 
-              :src="resolveImage(g.image)"
-              @error="$el.src='https://placehold.co/300x300'"
-            />
-            <div class="overlay">
-              <div x-text="g.title"></div>
-            </div>
-            <div class="absolute top-2 right-2 cursor-pointer"
-              @click.stop="toggleFavorite(g)">
-              ⭐
-            </div>
-          </div>
-        </template>
-      </div>
-    </div>
+<!-- SEARCH -->
+<div class="grid-container">
+  <input 
+    class="w-full p-3 rounded text-black mb-4"
+    placeholder="Search games..."
+    x-model="search"
+    @input="filterGames()"
+  />
+</div>
 
-    <!-- PAGINATION -->
-    <div class="flex justify-center gap-3 p-6">
-      <button class="btn" @click="prevPage()">Prev</button>
-      <span x-text="page"></span>
-      <button class="btn" @click="nextPage()">Next</button>
-    </div>
+<!-- GRID -->
+<div class="grid-container">
+  <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-5">
+    <template x-for="g in filteredGames" :key="g.title">
+      <div class="card" @click="playGame(g)">
+        
+        <img 
+          :src="resolveImage(g.image)"
+          @error="$el.src='https://placehold.co/300x300'"
+        >
 
-    <!-- GAME VIEW -->
-    <div x-show="showGame" class="game-view">
-      <div class="flex justify-between p-3">
-        <button class="btn" @click="closeGame()">Exit</button>
-        <button class="btn" @click="toggleFullscreen()">Fullscreen</button>
-        <span x-text="activeGame?.title"></span>
-      </div>
-      <iframe :src="resolveGameUrl(activeGame?.url)"></iframe>
-    </div>
-
-    <!-- SETTINGS MODAL -->
-    <div x-show="panelOpen" class="modal-bg">
-      <div class="modal">
-        <h2 class="text-lg mb-4">Settings</h2>
-        <label>Accent Color</label>
-        <input type="color" x-model="accentColor" @input="applyAccent()" class="w-full mb-4" />
-        <label>Items per page</label>
-        <select class="w-full p-2 text-black" x-model="perPage">
-          <option>6</option>
-          <option>10</option>
-          <option>20</option>
-        </select>
-        <div class="mt-4 text-right">
-          <button class="btn" @click="panelOpen = false">Close</button>
+        <div class="overlay">
+          <div x-text="g.title"></div>
         </div>
-      </div>
-    </div>
 
-    <!-- FAVORITES MODAL -->
-    <div x-show="favOpen" class="modal-bg">
-      <div class="modal">
-        <h2 class="text-lg mb-4">Favorites</h2>
-        <template x-for="g in favorites" :key="g.title">
-          <div class="p-2 border-b cursor-pointer hover:bg-white/5" @click="playGame(g)">
-            <span x-text="g.title"></span>
-          </div>
-        </template>
-        <div class="mt-4 text-right">
-          <button class="btn" @click="favOpen = false">Close</button>
+        <div class="absolute top-2 right-2 cursor-pointer"
+             @click.stop="toggleFavorite(g)">
+          ⭐
         </div>
+
       </div>
+    </template>
+  </div>
+</div>
+
+<!-- GAME VIEW -->
+<div x-show="showGame" class="game-view">
+  <div class="flex justify-between p-3">
+    <button class="btn" @click="closeGame()">Exit</button>
+    <button class="btn" @click="toggleFullscreen()">Fullscreen</button>
+    <span x-text="activeGame?.title"></span>
+  </div>
+  <iframe :src="resolveGameUrl(activeGame?.url)"></iframe>
+</div>
+
+<!-- SETTINGS -->
+<div x-show="panelOpen" class="modal-bg">
+  <div class="modal">
+    <h2 class="text-lg mb-4">Settings</h2>
+
+    <label>Accent Color</label>
+    <input type="color" x-model="accentColor" @input="applyAccent()" class="w-full mb-4">
+
+    <div class="text-right">
+      <button class="btn" @click="panelOpen=false">Close</button>
     </div>
   </div>
+</div>
 
-  <script>
-    function app() {
-      const IMAGE_BASE = "https://biology.science.geometry.project.computer.archivomemoria-audiovisualcsb.org/";
-      const GAME_BASE = "https://biology.science.geometry.project.computer.archivomemoria-audiovisualcsb.org/";
+<!-- FAVORITES -->
+<div x-show="favOpen" class="modal-bg">
+  <div class="modal">
+    <h2 class="text-lg mb-4">Favorites</h2>
 
-      return {
-        games: [],
-        favoritesMap: {},
-        favorites: [],
-        search: '',
-        showGame: false,
-        activeGame: null,
-        panelOpen: false,
-        favOpen: false,
-        page: 1,
-        perPage: 10,
-        accentColor: '#7c3aed',
+    <template x-for="g in favorites" :key="g.title">
+      <div class="p-2 border-b cursor-pointer hover:bg-white/5"
+           @click="playGame(g)">
+        <span x-text="g.title"></span>
+      </div>
+    </template>
 
-        init() {
-          this.loadFavorites();
-          this.loadGames();
+    <div class="text-right mt-4">
+      <button class="btn" @click="favOpen=false">Close</button>
+    </div>
+  </div>
+</div>
 
-          document.addEventListener("keydown", (e) => {
-            if (e.key === "f") this.toggleFullscreen();
-            if (e.key === "Escape") this.closeGame();
-          });
-        },
+</div>
 
-        async loadGames() {
-          try {
-            const BASE_PATH = "https://vaultgamesdevelopment.github.io/thevault.github.io/";
+<script>
+function app() {
 
-            const script = document.createElement('script');
-            script.src = BASE_PATH + "g/assets/js/games.js";
-            script.async = true;
+const IMAGE_BASE = "https://biology.science.geometry.project.computer.archivomemoria-audiovisualcsb.org/";
+const GAME_BASE  = "https://biology.science.geometry.project.computer.archivomemoria-audiovisualcsb.org/";
+const BASE_PATH  = "https://vaultgamesdevelopment.github.io/thevault.github.io/";
 
-            script.onload = () => {
-              if (typeof games !== 'undefined') {
-                this.games = games.map(g => ({ ...g }));
-                console.log("Games loaded:", this.games.length);
-              } else {
-                console.error("Games array not defined in games.js");
-              }
-            };
+return {
 
-            script.onerror = () => {
-              console.error("Failed to load games.js script.");
-            };
+games: [],
+filteredGames: [],
+favoritesMap: {},
+favorites: [],
 
-            document.body.appendChild(script);
+search: '',
+showGame: false,
+activeGame: null,
 
-          } catch (e) {
-            console.error("Games failed to load:", e);
-          }
-        },
+panelOpen: false,
+favOpen: false,
 
-        resolveImage(src) {
-          if (!src) return "https://placehold.co/300x300";
-          if (src.startsWith("http")) return src;
-          return IMAGE_BASE.replace(/\/$/, '') + "/" + src.replace(/^\//, '');
-        },
+accentColor: '#7c3aed',
 
-        resolveGameUrl(url) {
-          if (!url) return "#";
-          if (url.startsWith("http")) return url;
-          return GAME_BASE.replace(/\/$/, '') + "/" + url.replace(/^\//, '');
-        },
+init() {
+  this.loadFavorites();
+  this.loadGames();
 
-        toggleFavorite(g) {
-          if (this.favoritesMap[g.title]) {
-            delete this.favoritesMap[g.title];
-          } else {
-            this.favoritesMap[g.title] = g;
-          }
-          localStorage.setItem("fav", JSON.stringify(this.favoritesMap));
-          this.loadFavorites();
-        },
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") this.closeGame();
+    if (e.key === "f") this.toggleFullscreen();
+  });
+},
 
-        loadFavorites() {
-          this.favoritesMap = JSON.parse(localStorage.getItem("fav") || "{}");
-          this.favorites = Object.values(this.favoritesMap);
-        },
-
-        playGame(g) {
-          this.activeGame = g;
-          this.showGame = true;
-        },
-
-        closeGame() {
-          this.showGame = false;
-        },
-
-        toggleFullscreen() {
-          if (!document.fullscreenElement) {
-            document.documentElement.requestFullscreen();
-          } else {
-            document.exitFullscreen();
-          }
-        },
-
-        applyAccent() {
-          document.documentElement.style.setProperty('--accent', this.accentColor);
-        },
-
-        filterGames() {
-          let s = this.search.toLowerCase();
-          this.games = this.games.filter(g => g.title.toLowerCase().includes(s));
-        },
-
-        paginatedGames() {
-          let start = (this.page - 1) * this.perPage;
-          return this.games.slice(start, start + this.perPage);
-        },
-
-        nextPage() {
-          this.page++;
-        },
-
-        prevPage() {
-          if (this.page > 1) this.page--;
-        }
-      }
+/* LOAD GAMES */
+loadGames() {
+  const script = document.createElement("script");
+  script.src = BASE_PATH + "g/assets/js/games.js";
+  script.onload = () => {
+    if (typeof games !== "undefined") {
+      this.games = games;
+      this.filteredGames = games;
+    } else {
+      console.error("games.js did not define games");
     }
-  </script>
+  };
+  document.body.appendChild(script);
+},
+
+/* SEARCH */
+filterGames() {
+  let s = this.search.toLowerCase();
+  this.filteredGames = this.games.filter(g =>
+    g.title.toLowerCase().includes(s)
+  );
+},
+
+/* IMAGE */
+resolveImage(src) {
+  if (!src) return "https://placehold.co/300x300";
+  if (src.startsWith("http")) return src;
+  return IMAGE_BASE.replace(/\/$/, '') + "/" + src.replace(/^\//, '');
+},
+
+/* GAME URL */
+resolveGameUrl(url) {
+  if (!url) return "#";
+  if (url.startsWith("http")) return url;
+  return GAME_BASE.replace(/\/$/, '') + "/" + url.replace(/^\//, '');
+},
+
+/* FAVORITES */
+toggleFavorite(g) {
+  if (this.favoritesMap[g.title]) {
+    delete this.favoritesMap[g.title];
+  } else {
+    this.favoritesMap[g.title] = g;
+  }
+  localStorage.setItem("fav", JSON.stringify(this.favoritesMap));
+  this.loadFavorites();
+},
+
+loadFavorites() {
+  this.favoritesMap = JSON.parse(localStorage.getItem("fav") || "{}");
+  this.favorites = Object.values(this.favoritesMap);
+},
+
+/* GAME */
+playGame(g) {
+  this.activeGame = g;
+  this.showGame = true;
+},
+
+closeGame() {
+  this.showGame = false;
+},
+
+/* FULLSCREEN */
+toggleFullscreen() {
+  if (!document.fullscreenElement) {
+    document.documentElement.requestFullscreen();
+  } else {
+    document.exitFullscreen();
+  }
+},
+
+/* SETTINGS */
+applyAccent() {
+  document.documentElement.style.setProperty('--accent', this.accentColor);
+}
+
+};
+}
+</script>
+
 </body>
 </html>
