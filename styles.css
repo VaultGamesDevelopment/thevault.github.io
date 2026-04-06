@@ -1,21 +1,22 @@
-:root {
+:root{
   --bg:#0b0f1a;
   --card:rgba(255,255,255,0.06);
   --text:#fff;
 }
 
-/* RESET */
 *{box-sizing:border-box}
 
-body{
+html, body{
   margin:0;
+  padding:0;
+  overflow-x:hidden;
   font-family:system-ui;
   color:var(--text);
   background:var(--bg);
-  overflow-x:hidden;
+  isolation:isolate;
 }
 
-/* 🌈 ANIMATED BG */
+/* GLOBAL BACKGROUND */
 body::before{
   content:"";
   position:fixed;
@@ -23,7 +24,7 @@ body::before{
   background:linear-gradient(120deg,#7c5cff,#00d4ff,#ff4d6d);
   background-size:300% 300%;
   animation:bgMove 12s infinite;
-  opacity:0.15;
+  opacity:0.12;
   z-index:-2;
 }
 
@@ -40,14 +41,15 @@ body::before{
   padding:14px;
   backdrop-filter:blur(20px);
   background:rgba(0,0,0,0.4);
+  border-bottom:1px solid rgba(255,255,255,0.08);
 }
 
 .header input{
   flex:1;
   padding:10px;
   border-radius:10px;
-  background:rgba(255,255,255,0.05);
   border:none;
+  background:rgba(255,255,255,0.05);
   color:var(--text);
 }
 
@@ -61,7 +63,7 @@ button{
 
 .btn{
   background:linear-gradient(135deg,#7c5cff,#5a3bff);
-  color:white;
+  color:#fff;
 }
 
 .btn-ghost{
@@ -86,24 +88,11 @@ button{
   background:var(--card);
   border-radius:16px;
   overflow:hidden;
-  cursor:pointer;
-  transition:0.3s;
+  transition:.3s;
 }
 
 .card:hover{
   transform:translateY(-6px) scale(1.03);
-}
-
-.card img{
-  width:100%;
-  aspect-ratio:1/1;
-  object-fit:cover;
-}
-
-.card-footer{
-  display:flex;
-  justify-content:space-between;
-  padding:8px;
 }
 
 /* SIDEBAR */
@@ -146,49 +135,84 @@ iframe{
   background:var(--bg);
   padding:20px;
   border-radius:12px;
+  width:320px;
 }
 
-/* WEATHER */
-.weather-bg{position:fixed;inset:0;z-index:-1}
+/* ================= WEATHER FX (REALISTIC) ================= */
 
 /* RAIN */
-.weather-bg.rain::before{
+.weather-bg.rain::before,
+.weather-bg.rain::after{
   content:"";
   position:absolute;
-  inset:-100%;
-  background:linear-gradient(rgba(255,255,255,0.15) 2px,transparent 2px);
-  background-size:2px 20px;
-  animation:rain 0.25s linear infinite;
+  inset:-200%;
+  background-image:linear-gradient(rgba(255,255,255,0.25) 1px,transparent 1px);
+  background-size:2px 35px;
+  transform:rotate(12deg);
+  animation:rainFall 0.35s linear infinite;
+  opacity:0.25;
 }
-@keyframes rain{
-  from{transform:translateY(-50%)}
-  to{transform:translateY(0)}
+
+.weather-bg.rain::after{
+  opacity:0.15;
+  animation-duration:0.6s;
+}
+
+@keyframes rainFall{
+  from{transform:translateY(-50%) rotate(12deg);}
+  to{transform:translateY(0) rotate(12deg);}
 }
 
 /* SNOW */
-.weather-bg.snow::before{
+.weather-bg.snow::before,
+.weather-bg.snow::after{
   content:"";
   position:absolute;
-  inset:-50%;
-  background:radial-gradient(white 2px,transparent 2px);
-  background-size:25px 25px;
-  animation:snow 8s linear infinite;
+  inset:-100%;
+  background-image:radial-gradient(circle,white 1.5px,transparent 2px);
+  background-size:28px 28px;
+  animation:snowFall 10s linear infinite;
+  opacity:0.4;
 }
-@keyframes snow{
-  from{transform:translateY(-20%)}
-  to{transform:translateY(20%)}
+
+.weather-bg.snow::after{
+  opacity:0.2;
+  animation-duration:14s;
+}
+
+@keyframes snowFall{
+  from{transform:translateY(-20%);}
+  to{transform:translateY(20%);}
 }
 
 /* STARS */
+.weather-bg.stars{
+  background:radial-gradient(ellipse at bottom,#0b0f1a 0%,#000 100%);
+}
+
+.weather-bg.stars::before,
 .weather-bg.stars::after{
   content:"";
   position:absolute;
   inset:0;
-  background:radial-gradient(white 1px,transparent 1px);
-  background-size:3px 3px;
-  animation:twinkle 3s infinite alternate;
+  background-image:radial-gradient(white 1px,transparent 1px);
+  background-size:4px 4px;
+  opacity:0.3;
+  animation:twinkle 4s infinite alternate;
 }
+
+.weather-bg.stars::after{
+  background-size:2px 2px;
+  opacity:0.15;
+}
+
 @keyframes twinkle{
   from{opacity:0.2}
-  to{opacity:0.5}
+  to{opacity:0.6}
+}
+
+/* ================= FIX BLUR BLEED ================= */
+
+.header,.grid,.sidebar,.modal{
+  overflow:hidden;
 }

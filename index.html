@@ -14,9 +14,7 @@
 
 <header class="header">
   <h1>VAULT</h1>
-
   <input id="searchInput" placeholder="Search games...">
-
   <button class="btn-ghost" onclick="openSettings()">⚙️</button>
 </header>
 
@@ -36,7 +34,7 @@
 <!-- SETTINGS -->
 <div id="settingsModal" class="modal">
   <div class="modal-content">
-    <h3>PREFERENCES</h3>
+    <h3>Settings</h3>
 
     <label>Theme</label>
     <select id="themeSelect">
@@ -54,11 +52,30 @@
       <option value="stars">Stars</option>
     </select>
 
+    <label>UI Density</label>
+    <select id="densitySelect">
+      <option value="comfortable">Comfortable</option>
+      <option value="compact">Compact</option>
+    </select>
+
+    <label>Blur</label>
+    <select id="blurSelect">
+      <option value="low">Low</option>
+      <option value="medium">Medium</option>
+      <option value="high">High</option>
+    </select>
+
+    <label>Animations</label>
+    <select id="animationSelect">
+      <option value="on">On</option>
+      <option value="off">Off</option>
+    </select>
+
     <label>Cloak</label>
     <select id="cloakSelect">
       <option value="none">Off</option>
-      <option value="about">Google Classroom</option>
-      <option value="blob">Google Docs</option>
+      <option value="about">about:blank</option>
+      <option value="blob">blob:null</option>
     </select>
 
     <button class="btn" onclick="applySettings()">Apply</button>
@@ -67,7 +84,6 @@
 
 <script src="games.js"></script>
 <script src="state.js"></script>
-<script src="components.js"></script>
 <script src="ui.js"></script>
 <script src="settings.js"></script>
 <script src="app.js"></script>

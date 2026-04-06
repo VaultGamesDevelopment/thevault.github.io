@@ -1,32 +1,17 @@
-window.BASE="https://biology.science.geometry.project.computer.archivomemoria-audiovisualcsb.org/";
-
-let debounce;
-
 function renderGames(){
   const grid=document.getElementById("gameGrid");
   grid.innerHTML="";
 
-  let filtered=games.filter(g =>
-    g.title.toLowerCase().includes(State.search.toLowerCase())
-  );
-
-  filtered.forEach(g=>{
-    grid.innerHTML+=Components.gameCard(g);
+  games.forEach(g=>{
+    grid.innerHTML+=`
+      <div class="card" onclick="openGame(${JSON.stringify(g)})">
+        <img src="${BASE+g.image}">
+        <div style="padding:8px">${g.title}</div>
+      </div>
+    `;
   });
 }
 
-/* SEARCH */
-document.addEventListener("DOMContentLoaded",()=>{
-  document.getElementById("searchInput").addEventListener("input",e=>{
-    clearTimeout(debounce);
-    debounce=setTimeout(()=>{
-      State.search=e.target.value;
-      renderGames();
-    },200);
-  });
-});
-
-/* GAME */
 function openGame(game){
   document.getElementById("gameFrame").src=BASE+game.url;
   document.getElementById("gameViewer").style.display="flex";
@@ -40,31 +25,36 @@ function toggleFullscreen(){
   document.getElementById("gameFrame").requestFullscreen();
 }
 
+function renderFavorites(){
+  const el=document.getElementById("favorites");
+  el.innerHTML="<h3>Favorites</h3>";
+
+  State.favorites.forEach(g=>{
+    el.innerHTML+=`<div>${g.title}</div>`;
+  });
+}
+
 /* CLOAK */
-function launchCloak(){
-  const cloak=localStorage.getItem("cloak");
-  if(!cloak||cloak==="none") return;
+function cloak(){
+  const mode=localStorage.getItem("cloak");
 
-  const url=location.href;
-
-  if(cloak==="about"){
+  if(mode==="about"){
     const w=window.open("about:blank");
-    w.document.write(`<iframe src="${url}" style="width:100%;height:100%;border:none"></iframe>`);
+    w.document.write(`<iframe src="${location.href}" style="width:100%;height:100%;border:none"></iframe>`);
   }
 
-  if(cloak==="blob"){
-    const blob=new Blob([`<iframe src="${url}" style="width:100%;height:100%;border:none"></iframe>`],{type:"text/html"});
+  if(mode==="blob"){
+    const blob=new Blob([`<iframe src="${location.href}" style="width:100%;height:100%;border:none"></iframe>`]);
     window.open(URL.createObjectURL(blob));
   }
 
   document.body.innerHTML="";
 }
 
-/* ALT+R RESET */
+/* ALT + R RESET */
 document.addEventListener("keydown",e=>{
-  if(e.altKey && e.key.toLowerCase()==="r"){
+  if(e.altKey && e.key==="r"){
     localStorage.clear();
-    alert("Vault reset.");
     location.reload();
   }
 
@@ -74,9 +64,12 @@ document.addEventListener("keydown",e=>{
 
 /* INIT */
 document.addEventListener("DOMContentLoaded",()=>{
-  UI.init();
-  renderGames();
-  UI.renderFavorites();
+  UI.setTheme(localStorage.getItem("theme")||"dark");
+  UI.setWeather(localStorage.getItem("weather")||"none");
+  UI.applyExtras();
 
-  setTimeout(launchCloak,300);
+  renderGames();
+  renderFavorites();
+
+  setTimeout(cloak,300);
 });
