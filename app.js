@@ -1,9 +1,6 @@
 const BASE_URL = "https://biology.science.geometry.project.computer.archivomemoria-audiovisualcsb.org/";
-
-// Optional proxy fallback (helps bypass hotlink blocking)
 const PROXY = "https://images.weserv.nl/?url=";
 
-// Settings
 const settings = {
   showDesc: true,
   darkMode: true
@@ -18,27 +15,35 @@ function saveSettings() {
   localStorage.setItem("vault_settings", JSON.stringify(settings));
 }
 
-// Fix image URLs + fallback proxy
+// Ensure games exist before rendering
+function getGames() {
+  if (!window.games || !Array.isArray(window.games)) {
+    console.error("games.js failed to load or is invalid");
+    return [];
+  }
+  return window.games;
+}
+
 function getImageUrl(path) {
   if (!path) return "";
 
-  // Absolute URL
   if (path.startsWith("http")) return path;
 
-  const direct = BASE_URL + path;
-
-  // Proxy fallback (encoded)
-  const proxyUrl = PROXY + encodeURIComponent(direct);
-
-  return direct; // start with direct
+  return BASE_URL + path;
 }
 
-// Render
 const container = document.getElementById("gamesContainer");
 const searchInput = document.getElementById("searchInput");
 
 function renderGames(filter = "") {
+  const games = getGames();
+
   container.innerHTML = "";
+
+  if (games.length === 0) {
+    container.innerHTML = "<p>No games loaded. Check games.js</p>";
+    return;
+  }
 
   const filtered = games.filter(g =>
     g.title.toLowerCase().includes(filter.toLowerCase())
@@ -49,16 +54,12 @@ function renderGames(filter = "") {
     card.className = "game-card";
 
     const img = document.createElement("img");
+    img.src = getImageUrl(game.image);
 
-    const directUrl = getImageUrl(game.image);
-
-    // Try direct first
-    img.src = directUrl;
-
-    // If fails → fallback proxy
+    // fallback if blocked
     img.onerror = () => {
       img.onerror = null;
-      img.src = "https://images.weserv.nl/?url=" + encodeURIComponent(BASE_URL + game.image);
+      img.src = PROXY + encodeURIComponent(getImageUrl(game.image));
     };
 
     const content = document.createElement("div");
@@ -79,14 +80,14 @@ function renderGames(filter = "") {
     card.appendChild(content);
 
     card.onclick = () => {
-      window.location.href = game.url;
+      if (game.url) window.location.href = game.url;
     };
 
     container.appendChild(card);
   });
 }
 
-// UI Controls
+// UI
 document.getElementById("toggleDesc").onclick = () => {
   settings.showDesc = !settings.showDesc;
   saveSettings();
@@ -103,12 +104,13 @@ searchInput.addEventListener("input", (e) => {
   renderGames(e.target.value);
 });
 
-// Theme
 function applyTheme() {
   document.body.className = settings.darkMode ? "dark" : "light";
 }
 
-// Init
-loadSettings();
-applyTheme();
-renderGames();
+// Init (wait until DOM + games are ready)
+window.addEventListener("DOMContentLoaded", () => {
+  loadSettings();
+  applyTheme();
+  renderGames();
+});
