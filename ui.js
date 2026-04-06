@@ -1,4 +1,8 @@
-const UI = {
+const UI={
+  init(){
+    this.setTheme(localStorage.getItem("theme")||"dark");
+    this.setWeather(localStorage.getItem("weather")||"none");
+  },
 
   setTheme(theme){
     document.body.className=theme;
@@ -12,22 +16,12 @@ const UI = {
     localStorage.setItem("weather",w);
   },
 
-  applyExtras(){
-    const density=localStorage.getItem("density");
-    const blur=localStorage.getItem("blur");
-    const animation=localStorage.getItem("animation");
+  renderFavorites(){
+    const el=document.getElementById("favorites");
+    el.innerHTML="<h3>Favorites</h3>";
 
-    document.body.style.fontSize = density==="compact" ? "13px":"16px";
-
-    if(animation==="off"){
-      document.body.style.animation="none";
-    }
-
-    if(blur==="low"){
-      document.documentElement.style.setProperty("--card","rgba(255,255,255,0.03)");
-    }
-    if(blur==="high"){
-      document.documentElement.style.setProperty("--card","rgba(255,255,255,0.1)");
-    }
+    State.favorites.forEach(g=>{
+      el.innerHTML+=`<div onclick='openGame(${JSON.stringify(g)})'>${g.title}</div>`;
+    });
   }
 };

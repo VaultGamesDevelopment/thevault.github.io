@@ -1,5 +1,6 @@
-const State={
+const State = {
   favorites: JSON.parse(localStorage.getItem("favorites")||"[]"),
+  search:"",
 
   toggleFavorite(game){
     const exists=this.favorites.find(g=>g.title===game.title);
@@ -11,6 +12,11 @@ const State={
     }
 
     localStorage.setItem("favorites",JSON.stringify(this.favorites));
-    renderFavorites();
+    UI.renderFavorites();
+    renderGames();
+  },
+
+  isFavorite(game){
+    return this.favorites.some(g=>g.title===game.title);
   }
 };
