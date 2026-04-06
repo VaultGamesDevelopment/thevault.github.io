@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Vault X Pro</title>
+<title>Vault Games</title>
 
 <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
 <script src="https://cdn.tailwindcss.com"></script>
@@ -18,7 +18,7 @@ body{
 margin:0;
 background:var(--bg);
 color:white;
-font-family:Inter,system-ui;
+font-family:system-ui;
 }
 
 .bg{
@@ -29,7 +29,7 @@ background: radial-gradient(circle at 20% 20%, #7c3aed33, transparent 40%),
             radial-gradient(circle at 80% 80%, #06b6d433, transparent 40%);
 }
 
-/* CARDS */
+/* CARD */
 .card{
 aspect-ratio:1/1;
 border-radius:16px;
@@ -37,11 +37,12 @@ overflow:hidden;
 position:relative;
 cursor:pointer;
 transition:0.2s;
+background:#111;
 }
 
 .card:hover{
 transform:scale(1.05);
-box-shadow:0 0 25px rgba(124,58,237,0.4);
+box-shadow:0 0 20px rgba(124,58,237,0.4);
 }
 
 .card img{
@@ -59,7 +60,7 @@ font-size:12px;
 background:linear-gradient(to top, rgba(0,0,0,0.85), transparent);
 }
 
-/* SKELETON */
+/* skeleton */
 .skeleton{
 background:linear-gradient(90deg,#222,#333,#222);
 background-size:200% 100%;
@@ -71,30 +72,7 @@ animation:shimmer 1.2s infinite;
 100%{background-position:-200% 0;}
 }
 
-/* PANEL */
-.panel{
-position:fixed;
-right:0;
-top:0;
-width:320px;
-height:100%;
-transform:translateX(100%);
-transition:0.3s;
-z-index:50;
-}
-
-.panel.open{
-transform:translateX(0);
-}
-
-/* FULLSCREEN */
-.fullscreen{
-position:fixed;
-inset:0;
-z-index:100;
-}
-
-/* BUTTON */
+/* UI */
 .btn{
 background:var(--accent);
 padding:6px 10px;
@@ -102,7 +80,23 @@ border-radius:8px;
 font-size:12px;
 }
 
-/* FAVORITES PANEL */
+.panel{
+position:fixed;
+right:0;
+top:0;
+width:300px;
+height:100%;
+transform:translateX(100%);
+transition:0.3s;
+background:black;
+z-index:50;
+padding:16px;
+}
+
+.panel.open{
+transform:translateX(0);
+}
+
 .fav-panel{
 position:fixed;
 left:0;
@@ -111,7 +105,9 @@ width:260px;
 height:100%;
 transform:translateX(-100%);
 transition:0.3s;
+background:black;
 z-index:50;
+padding:16px;
 }
 
 .fav-panel.open{
@@ -126,12 +122,13 @@ transform:translateX(0);
 
 <div x-data="app()" x-init="init()">
 
+<!-- HEADER -->
 <header class="flex justify-between p-4">
-<h1 class="font-bold text-lg">Vault X Pro</h1>
+<h1 class="font-bold">Vault Games</h1>
 
 <div class="flex gap-2">
-<button class="btn" @click="toggleFavs()">⭐ Favorites</button>
-<button class="btn" @click="togglePanel()">Settings</button>
+<button class="btn" @click="toggleFavs()">⭐</button>
+<button class="btn" @click="togglePanel()">⚙</button>
 </div>
 </header>
 
@@ -143,7 +140,6 @@ transform:translateX(0);
 <!-- TABS -->
 <div class="p-4 flex gap-2">
 <button class="btn" @click="tab='local'">Local</button>
-<button class="btn" @click="tab='gamepix'">Cloud</button>
 <button class="btn" @click="tab='recommended'">Recommended</button>
 <button class="btn" @click="tab='trending'">Trending</button>
 </div>
@@ -154,16 +150,15 @@ transform:translateX(0);
 <template x-for="g in paginatedGames()" :key="g.title">
 
 <div class="card" @click="playGame(g)">
-<img x-bind:src="g.loaded ? resolveImage(g.image) : ''"
-@load="g.loaded=true"
-x-show="g.loaded"
-loading="lazy">
 
-<div x-show="!g.loaded" class="card skeleton"></div>
+<img 
+x-bind:src="resolveImage(g.image)" 
+@error="$el.src='https://placehold.co/300x300'"
+loading="lazy">
 
 <div class="title" x-text="g.title"></div>
 
-<div class="absolute top-1 right-1 text-xs cursor-pointer"
+<div class="absolute top-1 right-1 cursor-pointer text-xs"
 @click.stop="toggleFavorite(g)">
 ⭐
 </div>
@@ -182,7 +177,7 @@ loading="lazy">
 </div>
 
 <!-- GAME VIEW -->
-<div x-show="showGame" class="fullscreen bg-black flex flex-col">
+<div x-show="showGame" class="fixed inset-0 bg-black z-50 flex flex-col">
 
 <div class="p-2 flex justify-between">
 <button class="btn" @click="closeGame()">Exit</button>
@@ -190,20 +185,21 @@ loading="lazy">
 <span x-text="activeGame?.title"></span>
 </div>
 
-<iframe class="flex-1 w-full" :src="resolveGameUrl(activeGame?.url)"></iframe>
+<iframe class="flex-1 w-full"
+:src="resolveGameUrl(activeGame?.url)"></iframe>
 
 </div>
 
 <!-- SETTINGS -->
-<div class="panel bg-black p-4" :class="panelOpen ? 'open':''">
+<div class="panel" :class="panelOpen ? 'open':''">
 
 <h2 class="mb-3">Settings</h2>
 
-<label>Theme Accent</label>
-<input type="color" x-model="accentColor" @input="applyAccent()" class="w-full h-10 mb-3">
+<label>Accent</label>
+<input type="color" x-model="accentColor" @input="applyAccent()" class="w-full mb-3">
 
-<label>Items per page</label>
-<select class="w-full p-2 text-black mb-3" x-model="perPage">
+<label>Per Page</label>
+<select class="w-full p-2 text-black" x-model="perPage">
 <option>6</option>
 <option>10</option>
 <option>20</option>
@@ -212,7 +208,7 @@ loading="lazy">
 </div>
 
 <!-- FAVORITES -->
-<div class="fav-panel bg-black p-4" :class="favOpen ? 'open':''">
+<div class="fav-panel" :class="favOpen ? 'open':''">
 
 <h2 class="mb-3">Favorites</h2>
 
@@ -229,17 +225,18 @@ loading="lazy">
 <script>
 function app(){
 
-const BASE="https://biology.science.geometry.project.computer.archivomemoria-audiovisualcsb.org/";
+const BASE = "https://vaultgamesdevelopment.github.io/thevault.github.io/";
+const IMAGE_BASE = "https://biology.science.geometry.project.computer.archivomemoria-audiovisualcsb.org/";
+const GAME_BASE = "https://biology.science.geometry.project.computer.archivomemoria-audiovisualcsb.org/";
 
 return{
 
+games:[],
+favoritesMap:{},
+favorites:[],
+
 tab:'local',
 search:'',
-
-games:[],
-gamePixGames:[],
-favorites:[],
-favoritesMap:{},
 
 showGame:false,
 activeGame:null,
@@ -247,16 +244,14 @@ activeGame:null,
 panelOpen:false,
 favOpen:false,
 
-accentColor:'#7c3aed',
-
 page:1,
 perPage:10,
 
+accentColor:'#7c3aed',
+
 init(){
 this.loadFavorites();
-this.fetchLocal();
-this.fetchGamePix();
-this.applyAccent();
+this.loadGames();
 
 document.addEventListener("keydown",(e)=>{
 if(e.key==="f") this.toggleFullscreen();
@@ -264,12 +259,41 @@ if(e.key==="Escape") this.closeGame();
 });
 },
 
+/* LOAD GAMES */
+async loadGames(){
+try{
+const res = await fetch(BASE + "g/assets/js/games.js");
+const text = await res.text();
+
+eval(text); // defines `games`
+
+this.games = games.map(g=>({...g}));
+
+}catch(e){
+console.error("Failed loading games:",e);
+this.games=[];
+}
+},
+
+/* IMAGE RESOLVER */
+resolveImage(src){
+if(!src) return "https://placehold.co/300x300";
+if(src.startsWith("http")) return src;
+return IMAGE_BASE + src;
+},
+
+/* GAME URL */
+resolveGameUrl(url){
+if(!url) return "#";
+if(url.startsWith("http")) return url;
+return GAME_BASE + url;
+},
+
 /* FAVORITES */
 toggleFavorite(g){
 if(this.favoritesMap[g.title]){
 delete this.favoritesMap[g.title];
-}
-else{
+}else{
 this.favoritesMap[g.title]=g;
 }
 this.saveFavorites();
@@ -298,83 +322,6 @@ applyAccent(){
 document.documentElement.style.setProperty('--accent',this.accentColor);
 },
 
-/* IMAGE */
-resolveImage(src){
-if(!src) return "https://placehold.co/300x300";
-try{
-return "https://images.weserv.nl/?url="+encodeURIComponent(new URL(src,BASE).href);
-}catch{
-return "https://placehold.co/300x300";
-}
-},
-
-resolveGameUrl(url){
-try{return new URL(url,BASE).href;}
-catch{return url;}
-},
-
-/* DATA */
-async fetchLocal(){
-const res=await fetch("/g/assets/js/games.js");
-const text=await res.text();
-let data=[];
-try{data=eval(text+"; games");}catch{}
-
-this.games=data.map(g=>({...g,loaded:false}));
-},
-
-async fetchGamePix(){
-const res=await fetch("https://feeds.gamepix.com/v2/json?order=quality&page=1&pagination=50&sid=1");
-const data=await res.json();
-
-this.gamePixGames=(data.items||[]).map(g=>({
-title:g.title,
-url:g.url,
-image:g.banner_image||g.image,
-loaded:false,
-plays:Math.random()*1000
-}));
-},
-
-/* SEARCH */
-filterGames(){
-let s=this.search.toLowerCase();
-this.games=this.games.filter(g=>g.title.toLowerCase().includes(s));
-},
-
-/* AI RECOMMENDED */
-recommended(){
-return [...this.games]
-.sort((a,b)=>(b.plays||0)-(a.plays||0))
-.slice(0,10);
-},
-
-/* TRENDING */
-trending(){
-return [...this.gamePixGames]
-.sort((a,b)=>(b.plays||0)-(a.plays||0))
-.slice(0,10);
-},
-
-/* PAGINATION */
-paginatedGames(){
-let list=this.currentList();
-
-let start=(this.page-1)*this.perPage;
-return list.slice(start,start+this.perPage);
-},
-
-currentList(){
-if(this.tab==='local') return this.games;
-if(this.tab==='gamepix') return this.gamePixGames;
-if(this.tab==='recommended') return this.recommended();
-if(this.tab==='trending') return this.trending();
-return [];
-},
-
-nextPage(){this.page++;},
-prevPage(){if(this.page>1)this.page--;},
-
 /* GAME */
 playGame(g){
 this.activeGame=g;
@@ -392,7 +339,40 @@ document.documentElement.requestFullscreen();
 }else{
 document.exitFullscreen();
 }
-}
+},
+
+/* SEARCH */
+filterGames(){
+let s=this.search.toLowerCase();
+this.games=this.games.filter(g=>g.title.toLowerCase().includes(s));
+},
+
+/* RECOMMENDED */
+recommended(){
+return [...this.games].slice(0,10);
+},
+
+/* TRENDING */
+trending(){
+return [...this.games].reverse().slice(0,10);
+},
+
+/* PAGINATION */
+paginatedGames(){
+let list=this.currentList();
+let start=(this.page-1)*this.perPage;
+return list.slice(start,start+this.perPage);
+},
+
+currentList(){
+if(this.tab==='local') return this.games;
+if(this.tab==='recommended') return this.recommended();
+if(this.tab==='trending') return this.trending();
+return [];
+},
+
+nextPage(){this.page++;},
+prevPage(){if(this.page>1)this.page--;}
 
 }
 }
