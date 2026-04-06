@@ -1,11 +1,16 @@
 const container = document.getElementById("gamesContainer");
-const searchInput = document.getElementById("search");
+const searchInput = document.getElementById("searchInput");
+const toggleDescBtn = document.getElementById("toggleDesc");
+const toggleThemeBtn = document.getElementById("toggleTheme");
 
-// Build full URL using BASE_URL
-function getGameUrl(path) {
-  return BASE_URL + path;
+let showDescriptions = true;
+
+/* Safety check */
+if (!window.games || !window.BASE_URL) {
+  console.error("games.js failed to load properly.");
 }
 
+/* Render */
 function renderGames(list) {
   container.innerHTML = "";
 
@@ -13,36 +18,48 @@ function renderGames(list) {
     const card = document.createElement("div");
     card.className = "game-card";
 
-    const fullImageUrl = BASE_URL + game.image;
-    const fullGameUrl = getGameUrl(game.path);
+    const img = window.BASE_URL + game.image;
+    const url = window.BASE_URL + game.path;
 
     card.innerHTML = `
-      <img src="${fullImageUrl}" alt="${game.title}">
-      <div class="content">
+      <img src="${img}" onerror="this.style.display='none'" />
+      <div class="game-content">
         <h3>${game.title}</h3>
-        <p>${game.desc}</p>
+        ${showDescriptions ? `<p>${game.desc}</p>` : ""}
       </div>
     `;
 
     card.onclick = () => {
-      window.location.href = fullGameUrl;
+      window.location.href = url;
     };
 
     container.appendChild(card);
   });
 }
 
-// Search
+/* Search */
 searchInput.addEventListener("input", () => {
-  const query = searchInput.value.toLowerCase();
+  const q = searchInput.value.toLowerCase();
 
-  const filtered = games.filter(game =>
-    game.title.toLowerCase().includes(query) ||
-    game.desc.toLowerCase().includes(query)
+  const filtered = window.games.filter(g =>
+    g.title.toLowerCase().includes(q) ||
+    g.desc.toLowerCase().includes(q)
   );
 
   renderGames(filtered);
 });
 
-// Initial render
-renderGames(games);
+/* Toggle descriptions */
+toggleDescBtn.onclick = () => {
+  showDescriptions = !showDescriptions;
+  renderGames(window.games);
+};
+
+/* Theme toggle */
+toggleThemeBtn.onclick = () => {
+  document.body.classList.toggle("dark");
+  document.body.classList.toggle("light");
+};
+
+/* Init */
+renderGames(window.games);
