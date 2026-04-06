@@ -30,8 +30,11 @@ function renderGames(list) {
     `;
 
     card.onclick = () => {
-      window.location.href = url;
-    };
+  const fullUrl = window.BASE_URL + game.path;
+
+  // open in iframe page
+  window.location.href = `play.html?url=${encodeURIComponent(fullUrl)}`;
+};
 
     container.appendChild(card);
   });
