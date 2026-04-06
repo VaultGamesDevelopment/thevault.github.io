@@ -1,63 +1,35 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>The Vault</title>
-
-  <link rel="stylesheet" href="styles.css" />
-
-  <script>
-    // CLOAK
-    document.title = "Google Docs";
-    const link = document.createElement("link");
-    link.rel = "icon";
-    link.href = "https://www.google.com/favicon.ico";
-    document.head.appendChild(link);
-  </script>
+  <title>Game Hub</title>
+  <link rel="stylesheet" href="styles.css">
 </head>
+<body>
 
-<body class="dark">
+<div id="settingsBtn">⚙️ Settings</div>
 
-  <!-- Sidebar -->
-  <div class="sidebar">
-    <h1>The Vault</h1>
+<div id="games"></div>
 
-    <input id="searchInput" placeholder="Search games..." />
+<!-- Settings Popup -->
+<div id="settingsPanel" class="hidden">
+  <h2>Settings</h2>
 
-    <button id="openSettings">Settings</button>
-  </div>
+  <label>Theme:</label>
+  <select id="themeSelect">
+    <option value="dark">Dark</option>
+    <option value="light">Light</option>
+  </select>
 
-  <!-- Main -->
-  <div class="main">
-    <div id="gamesContainer"></div>
-  </div>
+  <label>Weather FX:</label>
+  <select id="weatherSelect">
+    <option value="none">None</option>
+    <option value="rain">Rain</option>
+    <option value="snow">Snow</option>
+  </select>
 
-  <!-- Settings Modal -->
-  <div id="settingsModal" class="modal hidden">
-    <div class="modal-content">
-      <h2>Settings</h2>
+  <button id="closeSettings">Close</button>
+</div>
 
-      <label>Theme:</label>
-      <select id="themeSelect">
-        <option value="dark">Dark</option>
-        <option value="light">Light</option>
-      </select>
-
-      <label>Weather FX:</label>
-      <select id="fxSelect">
-        <option value="none">None</option>
-        <option value="rain">Rain</option>
-        <option value="snow">Snow</option>
-      </select>
-
-      <button id="closeSettings">Close</button>
-    </div>
-  </div>
-
-  <!-- FX Canvas -->
-  <canvas id="fxCanvas"></canvas>
-
-  <script src="app.js"></script>
+<script src="app.js"></script>
 </body>
 </html>

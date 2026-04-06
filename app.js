@@ -1,140 +1,107 @@
-const container = document.getElementById("gamesContainer");
-const searchInput = document.getElementById("searchInput");
+const FEED_URL = "https://feeds.gamepix.com/v2/json?order=quality&page=1&pagination=24&sid=1";
 
-const modal = document.getElementById("settingsModal");
-const openSettings = document.getElementById("openSettings");
+const gamesContainer = document.getElementById("games");
+const settingsBtn = document.getElementById("settingsBtn");
+const settingsPanel = document.getElementById("settingsPanel");
 const closeSettings = document.getElementById("closeSettings");
-
 const themeSelect = document.getElementById("themeSelect");
-const fxSelect = document.getElementById("fxSelect");
+const weatherSelect = document.getElementById("weatherSelect");
 
-const canvas = document.getElementById("fxCanvas");
-const ctx = canvas.getContext("2d");
+// ✅ Prevent null errors
+window.addEventListener("DOMContentLoaded", () => {
 
-let gamesData = [];
-let fxMode = "none";
+  // Settings button
+  settingsBtn.onclick = () => {
+    settingsPanel.classList.remove("hidden");
+  };
 
-/* Resize canvas */
-function resizeCanvas() {
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight;
-}
-window.onresize = resizeCanvas;
-resizeCanvas();
+  closeSettings.onclick = () => {
+    settingsPanel.classList.add("hidden");
+  };
 
-/* Fetch Gamepix games */
-async function loadGames() {
-  const res = await fetch("https://feeds.gamepix.com/v2/json?sid=1&pagination=24&order=quality");
-  const data = await res.json();
+  // Theme switch
+  themeSelect.onchange = () => {
+    document.body.setAttribute("data-theme", themeSelect.value);
+  };
 
-  gamesData = data.items;
-  renderGames(gamesData);
-}
+  // Weather FX toggle
+  weatherSelect.onchange = () => {
+    setWeather(weatherSelect.value);
+  };
 
-/* Render games */
-function renderGames(list) {
-  container.innerHTML = "";
-
-  list.forEach(game => {
-    const card = document.createElement("div");
-    card.className = "game-card";
-
-    card.innerHTML = `
-      <img src="${game.image}" width="100%" />
-      <h3>${game.title}</h3>
-    `;
-
-    card.onclick = () => {
-      openGame(game);
-    };
-
-    container.appendChild(card);
-  });
-}
-
-/* Open game in iframe */
-function openGame(game) {
-  container.innerHTML = "";
-
-  const iframe = document.createElement("iframe");
-  iframe.src = game.url;
-  iframe.style.width = "100%";
-  iframe.style.height = "90vh";
-  iframe.style.border = "none";
-
-  container.appendChild(iframe);
-}
-
-/* Search */
-searchInput.addEventListener("input", () => {
-  const q = searchInput.value.toLowerCase();
-
-  const filtered = gamesData.filter(g =>
-    g.title.toLowerCase().includes(q) ||
-    g.description.toLowerCase().includes(q)
-  );
-
-  renderGames(filtered);
+  loadGames();
 });
 
-/* Settings modal */
-openSettings.onclick = () => modal.classList.remove("hidden");
-closeSettings.onclick = () => modal.classList.add("hidden");
+async function loadGames() {
+  try {
+    const res = await fetch(FEED_URL);
+    const data = await res.json();
 
-/* Theme */
-themeSelect.onchange = (e) => {
-  document.body.className = e.target.value;
-};
+    gamesContainer.innerHTML = "";
 
-/* Weather FX toggle */
-fxSelect.onchange = (e) => {
-  fxMode = e.target.value;
-};
+    data.items.forEach(game => {
+      const div = document.createElement("div");
+      div.className = "game-card";
 
-/* FX System */
-let particles = [];
+      div.innerHTML = `
+        <img src="${game.image}">
+        <h3>${game.title}</h3>
+        <button onclick="playGame('${game.namespace}')">Play</button>
+      `;
 
-function spawnParticles() {
-  particles = [];
+      gamesContainer.appendChild(div);
+    });
+
+  } catch (err) {
+    console.error("Failed to load games:", err);
+    gamesContainer.innerHTML = "Failed to load games.";
+  }
+}
+
+function playGame(namespace) {
+  localStorage.setItem("gameNamespace", namespace);
+  window.location.href = "play.html";
+}
+
+/* ---------------- WEATHER FX ---------------- */
+
+function setWeather(type) {
+  document.getElementById("weatherCanvas")?.remove();
+
+  if (type === "none") return;
+
+  const canvas = document.createElement("canvas");
+  canvas.id = "weatherCanvas";
+  document.body.appendChild(canvas);
+
+  const ctx = canvas.getContext("2d");
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+
+  let particles = [];
+
   for (let i = 0; i < 100; i++) {
     particles.push({
       x: Math.random() * canvas.width,
       y: Math.random() * canvas.height,
-      speed: Math.random() * 2 + 1
-    });
-  }
-}
-
-function animateFX() {
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-  if (fxMode === "rain") {
-    particles.forEach(p => {
-      p.y += p.speed * 4;
-      if (p.y > canvas.height) p.y = 0;
-
-      ctx.fillRect(p.x, p.y, 2, 10);
+      speed: Math.random() * 3 + 1
     });
   }
 
-  if (fxMode === "snow") {
+  function animate() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
     particles.forEach(p => {
       p.y += p.speed;
-      p.x += Math.sin(p.y * 0.01);
 
       if (p.y > canvas.height) p.y = 0;
 
-      ctx.beginPath();
-      ctx.arc(p.x, p.y, 2, 0, Math.PI * 2);
-      ctx.fill();
+      ctx.fillStyle = type === "rain" ? "rgba(173,216,230,0.6)" : "#fff";
+      ctx.fillRect(p.x, p.y, 2, 10);
     });
+
+    requestAnimationFrame(animate);
   }
 
-  requestAnimationFrame(animateFX);
+  animate();
 }
-
-spawnParticles();
-animateFX();
-
-/* Init */
-loadGames();
