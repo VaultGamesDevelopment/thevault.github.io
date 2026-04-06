@@ -180,7 +180,10 @@ iframe {
     <button class="btn" @click="toggleFullscreen()">Fullscreen</button>
     <span x-text="activeGame?.title"></span>
   </div>
-  <iframe :src="resolveGameUrl(activeGame?.url)"></iframe>
+  <iframe 
+  id="gameFrame"
+  :src="resolveGameUrl(activeGame?.url)">
+</iframe>
 </div>
 
 <!-- SETTINGS -->
