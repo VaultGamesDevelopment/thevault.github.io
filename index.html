@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vault X</title>
+
+<script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+<script src="https://cdn.tailwindcss.com"></script>
+
+<style>
+:root{
+--accent:#7c3aed;
+--bg:#0a0f1c;
+}
+
+body{
+margin:0;
+background:var(--bg);
+color:white;
+font-family:Inter,system-ui;
+overflow-x:hidden;
+}
+
+/* BACKGROUND FX */
+.bg{
+position:fixed;
+inset:0;
+z-index:-2;
+background: radial-gradient(circle at 20% 20%, #7c3aed33, transparent 40%),
+            radial-gradient(circle at 80% 80%, #06b6d433, transparent 40%);
+animation:float 12s infinite alternate;
+}
+
+@keyframes float{
+from{transform:translate(0,0);}
+to{transform:translate(-60px,40px);}
+}
+
+/* WEATHER FX */
+.weather-rain::before{
+content:"";
+position:fixed;
+inset:0;
+background: repeating-linear-gradient(
+to bottom,
+rgba(255,255,255,0.05) 0px,
+rgba(255,255,255,0.05) 2px,
+transparent 3px,
+transparent 6px
+);
+animation:rain 0.5s linear infinite;
+pointer-events:none;
+}
+
+@keyframes rain{
+from{transform:translateY(0);}
+to{transform:translateY(20px);}
+}
+
+/* GLASS */
+.glass{
+background:rgba(255,255,255,0.05);
+backdrop-filter:blur(14px);
+border:1px solid rgba(255,255,255,0.08);
+}
+
+/* CARDS */
+.card{
+aspect-ratio:1/1;
+border-radius:16px;
+overflow:hidden;
+position:relative;
+transition:0.25s;
+cursor:pointer;
+}
+
+.card:hover{
+transform:scale(1.05);
+box-shadow:0 0 25px rgba(124,58,237,0.4);
+}
+
+.card img{
+width:100%;
+height:100%;
+object-fit:cover;
+}
+
+.title{
+position:absolute;
+bottom:0;
+width:100%;
+padding:6px;
+font-size:12px;
+background:linear-gradient(to top, rgba(0,0,0,0.85), transparent);
+}
+
+/* PANEL */
+.panel{
+position:fixed;
+top:0;
+right:0;
+width:320px;
+height:100%;
+transform:translateX(100%);
+transition:0.3s;
+z-index:50;
+}
+
+.panel.open{
+transform:translateX(0);
+}
+
+/* INPUT */
+.input{
+width:100%;
+padding:8px;
+border-radius:8px;
+background:rgba(255,255,255,0.05);
+border:1px solid rgba(255,255,255,0.1);
+}
+
+/* BUTTON */
+.btn{
+background:var(--accent);
+padding:6px 10px;
+border-radius:8px;
+font-size:12px;
+}
+
+/* ANIMATION */
+.fade{
+animation:fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn{
+from{opacity:0; transform:translateY(10px);}
+to{opacity:1; transform:translateY(0);}
+}
+</style>
+</head>
+
+<body>
+
+<div class="bg"></div>
+
+<div x-data="app()" x-init="init()" :class="weatherClass">
+
+<header class="flex justify-between p-4 glass">
+<h1 class="text-lg font-bold">Vault X</h1>
+
+<div class="flex gap-2">
+<button class="btn" @click="togglePanel()">Settings</button>
+<button class="btn" @click="activeTab='local'">Local</button>
+<button class="btn" @click="activeTab='gamepix'">Cloud</button>
+</div>
+</header>
+
+<!-- SEARCH -->
+<div class="p-4">
+<input class="input" placeholder="Search..." x-model="search" @input="filterGames()">
+</div>
+
+<!-- LOCAL -->
+<div x-show="activeTab==='local'" class="p-4 grid grid-cols-2 md:grid-cols-5 gap-4 fade">
+
+<template x-for="g in filteredLocal" :key="g.title">
+<div class="card glass">
+<img :src="resolveImage(g.image)" @error="fallbackImage">
+<div class="title" x-text="g.title"></div>
+<div class="absolute inset-0" @click="playGame(g)"></div>
+</div>
+</template>
+
+</div>
+
+<!-- GAMEPIX -->
+<div x-show="activeTab==='gamepix'" class="p-4 grid grid-cols-2 md:grid-cols-5 gap-4 fade">
+
+<template x-for="g in gamePixGames" :key="g.id">
+<div class="card glass" @click="playGame(g)">
+<img :src="resolveImage(g.image)" @error="fallbackImage">
+<div class="title" x-text="g.title"></div>
+</div>
+</template>
+
+</div>
+
+<!-- GAME MODAL -->
+<div x-show="showGame" class="fixed inset-0 bg-black z-50 flex flex-col fade">
+<div class="p-2 flex justify-between glass">
+<button class="btn" @click="closeGame()">Exit</button>
+<span x-text="activeGame?.title"></span>
+</div>
+
+<iframe class="flex-1 w-full" :src="resolveGameUrl(activeGame?.url)"></iframe>
+</div>
+
+<!-- SETTINGS PANEL -->
+<div class="panel glass p-4" :class="panelOpen ? 'open' : ''">
+
+<h2 class="text-lg mb-4">Settings</h2>
+
+<!-- THEME -->
+<label>Theme</label>
+<select class="input mb-3" x-model="theme" @change="applyTheme()">
+<option value="dark">Dark</option>
+<option value="neon">Neon</option>
+<option value="minimal">Minimal</option>
+<option value="ocean">Ocean</option>
+<option value="midnight">Midnight</option>
+<option value="purple">Purple</option>
+</select>
+
+<!-- ACCENT -->
+<label>Accent Color</label>
+<input type="color" x-model="accentColor" @input="applyAccent()" class="mb-3 w-full h-10">
+
+<!-- WEATHER FX -->
+<label>Weather FX</label>
+<select class="input mb-3" x-model="weatherFX" @change="applyWeather()">
+<option value="none">None</option>
+<option value="rain">Rain</option>
+<option value="snow">Snow</option>
+<option value="fog">Fog</option>
+</select>
+
+<!-- CLOAKING -->
+<label>Cloaking Preset</label>
+<select class="input mb-3" x-model="cloakPreset" @change="applyCloak()">
+<option value="none">None</option>
+<option value="google">Google Docs</option>
+<option value="drive">Google Drive</option>
+<option value="classroom">Google Classroom</option>
+<option value="custom">Custom</option>
+</select>
+
+<div x-show="cloakPreset==='custom'">
+<input class="input mb-2" placeholder="Title" x-model="customTitle">
+<input class="input" placeholder="Favicon URL" x-model="customIcon">
+<button class="btn mt-2 w-full" @click="applyCloak()">Apply</button>
+</div>
+
+</div>
+
+<script>
+function app(){
+
+const BASE="https://biology.science.geometry.project.computer.archivomemoria-audiovisualcsb.org/";
+
+return{
+
+activeTab:'local',
+search:'',
+localGames:[],
+filteredLocal:[],
+gamePixGames:[],
+showGame:false,
+activeGame:null,
+
+panelOpen:false,
+
+theme:'dark',
+accentColor:'#7c3aed',
+weatherFX:'none',
+
+cloakPreset:'none',
+customTitle:'',
+customIcon:'',
+
+weatherClass:'',
+
+init(){
+this.fetchLocal();
+this.fetchGamePix();
+this.loadSettings();
+this.applyTheme();
+this.applyAccent();
+this.applyWeather();
+this.applyCloak();
+},
+
+togglePanel(){
+this.panelOpen=!this.panelOpen;
+},
+
+/* THEMES */
+applyTheme(){
+const themes={
+dark:'#0a0f1c',
+neon:'#050505',
+minimal:'#111',
+ocean:'#071a2f',
+midnight:'#020617',
+purple:'#1a0b2e'
+};
+document.documentElement.style.setProperty('--bg',themes[this.theme]);
+this.saveSettings();
+},
+
+/* ACCENT */
+applyAccent(){
+document.documentElement.style.setProperty('--accent',this.accentColor);
+this.saveSettings();
+},
+
+/* WEATHER FX */
+applyWeather(){
+this.weatherClass = this.weatherFX==='rain' ? 'weather-rain' : '';
+this.saveSettings();
+},
+
+/* CLOAKING */
+applyCloak(){
+
+if(this.cloakPreset==='google'){
+document.title="Google Docs";
+this.setIcon("https://ssl.gstatic.com/docs/documents/images/kix-favicon7.ico");
+}
+
+else if(this.cloakPreset==='drive'){
+document.title="Google Drive";
+this.setIcon("https://ssl.gstatic.com/images/branding/product/1x/drive_2020q4_48dp.png");
+}
+
+else if(this.cloakPreset==='classroom'){
+document.title="Google Classroom";
+this.setIcon("https://ssl.gstatic.com/classroom/ic_product_classroom_32.png");
+}
+
+else if(this.cloakPreset==='custom'){
+document.title=this.customTitle||"Vault X";
+this.setIcon(this.customIcon);
+}
+
+else{
+document.title="Vault X";
+this.setIcon(null);
+}
+
+this.saveSettings();
+},
+
+setIcon(url){
+let link=document.querySelector("link[rel~='icon']");
+if(!link){
+link=document.createElement('link');
+link.rel='icon';
+document.head.appendChild(link);
+}
+if(url) link.href=url;
+},
+
+/* STORAGE */
+saveSettings(){
+localStorage.setItem("vault_settings",JSON.stringify({
+theme:this.theme,
+accentColor:this.accentColor,
+weatherFX:this.weatherFX,
+cloakPreset:this.cloakPreset,
+customTitle:this.customTitle,
+customIcon:this.customIcon
+}));
+},
+
+loadSettings(){
+let s=JSON.parse(localStorage.getItem("vault_settings")||"{}");
+Object.assign(this,s);
+},
+
+/* IMAGE */
+resolveImage(src){
+if(!src) return "https://placehold.co/300x300";
+try{
+return "https://images.weserv.nl/?url="+encodeURIComponent(new URL(src,BASE).href);
+}catch{
+return "https://placehold.co/300x300";
+}
+},
+
+fallbackImage(e){
+e.target.src="https://placehold.co/300x300";
+},
+
+resolveGameUrl(url){
+try{return new URL(url,BASE).href;}
+catch{return url;}
+},
+
+/* DATA */
+async fetchLocal(){
+try{
+const res=await fetch("/g/assets/js/games.js");
+const text=await res.text();
+let data=[];
+try{data=eval(text+"; games");}catch(e){}
+
+this.localGames=data;
+this.filteredLocal=data;
+
+}catch(e){}
+},
+
+filterGames(){
+let s=this.search.toLowerCase();
+this.filteredLocal=this.localGames.filter(g=>g.title.toLowerCase().includes(s));
+},
+
+async fetchGamePix(){
+try{
+const res=await fetch("https://feeds.gamepix.com/v2/json?order=quality&page=1&pagination=20&sid=1");
+const data=await res.json();
+this.gamePixGames=(data.items||[]).map(g=>({
+id:g.id,
+title:g.title,
+url:g.url,
+image:g.banner_image||g.image
+}));
+}catch(e){}
+},
+
+/* GAME */
+playGame(g){
+this.activeGame=g;
+this.showGame=true;
+document.body.style.overflow="hidden";
+},
+
+closeGame(){
+this.showGame=false;
+document.body.style.overflow="auto";
+}
+
+}
+}
+</script>
+
+</body>
+</html>
