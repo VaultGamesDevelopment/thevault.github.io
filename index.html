@@ -21,7 +21,6 @@ color:white;
 font-family:system-ui;
 }
 
-/* BACKGROUND */
 .bg{
 position:fixed;
 inset:0;
@@ -29,14 +28,6 @@ z-index:-2;
 background:
 radial-gradient(circle at 20% 20%, rgba(124,58,237,0.25), transparent 40%),
 radial-gradient(circle at 80% 80%, rgba(6,182,212,0.15), transparent 40%);
-}
-
-/* GLASS PANEL */
-.glass{
-background:rgba(255,255,255,0.05);
-backdrop-filter: blur(16px);
-border:1px solid rgba(255,255,255,0.08);
-border-radius:16px;
 }
 
 /* NAVBAR */
@@ -48,22 +39,16 @@ padding:12px 20px;
 display:flex;
 justify-content:space-between;
 align-items:center;
-background:rgba(0,0,0,0.4);
+background:rgba(0,0,0,0.5);
 backdrop-filter: blur(12px);
 border-bottom:1px solid rgba(255,255,255,0.05);
 }
 
-/* BUTTON */
 .btn{
 background:var(--accent);
 padding:6px 12px;
 border-radius:8px;
 font-size:13px;
-transition:0.2s;
-}
-.btn:hover{
-opacity:0.85;
-transform:translateY(-1px);
 }
 
 /* GRID */
@@ -73,20 +58,18 @@ margin:auto;
 padding:20px;
 }
 
-/* CARD */
 .card{
 position:relative;
 border-radius:16px;
 overflow:hidden;
 cursor:pointer;
-transition:0.25s;
-background:#111;
+transition:0.2s;
 aspect-ratio:1/1;
+background:#111;
 }
 
 .card:hover{
 transform:scale(1.04);
-box-shadow:0 10px 30px rgba(0,0,0,0.6);
 }
 
 .card img{
@@ -95,51 +78,33 @@ height:100%;
 object-fit:cover;
 }
 
-.card-overlay{
+.overlay{
 position:absolute;
 bottom:0;
 width:100%;
-padding:10px;
+padding:8px;
 background:linear-gradient(to top, rgba(0,0,0,0.85), transparent);
 }
 
-.card-title{
-font-size:14px;
-font-weight:500;
-}
-
-/* SIDEBAR */
-.sidebar{
+/* MODAL BACKDROP */
+.modal-bg{
 position:fixed;
-top:0;
-right:0;
-height:100%;
-width:320px;
-transform:translateX(100%);
-transition:0.3s;
-z-index:50;
+inset:0;
+background:rgba(0,0,0,0.6);
+backdrop-filter: blur(8px);
+z-index:60;
+display:flex;
+justify-content:center;
+align-items:center;
+}
+
+/* MODAL BOX */
+.modal{
+width:400px;
+background:#111;
+border-radius:12px;
 padding:16px;
-}
-
-.sidebar.open{
-transform:translateX(0);
-}
-
-/* LEFT FAVORITES */
-.leftbar{
-position:fixed;
-top:0;
-left:0;
-height:100%;
-width:280px;
-transform:translateX(-100%);
-transition:0.3s;
-z-index:50;
-padding:16px;
-}
-
-.leftbar.open{
-transform:translateX(0);
+border:1px solid rgba(255,255,255,0.1);
 }
 
 /* GAME VIEW */
@@ -167,19 +132,19 @@ border:none;
 
 <!-- NAVBAR -->
 <div class="navbar">
-<div class="text-lg font-semibold tracking-wide">Vault Games</div>
+<div class="font-semibold text-lg">Vault Games</div>
 
 <div class="flex gap-2">
-<button class="btn" @click="toggleFavs()">⭐ Favorites</button>
-<button class="btn" @click="togglePanel()">⚙ Settings</button>
+<button class="btn" @click="favOpen=true">⭐</button>
+<button class="btn" @click="panelOpen=true">⚙</button>
 </div>
 </div>
 
 <!-- SEARCH -->
 <div class="grid-container">
 <input 
-class="w-full p-3 rounded-lg text-black mb-4"
-placeholder="Search games..."
+class="w-full p-3 rounded text-black mb-4"
+placeholder="Search..."
 x-model="search"
 @input="filterGames()">
 </div>
@@ -189,15 +154,17 @@ x-model="search"
 <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-5">
 
 <template x-for="g in paginatedGames()" :key="g.title">
-<div class="card glass" @click="playGame(g)">
+<div class="card" @click="playGame(g)">
 
-<img :src="resolveImage(g.image)" @error="$el.src='https://placehold.co/300x300'">
+<img 
+:src="resolveImage(g.image)"
+@error="$el.src='https://placehold.co/300x300'">
 
-<div class="card-overlay">
-<div class="card-title" x-text="g.title"></div>
+<div class="overlay">
+<div x-text="g.title"></div>
 </div>
 
-<div class="absolute top-2 right-2 text-sm cursor-pointer"
+<div class="absolute top-2 right-2 cursor-pointer"
 @click.stop="toggleFavorite(g)">
 ⭐
 </div>
@@ -218,7 +185,7 @@ x-model="search"
 <!-- GAME VIEW -->
 <div x-show="showGame" class="game-view">
 
-<div class="flex justify-between p-3 glass">
+<div class="flex justify-between p-3">
 <button class="btn" @click="closeGame()">Exit</button>
 <button class="btn" @click="toggleFullscreen()">Fullscreen</button>
 <span x-text="activeGame?.title"></span>
@@ -228,25 +195,32 @@ x-model="search"
 
 </div>
 
-<!-- SETTINGS SIDEBAR -->
-<div class="sidebar glass" :class="panelOpen ? 'open':''">
+<!-- SETTINGS MODAL -->
+<div x-show="panelOpen" class="modal-bg">
+<div class="modal">
 
 <h2 class="text-lg mb-4">Settings</h2>
 
-<label class="text-sm">Accent Color</label>
+<label>Accent Color</label>
 <input type="color" x-model="accentColor" @input="applyAccent()" class="w-full mb-4">
 
-<label class="text-sm">Items per page</label>
-<select class="w-full p-2 text-black rounded" x-model="perPage">
+<label>Items per page</label>
+<select class="w-full p-2 text-black" x-model="perPage">
 <option>6</option>
 <option>10</option>
 <option>20</option>
 </select>
 
+<div class="mt-4 text-right">
+<button class="btn" @click="panelOpen=false">Close</button>
 </div>
 
-<!-- FAVORITES SIDEBAR -->
-<div class="leftbar glass" :class="favOpen ? 'open':''">
+</div>
+</div>
+
+<!-- FAVORITES MODAL -->
+<div x-show="favOpen" class="modal-bg">
+<div class="modal">
 
 <h2 class="text-lg mb-4">Favorites</h2>
 
@@ -256,6 +230,11 @@ x-model="search"
 </div>
 </template>
 
+<div class="mt-4 text-right">
+<button class="btn" @click="favOpen=false">Close</button>
+</div>
+
+</div>
 </div>
 
 </div>
@@ -263,7 +242,6 @@ x-model="search"
 <script>
 function app(){
 
-const BASE = "./";
 const IMAGE_BASE = "https://biology.science.geometry.project.computer.archivomemoria-audiovisualcsb.org/";
 const GAME_BASE = "https://biology.science.geometry.project.computer.archivomemoria-audiovisualcsb.org/";
 
@@ -274,6 +252,7 @@ favoritesMap:{},
 favorites:[],
 
 search:'',
+
 showGame:false,
 activeGame:null,
 
@@ -295,12 +274,16 @@ if(e.key==="Escape") this.closeGame();
 });
 },
 
-/* LOAD */
+/* LOAD GAMES */
 async loadGames(){
+try{
 const res = await fetch("./g/assets/js/games.js");
 const text = await res.text();
 eval(text);
 this.games = games;
+}catch(e){
+console.error("Games failed to load:",e);
+}
 },
 
 /* IMAGE */
@@ -333,14 +316,6 @@ this.favoritesMap=JSON.parse(localStorage.getItem("fav")||"{}");
 this.favorites=Object.values(this.favoritesMap);
 },
 
-toggleFavs(){this.favOpen=!this.favOpen;},
-
-togglePanel(){this.panelOpen=!this.panelOpen;},
-
-applyAccent(){
-document.documentElement.style.setProperty('--accent',this.accentColor);
-},
-
 /* GAME */
 playGame(g){
 this.activeGame=g;
@@ -358,6 +333,11 @@ document.documentElement.requestFullscreen();
 }else{
 document.exitFullscreen();
 }
+},
+
+/* SETTINGS */
+applyAccent(){
+document.documentElement.style.setProperty('--accent',this.accentColor);
 },
 
 /* SEARCH */
