@@ -73,29 +73,24 @@
 
         /* Grids */
         .game-grid, .partners-grid {
-            display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 24px;
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 24px;
         }
 
-        /* Partner Cards */
+        /* Partner Cards Styling */
         .partner-card {
             background: var(--card-bg);
             border: 1px solid var(--border-color);
             border-radius: 16px;
             padding: 32px 24px;
             text-align: center;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             display: flex;
             flex-direction: column;
             align-items: center;
             gap: 12px;
-            text-decoration: none;
-            color: inherit;
+            transition: border-color 0.3s ease;
         }
-        .partner-card:hover {
-            border-color: var(--text-color);
-            background: rgba(255,255,255,0.02);
-            transform: translateY(-5px);
-        }
+        .partner-card:hover { border-color: var(--text-color); }
+        
         .p-icon {
             width: 64px; height: 64px;
             background: var(--border-color);
@@ -103,10 +98,25 @@
             display: flex; align-items: center; justify-content: center;
             overflow: hidden;
             border: 1px solid rgba(255,255,255,0.05);
+            margin-bottom: 8px;
         }
         .p-icon img { width: 100%; height: 100%; object-fit: cover; }
-        .partner-card h3 { margin: 8px 0 0; font-size: 1.1rem; letter-spacing: -0.02em; }
-        .partner-card p { margin: 0; font-size: 0.85rem; color: var(--secondary-text); }
+        .partner-card h3 { margin: 0; font-size: 1.1rem; letter-spacing: -0.02em; }
+        .partner-card p { margin: 0; font-size: 0.85rem; color: var(--secondary-text); margin-bottom: 12px; }
+
+        /* Partner Action Button */
+        .partner-link {
+            width: 100%;
+            padding: 10px;
+            border-radius: 8px;
+            background: var(--text-color);
+            color: var(--bg-color);
+            text-decoration: none;
+            font-size: 0.8rem;
+            font-weight: 700;
+            transition: opacity 0.2s;
+        }
+        .partner-link:hover { opacity: 0.85; }
 
         /* Game Cards */
         .game-card {
@@ -118,7 +128,6 @@
         .game-card img { width: 100%; aspect-ratio: 1/1; object-fit: cover; }
         .game-info { padding: 12px; }
         .game-info h3 { margin: 0; font-size: 0.85rem; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .game-info span { font-size: 0.75rem; color: var(--secondary-text); }
 
         /* Settings Modal */
         #settings-modal {
@@ -172,38 +181,44 @@
 
     <section id="view-partners" class="view-section">
         <div style="margin-bottom: 40px;">
-            <h1 style="font-size: 2.5rem; letter-spacing: -0.06em;">Affiliates</h1>
-            <p style="color: var(--secondary-text);">Trusted connections within the network.</p>
+            <h1 style="font-size: 2.5rem; letter-spacing: -0.06em; margin-bottom: 8px;">Network Partners</h1>
+            <p style="color: var(--secondary-text);">The ecosystem supporting high-performance web entertainment.</p>
         </div>
+        
         <div class="partners-grid">
-            <a href="https://sites.google.com/view/jaimescheesegrater" target="_blank" class="partner-card">
-                <div class="p-icon"><img src="https://lh3.googleusercontent.com/d/1X-50S0S0S0S0S0S0S0S0S0S0S0S0S0S=s128" alt="Profile"></div>
+            <div class="partner-card">
+                <div class="p-icon">
+                    <img src="https://lh3.googleusercontent.com/d/1X-50S0S0S0S0S0S0S0S0S0S0S0S0S0S=s128" alt="Jaime's Icon">
+                </div>
                 <h3>Jaime's Cheese Grater</h3>
                 <p>Another W games site</p>
-            </a>
+                <a href="https://sites.google.com/view/jaimescheesegrater" target="_blank" class="partner-link">Visit Site</a>
+            </div>
 
             <div class="partner-card">
                 <div class="p-icon" style="font-size: 1.2rem; font-weight: 800;">GP</div>
                 <h3>GamePix</h3>
-                <p>Official Content Provider</p>
+                <p>Official Content Library</p>
+                <a href="https://www.gamepix.com" target="_blank" class="partner-link">Visit Site</a>
             </div>
         </div>
     </section>
 
     <div id="game-view">
-        <button style="position:absolute; top:20px; left:20px; z-index:2001;" onclick="closeGame()">← Back</button>
+        <button style="position:absolute; top:20px; left:20px; z-index:2001;" onclick="closeGame()">← Close Terminal</button>
         <div id="iframe-container" style="width: 100%; height: 100%;"></div>
     </div>
 
     <div class="modal-overlay" id="modal-overlay" onclick="toggleSettings(false)"></div>
     <div id="settings-modal">
-        <h3 style="margin:0">Preferences</h3>
+        <h3 style="margin:0">System Preferences</h3>
         
         <span class="setting-label">Cloak Protocol</span>
         <div class="btn-grid">
             <button onclick="setCloak('none')">Default</button>
             <button onclick="setCloak('google')">Google</button>
             <button onclick="setCloak('classroom')">Classroom</button>
+            <button onclick="setCloak('drive')">Drive</button>
         </div>
 
         <span class="setting-label">Appearance</span>
@@ -218,7 +233,7 @@
             <button onclick="setWeather('rain')">Rain</button>
             <button onclick="setWeather('snow')">Snow</button>
         </div>
-        <button style="width:100%; margin-top:30px; background:var(--text-color); color:var(--bg-color);" onclick="toggleSettings(false)">Save & Close</button>
+        <button style="width:100%; margin-top:30px; background:var(--text-color); color:var(--bg-color);" onclick="toggleSettings(false)">Apply Changes</button>
     </div>
 
     <script>
@@ -251,12 +266,12 @@
                 const el = document.createElement('div');
                 el.className = 'weather-item';
                 el.style.left = Math.random() * 100 + '%';
-                el.style.animationDuration = (Math.random() * 2 + 0.8) + 's';
+                el.style.animationDuration = (Math.random() * 2 + 1) + 's';
                 el.style.animationDelay = `-${Math.random() * 5}s`;
                 if (type === 'rain') {
                     el.style.width = '1px'; el.style.height = '25px'; el.style.background = 'rgba(255,255,255,0.2)';
                 } else {
-                    el.style.width = '4px'; el.style.height = '4px'; el.style.background = '#fff'; el.style.borderRadius = '50%'; el.style.opacity = '0.4';
+                    el.style.width = '4px'; el.style.height = '4px'; el.style.background = '#fff'; el.style.borderRadius = '50%'; el.style.opacity = '0.3';
                 }
                 overlay.appendChild(el);
             }
@@ -268,6 +283,7 @@
             const presets = {
                 'google': { title: 'Google', icon: 'https://www.google.com/favicon.ico' },
                 'classroom': { title: 'Classes', icon: 'https://ssl.gstatic.com/classroom/favicon.png' },
+                'drive': { title: 'My Drive - Google Drive', icon: 'https://ssl.gstatic.com/docs/doclist/images/adrive/dw-favicon.ico' },
                 'none': { title: 'The Vault | Premium Arcade', icon: 'https://www.gamepix.com/favicon.ico' }
             };
             title.innerText = presets[type].title;
@@ -275,14 +291,17 @@
             save('cloak', type);
         }
 
-        // --- API & NAVIGATION ---
+        // --- NAVIGATION ---
         function showView(v) {
             document.querySelectorAll('.view-section').forEach(s => s.classList.remove('active'));
             document.getElementById(`view-${v}`).classList.add('active');
             document.querySelectorAll('nav a').forEach(a => a.classList.remove('active'));
             document.getElementById(`nav-${v}`).classList.add('active');
+            document.getElementById('search-wrapper').style.opacity = (v === 'home') ? '1' : '0';
+            document.getElementById('search-wrapper').style.pointerEvents = (v === 'home') ? 'auto' : 'none';
         }
 
+        // --- DATA ---
         async function fetchGames() {
             if (isLoading || !nextUrl) return;
             isLoading = true;
@@ -295,7 +314,7 @@
                     card.className = 'game-card';
                     card.setAttribute('data-title', item.title.toLowerCase());
                     card.onclick = () => launchGame(item.namespace);
-                    card.innerHTML = `<img src="${item.banner_image}" loading="lazy"><div class="game-info"><h3>${item.title}</h3><span>${item.category.toUpperCase()}</span></div>`;
+                    card.innerHTML = `<img src="${item.banner_image}" loading="lazy"><div class="game-info"><h3>${item.title}</h3></div>`;
                     grid.appendChild(card);
                 });
                 nextUrl = data.next_url;
