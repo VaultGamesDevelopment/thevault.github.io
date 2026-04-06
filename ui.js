@@ -12,13 +12,16 @@ const UI = {
   setWeather(weather) {
     const fx = document.getElementById("weatherFx");
     fx.className = "weather-bg";
-
     if (weather !== "none") fx.classList.add(weather);
-
     localStorage.setItem("weather", weather);
   },
 
-  getCloak() {
-    return localStorage.getItem("cloak") || "none";
+  renderFavorites() {
+    const el = document.getElementById("favorites");
+    el.innerHTML = "<h3>Favorites</h3>";
+
+    State.favorites.forEach(g => {
+      el.innerHTML += `<div onclick='openGame(${JSON.stringify(g)})'>${g.title}</div>`;
+    });
   }
 };

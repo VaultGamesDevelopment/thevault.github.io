@@ -13,4 +13,6 @@ function applySettings() {
   localStorage.setItem("cloak", cloak);
 
   if (cloak !== "none") location.reload();
+
+  document.getElementById("settingsModal").style.display = "none";
 }
