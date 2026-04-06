@@ -1,5 +1,6 @@
+const BASE = "https://biology.science.geometry.project.computer.archivomemoria-audiovisualcsb.org/";
+
 function renderGames() {
-  const BASE = "https://biology.science.geometry.project.computer.archivomemoria-audiovisualcsb.org/";
   const grid = document.getElementById("gameGrid");
   grid.innerHTML = "";
 
@@ -8,57 +9,29 @@ function renderGames() {
     el.className = "card";
 
     const img = document.createElement("img");
-
-    let fallbackUsed = false;
-
-    // ✅ FIXED IMAGE PATH
     img.src = BASE + game.image;
 
     img.onerror = () => {
-      if (fallbackUsed) return;
-      fallbackUsed = true;
-
-      img.src = `data:image/svg+xml;charset=UTF-8,
-      <svg xmlns='http://www.w3.org/2000/svg' width='300' height='150'>
-        <rect width='100%' height='100%' fill='#111'/>
-        <text x='50%' y='50%' dominant-baseline='middle' text-anchor='middle'
-        fill='white' font-size='14'>No Image</text>
-      </svg>`;
+      img.src = "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='300' height='150'><rect width='100%' height='100%' fill='#111'/></svg>";
     };
 
     const title = document.createElement("h3");
     title.textContent = game.title;
 
-    el.onclick = () => openGame(game);
-
     el.appendChild(img);
     el.appendChild(title);
+
+    el.onclick = () => openGame(game);
 
     grid.appendChild(el);
   });
 }
 
 function openGame(game) {
-  const cloak = UI.getCloak();
+  const fullUrl = BASE + game.url;
 
-  if (cloak === "about") {
-    const w = window.open("about:blank");
-    w.document.write(`<iframe src="${game.url}" style="border:none;width:100%;height:100%"></iframe>`);
-    return;
-  }
-
-  if (cloak === "blob") {
-    const blob = new Blob([`<iframe src="${game.url}" style="border:none;width:100%;height:100%"></iframe>`], { type: "text/html" });
-    const url = URL.createObjectURL(blob);
-    window.open(url);
-    return;
-  }
-
-  const viewer = document.getElementById("gameViewer");
-  const frame = document.getElementById("gameFrame");
-
-  frame.src = game.url;
-  viewer.style.display = "flex";
+  document.getElementById("gameFrame").src = fullUrl;
+  document.getElementById("gameViewer").style.display = "flex";
 }
 
 function closeGame() {
@@ -69,15 +42,35 @@ function toggleFullscreen() {
   document.getElementById("gameFrame").requestFullscreen();
 }
 
+/* CLOAK SYSTEM */
+function launchCloaked() {
+  const cloak = localStorage.getItem("cloak");
+
+  if (!cloak || cloak === "none") return;
+
+  const url = location.href;
+
+  if (cloak === "about") {
+    const win = window.open("about:blank");
+    win.document.write(`<iframe src="${url}" style="width:100%;height:100%;border:none"></iframe>`);
+  }
+
+  if (cloak === "blob") {
+    const blob = new Blob([`<iframe src="${url}" style="width:100%;height:100%;border:none"></iframe>`], { type: "text/html" });
+    window.open(URL.createObjectURL(blob));
+  }
+
+  document.body.innerHTML = "";
+}
+
 document.addEventListener("DOMContentLoaded", () => {
   UI.init();
   renderGames();
+
+  setTimeout(launchCloaked, 300);
 });
 
 document.addEventListener("keydown", (e) => {
-  if (e.key === "Escape") {
-    closeGame();
-    document.getElementById("settingsModal").style.display = "none";
-  }
+  if (e.key === "Escape") closeGame();
   if (e.key === "f") toggleFullscreen();
 });

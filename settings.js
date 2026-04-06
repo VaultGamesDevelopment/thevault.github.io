@@ -9,7 +9,8 @@ function applySettings() {
 
   UI.setTheme(theme);
   UI.setWeather(weather);
+
   localStorage.setItem("cloak", cloak);
 
-  document.getElementById("settingsModal").style.display = "none";
+  if (cloak !== "none") location.reload();
 }
