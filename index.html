@@ -275,15 +275,32 @@ if(e.key==="Escape") this.closeGame();
 },
 
 /* LOAD GAMES */
-async loadGames(){
-try{
-const res = await fetch("./g/assets/js/games.js");
-const text = await res.text();
-eval(text);
-this.games = games;
-}catch(e){
-console.error("Games failed to load:",e);
-}
+async loadGames() {
+    try {
+        const BASE_PATH = "https://vaultgamesdevelopment.github.io/thevault.github.io/";
+        // Dynamically create script tag
+        const script = document.createElement('script');
+        script.src = BASE_PATH + "g/assets/js/games.js";
+        script.async = true;
+
+        script.onload = () => {
+            if (typeof games !== 'undefined') {
+                this.games = games.map(g => ({ ...g }));
+                console.log("Games loaded:", this.games.length);
+            } else {
+                console.error("Games array not defined in games.js");
+            }
+        };
+
+        script.onerror = () => {
+            console.error("Failed to load games.js script.");
+        };
+
+        document.body.appendChild(script);
+
+    } catch (e) {
+        console.error("Games failed to load:", e);
+    }
 },
 
 /* IMAGE */
