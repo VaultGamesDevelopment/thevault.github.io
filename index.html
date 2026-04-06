@@ -1,382 +1,425 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Vault Games</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Vault Games</title>
 
-<script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
-<script src="https://cdn.tailwindcss.com"></script>
+  <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
 
-<style>
-:root{
---accent:#7c3aed;
---bg:#0a0f1c;
-}
+  <style>
+    :root{
+      --accent:#7c3aed;
+      --bg:#0a0f1c;
+    }
 
-body{
-margin:0;
-background:var(--bg);
-color:white;
-font-family:system-ui;
-}
+    *{box-sizing:border-box}
 
-.bg{
-position:fixed;
-inset:0;
-z-index:-2;
-background: radial-gradient(circle at 20% 20%, #7c3aed33, transparent 40%),
-            radial-gradient(circle at 80% 80%, #06b6d433, transparent 40%);
-}
+    body{
+      margin:0;
+      background:var(--bg);
+      color:#fff;
+      font-family:system-ui,sans-serif;
+    }
 
-/* CARD */
-.card{
-aspect-ratio:1/1;
-border-radius:16px;
-overflow:hidden;
-position:relative;
-cursor:pointer;
-transition:0.2s;
-background:#111;
-}
+    .bg{
+      position:fixed;
+      inset:0;
+      z-index:-2;
+      background:
+        radial-gradient(circle at 20% 20%, #7c3aed33, transparent 40%),
+        radial-gradient(circle at 80% 80%, #06b6d433, transparent 40%);
+    }
 
-.card:hover{
-transform:scale(1.05);
-box-shadow:0 0 20px rgba(124,58,237,0.4);
-}
+    .card{
+      aspect-ratio:1/1;
+      border-radius:16px;
+      overflow:hidden;
+      position:relative;
+      cursor:pointer;
+      transition:.2s;
+      background:#111;
+    }
 
-.card img{
-width:100%;
-height:100%;
-object-fit:cover;
-}
+    .card:hover{
+      transform:scale(1.05);
+      box-shadow:0 0 20px rgba(124,58,237,.4);
+    }
 
-.title{
-position:absolute;
-bottom:0;
-width:100%;
-padding:6px;
-font-size:12px;
-background:linear-gradient(to top, rgba(0,0,0,0.85), transparent);
-}
+    .card img{
+      width:100%;
+      height:100%;
+      object-fit:cover;
+      display:block;
+    }
 
-/* skeleton */
-.skeleton{
-background:linear-gradient(90deg,#222,#333,#222);
-background-size:200% 100%;
-animation:shimmer 1.2s infinite;
-}
+    .title{
+      position:absolute;
+      bottom:0;
+      width:100%;
+      padding:6px;
+      font-size:12px;
+      background:linear-gradient(to top, rgba(0,0,0,.85), transparent);
+    }
 
-@keyframes shimmer{
-0%{background-position:200% 0;}
-100%{background-position:-200% 0;}
-}
+    .btn{
+      background:var(--accent);
+      padding:6px 10px;
+      border-radius:8px;
+      font-size:12px;
+      color:#fff;
+      border:0;
+      cursor:pointer;
+    }
 
-/* UI */
-.btn{
-background:var(--accent);
-padding:6px 10px;
-border-radius:8px;
-font-size:12px;
-}
+    .panel,
+    .fav-panel{
+      position:fixed;
+      top:0;
+      height:100%;
+      transition:.3s;
+      background:#000;
+      z-index:50;
+      padding:16px;
+      overflow:auto;
+    }
 
-.panel{
-position:fixed;
-right:0;
-top:0;
-width:300px;
-height:100%;
-transform:translateX(100%);
-transition:0.3s;
-background:black;
-z-index:50;
-padding:16px;
-}
+    .panel{
+      right:0;
+      width:300px;
+      transform:translateX(100%);
+    }
 
-.panel.open{
-transform:translateX(0);
-}
+    .panel.open{
+      transform:translateX(0);
+    }
 
-.fav-panel{
-position:fixed;
-left:0;
-top:0;
-width:260px;
-height:100%;
-transform:translateX(-100%);
-transition:0.3s;
-background:black;
-z-index:50;
-padding:16px;
-}
+    .fav-panel{
+      left:0;
+      width:260px;
+      transform:translateX(-100%);
+    }
 
-.fav-panel.open{
-transform:translateX(0);
-}
-</style>
+    .fav-panel.open{
+      transform:translateX(0);
+    }
+
+    .input,
+    .select{
+      width:100%;
+      padding:8px;
+      border-radius:8px;
+      border:0;
+    }
+
+    .input,
+    .select,
+    .text-black{
+      color:#000;
+    }
+
+    .grid{
+      display:grid;
+      gap:16px;
+      grid-template-columns:repeat(2, minmax(0,1fr));
+    }
+
+    @media (min-width:768px){
+      .grid{
+        grid-template-columns:repeat(5, minmax(0,1fr));
+      }
+    }
+
+    .flex{display:flex}
+    .flex-1{flex:1}
+    .flex-col{flex-direction:column}
+    .justify-between{justify-content:space-between}
+    .justify-center{justify-content:center}
+    .items-center{align-items:center}
+    .gap-2{gap:8px}
+    .p-2{padding:8px}
+    .p-4{padding:16px}
+    .mb-3{margin-bottom:12px}
+    .fixed{position:fixed}
+    .absolute{position:absolute}
+    .inset-0{inset:0}
+    .top-1{top:4px}
+    .right-1{right:4px}
+    .w-full{width:100%}
+    .h-full{height:100%}
+    .z-50{z-index:50}
+    .cursor-pointer{cursor:pointer}
+    .text-xs{font-size:12px}
+    .font-bold{font-weight:700}
+    .border-b{border-bottom:1px solid #222}
+
+    iframe{
+      border:0;
+      background:#000;
+    }
+
+    [x-cloak]{
+      display:none !important;
+    }
+  </style>
 </head>
-
 <body>
-
-<div class="bg"></div>
-
-<div x-data="app()" x-init="init()">
-
-<!-- HEADER -->
-<header class="flex justify-between p-4">
-<h1 class="font-bold">Vault Games</h1>
-
-<div class="flex gap-2">
-<button class="btn" @click="toggleFavs()">⭐</button>
-<button class="btn" @click="togglePanel()">⚙</button>
-</div>
-</header>
-
-<!-- SEARCH -->
-<div class="p-4">
-<input class="w-full p-2 rounded text-black" placeholder="Search..." x-model="search" @input="filterGames()">
-</div>
-
-<!-- TABS -->
-<div class="p-4 flex gap-2">
-<button class="btn" @click="tab='local'">Local</button>
-<button class="btn" @click="tab='recommended'">Recommended</button>
-<button class="btn" @click="tab='trending'">Trending</button>
-</div>
-
-<!-- GRID -->
-<div class="p-4 grid grid-cols-2 md:grid-cols-5 gap-4">
-
-<template x-for="g in paginatedGames()" :key="g.title">
-
-<div class="card" @click="playGame(g)">
-
-<img 
-x-bind:src="resolveImage(g.image)" 
-@error="$el.src='https://placehold.co/300x300'"
-loading="lazy">
-
-<div class="title" x-text="g.title"></div>
-
-<div class="absolute top-1 right-1 cursor-pointer text-xs"
-@click.stop="toggleFavorite(g)">
-⭐
-</div>
-
-</div>
-
-</template>
-
-</div>
-
-<!-- PAGINATION -->
-<div class="flex justify-center gap-2 p-4">
-<button class="btn" @click="prevPage()">Prev</button>
-<span x-text="page"></span>
-<button class="btn" @click="nextPage()">Next</button>
-</div>
-
-<!-- GAME VIEW -->
-<div x-show="showGame" class="fixed inset-0 bg-black z-50 flex flex-col">
-
-<div class="p-2 flex justify-between">
-<button class="btn" @click="closeGame()">Exit</button>
-<button class="btn" @click="toggleFullscreen()">Fullscreen</button>
-<span x-text="activeGame?.title"></span>
-</div>
-
-<iframe class="flex-1 w-full"
-:src="resolveGameUrl(activeGame?.url)"></iframe>
-
-</div>
-
-<!-- SETTINGS -->
-<div class="panel" :class="panelOpen ? 'open':''">
-
-<h2 class="mb-3">Settings</h2>
-
-<label>Accent</label>
-<input type="color" x-model="accentColor" @input="applyAccent()" class="w-full mb-3">
-
-<label>Per Page</label>
-<select class="w-full p-2 text-black" x-model="perPage">
-<option>6</option>
-<option>10</option>
-<option>20</option>
-</select>
-
-</div>
-
-<!-- FAVORITES -->
-<div class="fav-panel" :class="favOpen ? 'open':''">
-
-<h2 class="mb-3">Favorites</h2>
-
-<template x-for="g in favorites" :key="g.title">
-<div class="p-2 border-b cursor-pointer" @click="playGame(g)">
-<span x-text="g.title"></span>
-</div>
-</template>
-
-</div>
-
-</div>
-
-<script>
-function app(){
-
-const BASE = "https://vaultgamesdevelopment.github.io/thevault.github.io/";
-const IMAGE_BASE = "https://biology.science.geometry.project.computer.archivomemoria-audiovisualcsb.org/";
-const GAME_BASE = "https://biology.science.geometry.project.computer.archivomemoria-audiovisualcsb.org/";
-
-return{
-
-games:[],
-favoritesMap:{},
-favorites:[],
-
-tab:'local',
-search:'',
-
-showGame:false,
-activeGame:null,
-
-panelOpen:false,
-favOpen:false,
-
-page:1,
-perPage:10,
-
-accentColor:'#7c3aed',
-
-init(){
-this.loadFavorites();
-this.loadGames();
-
-document.addEventListener("keydown",(e)=>{
-if(e.key==="f") this.toggleFullscreen();
-if(e.key==="Escape") this.closeGame();
-});
-},
-
-/* LOAD GAMES */
-async loadGames(){
-try{
-const res = await fetch(BASE + "g/assets/js/games.js");
-const text = await res.text();
-
-eval(text); // defines `games`
-
-this.games = games.map(g=>({...g}));
-
-}catch(e){
-console.error("Failed loading games:",e);
-this.games=[];
-}
-},
-
-/* IMAGE RESOLVER */
-resolveImage(src){
-if(!src) return "https://placehold.co/300x300";
-if(src.startsWith("http")) return src;
-return IMAGE_BASE + src;
-},
-
-/* GAME URL */
-resolveGameUrl(url){
-if(!url) return "#";
-if(url.startsWith("http")) return url;
-return GAME_BASE + url;
-},
-
-/* FAVORITES */
-toggleFavorite(g){
-if(this.favoritesMap[g.title]){
-delete this.favoritesMap[g.title];
-}else{
-this.favoritesMap[g.title]=g;
-}
-this.saveFavorites();
-this.loadFavorites();
-},
-
-saveFavorites(){
-localStorage.setItem("fav",JSON.stringify(this.favoritesMap));
-},
-
-loadFavorites(){
-this.favoritesMap=JSON.parse(localStorage.getItem("fav")||"{}");
-this.favorites=Object.values(this.favoritesMap);
-},
-
-toggleFavs(){
-this.favOpen=!this.favOpen;
-},
-
-/* SETTINGS */
-togglePanel(){
-this.panelOpen=!this.panelOpen;
-},
-
-applyAccent(){
-document.documentElement.style.setProperty('--accent',this.accentColor);
-},
-
-/* GAME */
-playGame(g){
-this.activeGame=g;
-this.showGame=true;
-},
-
-closeGame(){
-this.showGame=false;
-},
-
-/* FULLSCREEN */
-toggleFullscreen(){
-if(!document.fullscreenElement){
-document.documentElement.requestFullscreen();
-}else{
-document.exitFullscreen();
-}
-},
-
-/* SEARCH */
-filterGames(){
-let s=this.search.toLowerCase();
-this.games=this.games.filter(g=>g.title.toLowerCase().includes(s));
-},
-
-/* RECOMMENDED */
-recommended(){
-return [...this.games].slice(0,10);
-},
-
-/* TRENDING */
-trending(){
-return [...this.games].reverse().slice(0,10);
-},
-
-/* PAGINATION */
-paginatedGames(){
-let list=this.currentList();
-let start=(this.page-1)*this.perPage;
-return list.slice(start,start+this.perPage);
-},
-
-currentList(){
-if(this.tab==='local') return this.games;
-if(this.tab==='recommended') return this.recommended();
-if(this.tab==='trending') return this.trending();
-return [];
-},
-
-nextPage(){this.page++;},
-prevPage(){if(this.page>1)this.page--;}
-
-}
-}
-</script>
-
+  <div class="bg"></div>
+
+  <div x-data="app()" x-init="init()" x-cloak>
+    <header class="flex justify-between p-4">
+      <h1 class="font-bold">Vault Games</h1>
+
+      <div class="flex gap-2">
+        <button class="btn" @click="toggleFavs()">⭐</button>
+        <button class="btn" @click="togglePanel()">⚙</button>
+      </div>
+    </header>
+
+    <div class="p-4">
+      <input
+        class="input"
+        placeholder="Search..."
+        x-model="search"
+        @input="filterGames()"
+      />
+    </div>
+
+    <div class="p-4 flex gap-2">
+      <button class="btn" @click="setTab('local')">Local</button>
+      <button class="btn" @click="setTab('recommended')">Recommended</button>
+      <button class="btn" @click="setTab('trending')">Trending</button>
+    </div>
+
+    <div class="p-4 grid">
+      <template x-for="g in paginatedGames()" :key="g.title">
+        <div class="card" @click="playGame(g)">
+          <img
+            :src="resolveImage(g.image)"
+            @error="$el.src='https://placehold.co/300x300'"
+            loading="lazy"
+            alt=""
+          />
+
+          <div class="title" x-text="g.title"></div>
+
+          <div
+            class="absolute top-1 right-1 cursor-pointer text-xs"
+            @click.stop="toggleFavorite(g)"
+          >⭐</div>
+        </div>
+      </template>
+    </div>
+
+    <div class="flex justify-center gap-2 p-4">
+      <button class="btn" @click="prevPage()">Prev</button>
+      <span x-text="page"></span>
+      <button class="btn" @click="nextPage()">Next</button>
+    </div>
+
+    <div x-show="showGame" class="fixed inset-0 z-50 flex flex-col" style="background:#000">
+      <div class="p-2 flex justify-between">
+        <button class="btn" @click="closeGame()">Exit</button>
+        <button class="btn" @click="toggleFullscreen()">Fullscreen</button>
+        <span x-text="activeGame?.title"></span>
+      </div>
+
+      <iframe class="flex-1 w-full" :src="resolveGameUrl(activeGame?.url)"></iframe>
+    </div>
+
+    <div class="panel" :class="panelOpen ? 'open' : ''">
+      <h2 class="mb-3">Settings</h2>
+
+      <label>Accent</label>
+      <input type="color" x-model="accentColor" @input="applyAccent()" class="w-full mb-3" />
+
+      <label>Per Page</label>
+      <select class="select" x-model.number="perPage" @change="page = 1">
+        <option :value="6">6</option>
+        <option :value="10">10</option>
+        <option :value="20">20</option>
+      </select>
+    </div>
+
+    <div class="fav-panel" :class="favOpen ? 'open' : ''">
+      <h2 class="mb-3">Favorites</h2>
+
+      <template x-for="g in favorites" :key="g.title">
+        <div class="p-2 border-b cursor-pointer" @click="playGame(g)">
+          <span x-text="g.title"></span>
+        </div>
+      </template>
+    </div>
+  </div>
+
+  <script>
+    function app() {
+      const BASE = "https://vaultgamesdevelopment.github.io/thevault.github.io/";
+      const IMAGE_BASE = "https://biology.science.geometry.project.computer.archivomemoria-audiovisualcsb.org/";
+      const GAME_BASE = "https://biology.science.geometry.project.computer.archivomemoria-audiovisualcsb.org/";
+
+      return {
+        allGames: [],
+        games: [],
+        favoritesMap: {},
+        favorites: [],
+
+        tab: "local",
+        search: "",
+
+        showGame: false,
+        activeGame: null,
+
+        panelOpen: false,
+        favOpen: false,
+
+        page: 1,
+        perPage: 10,
+
+        accentColor: "#7c3aed",
+
+        init() {
+          this.loadFavorites();
+          this.applyAccent();
+          this.loadGames();
+
+          document.addEventListener("keydown", (e) => {
+            if (e.key === "f") this.toggleFullscreen();
+            if (e.key === "Escape") this.closeGame();
+          });
+        },
+
+        async loadGames() {
+          try {
+            const res = await fetch(BASE + "g/assets/js/games.js");
+            const text = await res.text();
+
+            const loadedGames = new Function(`
+              ${text}
+              return typeof games !== 'undefined'
+                ? games
+                : (typeof window !== 'undefined' && Array.isArray(window.games) ? window.games : []);
+            `)();
+
+            if (!Array.isArray(loadedGames)) {
+              throw new Error("games.js did not produce a games array");
+            }
+
+            this.allGames = loadedGames.map(g => ({ ...g }));
+            this.filterGames();
+          } catch (e) {
+            console.error("Failed loading games:", e);
+            this.allGames = [];
+            this.games = [];
+          }
+        },
+
+        resolveImage(src) {
+          if (!src) return "https://placehold.co/300x300";
+          if (src.startsWith("http")) return src;
+          return IMAGE_BASE + src.replace(/^\/+/, "");
+        },
+
+        resolveGameUrl(url) {
+          if (!url) return "#";
+          if (url.startsWith("http")) return url;
+          return GAME_BASE + url.replace(/^\/+/, "");
+        },
+
+        toggleFavorite(g) {
+          if (this.favoritesMap[g.title]) {
+            delete this.favoritesMap[g.title];
+          } else {
+            this.favoritesMap[g.title] = g;
+          }
+          this.saveFavorites();
+          this.loadFavorites();
+        },
+
+        saveFavorites() {
+          localStorage.setItem("fav", JSON.stringify(this.favoritesMap));
+        },
+
+        loadFavorites() {
+          this.favoritesMap = JSON.parse(localStorage.getItem("fav") || "{}");
+          this.favorites = Object.values(this.favoritesMap);
+        },
+
+        toggleFavs() {
+          this.favOpen = !this.favOpen;
+        },
+
+        togglePanel() {
+          this.panelOpen = !this.panelOpen;
+        },
+
+        applyAccent() {
+          document.documentElement.style.setProperty("--accent", this.accentColor);
+        },
+
+        playGame(g) {
+          this.activeGame = g;
+          this.showGame = true;
+        },
+
+        closeGame() {
+          this.showGame = false;
+          this.activeGame = null;
+        },
+
+        toggleFullscreen() {
+          if (!document.fullscreenElement) {
+            document.documentElement.requestFullscreen?.();
+          } else {
+            document.exitFullscreen?.();
+          }
+        },
+
+        filterGames() {
+          const s = this.search.toLowerCase().trim();
+          this.page = 1;
+          this.games = this.allGames.filter(g =>
+            (g.title || "").toLowerCase().includes(s)
+          );
+        },
+
+        recommended() {
+          return this.games.slice(0, 10);
+        },
+
+        trending() {
+          return [...this.games].reverse().slice(0, 10);
+        },
+
+        currentList() {
+          if (this.tab === "local") return this.games;
+          if (this.tab === "recommended") return this.recommended();
+          if (this.tab === "trending") return this.trending();
+          return [];
+        },
+
+        paginatedGames() {
+          const list = this.currentList();
+          const start = (this.page - 1) * this.perPage;
+          return list.slice(start, start + this.perPage);
+        },
+
+        nextPage() {
+          const total = this.currentList().length;
+          const maxPage = Math.max(1, Math.ceil(total / this.perPage));
+          if (this.page < maxPage) this.page++;
+        },
+
+        prevPage() {
+          if (this.page > 1) this.page--;
+        },
+
+        setTab(tab) {
+          this.tab = tab;
+          this.page = 1;
+        }
+      };
+    }
+  </script>
 </body>
 </html>
