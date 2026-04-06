@@ -3,153 +3,160 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>The Vault | Premium Arcade</title>
+    <title id="tab-title">The Vault | Premium Arcade</title>
+    <link id="tab-favicon" rel="icon" type="image/x-icon" href="https://www.gamepix.com/favicon.ico">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg-color: #0f0f0f;
-            --text-color: #e0e0e0;
-            --accent-color: #00d4ff;
-            --card-bg: #1a1a1a;
-            --nav-bg: rgba(20, 20, 20, 0.8);
+            --bg-color: #000000;
+            --text-color: #ffffff;
+            --accent-color: #ffffff;
+            --card-bg: #000000;
+            --border-color: #333333;
+            --nav-bg: rgba(0, 0, 0, 0.7);
+            --secondary-text: #888888;
         }
 
         [data-theme="light"] {
-            --bg-color: #f5f5f7;
-            --text-color: #1d1d1f;
-            --accent-color: #0071e3;
+            --bg-color: #ffffff;
+            --text-color: #000000;
+            --accent-color: #000000;
             --card-bg: #ffffff;
-            --nav-bg: rgba(245, 245, 247, 0.8);
+            --border-color: #eaeaea;
+            --nav-bg: rgba(255, 255, 255, 0.7);
+            --secondary-text: #666666;
         }
 
         [data-theme="cyberpunk"] {
-            --bg-color: #050505;
+            --bg-color: #0d0211;
             --text-color: #00ff9f;
             --accent-color: #f20587;
-            --card-bg: #0d0d0d;
-            --nav-bg: rgba(5, 5, 5, 0.9);
+            --card-bg: #1a0033;
+            --border-color: #f20587;
+            --nav-bg: rgba(13, 2, 17, 0.8);
+            --secondary-text: #00ff9f;
         }
 
         body, html {
-            margin: 0;
-            padding: 0;
-            height: 100%;
+            margin: 0; padding: 0; height: 100%;
             font-family: 'Inter', sans-serif;
             background-color: var(--bg-color);
             color: var(--text-color);
-            overflow-x: hidden;
-            transition: background 0.4s ease;
+            transition: background 0.3s ease;
         }
 
+        /* Weather Engine */
         #weather-overlay {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            pointer-events: none;
-            z-index: 1;
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none; z-index: 1;
         }
-
-        .weather-item {
-            position: absolute;
-            top: -50px;
-            pointer-events: none;
-            animation: fall linear infinite;
-        }
-
+        .weather-item { position: absolute; top: -50px; animation: fall linear infinite; }
         @keyframes fall { to { transform: translateY(110vh); } }
 
+        /* Header & Navigation */
         header {
-            position: sticky;
-            top: 0;
+            position: sticky; top: 0;
             padding: 1rem 5%;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+            display: flex; justify-content: space-between; align-items: center;
             background: var(--nav-bg);
-            backdrop-filter: blur(15px);
+            backdrop-filter: saturate(180%) blur(20px);
             z-index: 100;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            border-bottom: 1px solid var(--border-color);
         }
 
-        .logo {
-            font-size: 1.5rem;
-            font-weight: 800;
-            color: var(--accent-color);
-            text-shadow: 0 0 15px var(--accent-color);
+        .logo { font-weight: 800; font-size: 1.2rem; letter-spacing: -0.05em; }
+
+        .search-container {
+            flex-grow: 1;
+            max-width: 400px;
+            margin: 0 20px;
+            position: relative;
         }
 
+        #game-search {
+            width: 100%;
+            padding: 8px 16px;
+            background: var(--bg-color);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            color: var(--text-color);
+            font-family: inherit;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        #game-search:focus { border-color: var(--text-color); }
+
+        /* Main Content */
         main { position: relative; z-index: 2; padding: 2rem 5%; }
 
         .game-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-            gap: 25px;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 24px;
         }
 
         .game-card {
             background: var(--card-bg);
-            border-radius: 16px;
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
             overflow: hidden;
             cursor: pointer;
-            transition: all 0.3s ease;
-            border: 1px solid rgba(255,255,255,0.05);
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         .game-card:hover {
-            transform: translateY(-8px);
-            border-color: var(--accent-color);
+            border-color: var(--text-color);
+            transform: translateY(-4px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
         }
 
         .game-card img { width: 100%; aspect-ratio: 1/1; object-fit: cover; }
-        .game-info { padding: 15px; }
-        .game-info h3 { margin: 0; font-size: 1rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .game-info { padding: 12px; }
+        .game-info h3 { margin: 0; font-size: 0.9rem; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .game-info span { font-size: 0.75rem; color: var(--secondary-text); }
 
-        /* Loader & Sentinel */
-        #loader {
-            text-align: center;
-            padding: 40px;
-            font-size: 0.9rem;
-            color: var(--accent-color);
-            display: none;
-        }
-
-        #sentinel { height: 50px; width: 100%; }
-
-        /* Settings & Game View */
+        /* Settings Modal */
         #settings-modal {
-            display: none;
-            position: fixed;
-            top: 50%; left: 50%;
+            display: none; position: fixed; top: 50%; left: 50%;
             transform: translate(-50%, -50%);
-            background: var(--card-bg);
-            padding: 2rem;
-            border-radius: 24px;
-            z-index: 1000;
-            width: 90%; max-width: 400px;
-            border: 1px solid var(--accent-color);
+            background: var(--bg-color);
+            padding: 2rem; border-radius: 12px;
+            z-index: 1000; width: 90%; max-width: 400px;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.3);
         }
 
         .modal-overlay {
-            display: none;
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.85);
-            z-index: 999;
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.5); z-index: 999; backdrop-filter: blur(4px);
         }
 
-        #game-view {
-            display: none;
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: #000;
-            z-index: 2000;
-        }
-
-        .controls { position: absolute; top: 20px; left: 20px; z-index: 2001; }
+        /* Buttons */
         button {
-            padding: 10px 20px; border-radius: 8px; border: none;
-            background: var(--accent-color); color: white; font-weight: 600; cursor: pointer;
+            padding: 8px 16px; border-radius: 6px; border: 1px solid var(--border-color);
+            background: var(--bg-color); color: var(--text-color);
+            font-weight: 600; cursor: pointer; transition: all 0.2s;
+            font-size: 0.85rem;
         }
 
-        .btn-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; }
+        button:hover { background: var(--text-color); color: var(--bg-color); }
+
+        .btn-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 8px; }
+        .label { font-size: 11px; font-weight: 600; text-transform: uppercase; color: var(--secondary-text); margin-top: 16px; display: block; }
+
+        /* Loader */
+        #loader { text-align: center; padding: 40px; color: var(--secondary-text); font-size: 0.8rem; }
+        #sentinel { height: 1px; }
+
+        /* Fullscreen Game */
+        #game-view {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: #000; z-index: 2000;
+        }
+        .close-btn { position: absolute; top: 20px; left: 20px; z-index: 2001; }
+        iframe { border: none; width: 100%; height: 100%; }
+
     </style>
 </head>
 <body>
@@ -157,62 +164,100 @@
     <div id="weather-overlay"></div>
 
     <header>
-        <div class="logo">The Vault</div>
-        <button onclick="toggleSettings(true)">System Settings</button>
+        <div class="logo">THE VAULT</div>
+        
+        <div class="search-container">
+            <input type="text" id="game-search" placeholder="Search the archive..." onkeyup="filterGames()">
+        </div>
+
+        <button onclick="toggleSettings(true)">Settings</button>
     </header>
 
     <main>
-        <div class="game-grid" id="game-grid">
-            </div>
-        
-        <div id="loader">ACCESSING VAULT DATA...</div>
+        <div class="game-grid" id="game-grid"></div>
+        <div id="loader">Syncing database...</div>
         <div id="sentinel"></div>
     </main>
 
     <div id="game-view">
-        <div class="controls"><button onclick="closeGame()">← Return to Vault</button></div>
+        <button class="close-btn" onclick="closeGame()">Esc — Close</button>
         <div id="iframe-container" style="width: 100%; height: 100%;"></div>
     </div>
 
     <div class="modal-overlay" id="modal-overlay" onclick="toggleSettings(false)"></div>
     <div id="settings-modal">
-        <h2 style="margin-top:0">Terminal Config</h2>
+        <h2 style="margin:0 0 20px 0; font-size: 1.25rem;">Preferences</h2>
+        
+        <span class="label">Cloak Protocol</span>
         <div class="btn-grid">
-            <button onclick="setTheme('dark')">Onyx</button>
-            <button onclick="setTheme('light')">Polar</button>
-            <button onclick="setTheme('cyberpunk')" style="grid-column: span 2;">Neon Protocol</button>
+            <button onclick="setCloak('none')">Default</button>
+            <button onclick="setCloak('google')">Google</button>
+            <button onclick="setCloak('classroom')">Classes</button>
+            <button onclick="setCloak('drive')">Drive</button>
         </div>
-        <hr style="margin:20px 0; border:0; border-top:1px solid #444;">
+
+        <span class="label">System Theme</span>
+        <div class="btn-grid">
+            <button onclick="setTheme('dark')">Dark</button>
+            <button onclick="setTheme('light')">Light</button>
+            <button onclick="setTheme('cyberpunk')" style="grid-column: span 2;">Cyberpunk</button>
+        </div>
+
+        <span class="label">Environment FX</span>
         <div class="btn-grid">
             <button onclick="setWeather('none')">Static</button>
             <button onclick="setWeather('rain')">Rain</button>
             <button onclick="setWeather('snow')">Snow</button>
         </div>
-        <button style="width: 100%; margin-top: 20px; background: #333;" onclick="toggleSettings(false)">Close</button>
+
+        <button style="width: 100%; margin-top: 24px; background: var(--text-color); color: var(--bg-color);" onclick="toggleSettings(false)">Apply & Close</button>
     </div>
 
     <script>
         const SID = "1";
         let nextUrl = `https://feeds.gamepix.com/v2/json?order=quality&pagination=48&sid=${SID}`;
         let isLoading = false;
+        let allGamesData = [];
 
-        /**
-         * Fetching Logic
-         */
+        // --- SEARCH LOGIC ---
+        function filterGames() {
+            const query = document.getElementById('game-search').value.toLowerCase();
+            const cards = document.querySelectorAll('.game-card');
+            
+            cards.forEach(card => {
+                const title = card.getAttribute('data-title');
+                card.style.display = title.includes(query) ? 'block' : 'none';
+            });
+        }
+
+        // --- TAB CLOAKING ---
+        function setCloak(type) {
+            const title = document.getElementById('tab-title');
+            const favicon = document.getElementById('tab-favicon');
+            const presets = {
+                'google': { title: 'Google', icon: 'https://www.google.com/favicon.ico' },
+                'classroom': { title: 'Classes', icon: 'https://ssl.gstatic.com/classroom/favicon.png' },
+                'drive': { title: 'My Drive - Google Drive', icon: 'https://ssl.gstatic.com/docs/doclist/images/adrive/dw-favicon.ico' },
+                'none': { title: 'The Vault | Premium Arcade', icon: 'https://www.gamepix.com/favicon.ico' }
+            };
+            const s = presets[type];
+            title.innerText = s.title;
+            favicon.href = s.icon;
+            localStorage.setItem('vault-cloak', type);
+        }
+
+        // --- API & RENDERING ---
         async function fetchGames() {
             if (isLoading || !nextUrl) return;
-            
             isLoading = true;
             document.getElementById('loader').style.display = 'block';
-
             try {
                 const response = await fetch(nextUrl);
                 const data = await response.json();
-                
                 renderGames(data.items);
-                nextUrl = data.next_url || null; // Update the URL for the next page
+                nextUrl = data.next_url || null;
             } catch (err) {
-                console.error("Vault pagination error", err);
+                console.error("Access Denied:", err);
             } finally {
                 isLoading = false;
                 document.getElementById('loader').style.display = 'none';
@@ -224,38 +269,30 @@
             items.forEach(item => {
                 const card = document.createElement('div');
                 card.className = 'game-card';
+                card.setAttribute('data-title', item.title.toLowerCase());
                 card.onclick = () => launchGame(item.namespace);
                 card.innerHTML = `
                     <img src="${item.banner_image}" alt="${item.title}" loading="lazy">
                     <div class="game-info">
                         <h3>${item.title}</h3>
-                        <span style="font-size: 0.7rem; opacity: 0.6">${item.category.toUpperCase()}</span>
+                        <span>${item.category.toUpperCase()}</span>
                     </div>
                 `;
                 grid.appendChild(card);
             });
         }
 
-        /**
-         * Infinite Scroll Observer
-         */
         const observer = new IntersectionObserver((entries) => {
-            if (entries[0].isIntersecting) {
-                fetchGames();
-            }
+            if (entries[0].isIntersecting) fetchGames();
         }, { threshold: 0.1 });
-
         observer.observe(document.getElementById('sentinel'));
 
-        /**
-         * Core Functions
-         */
+        // --- SYSTEM UTILS ---
         function launchGame(ns) {
             const view = document.getElementById('game-view');
             const container = document.getElementById('iframe-container');
             const frame = document.createElement('iframe');
             frame.src = `https://play.gamepix.com/${ns}/embed?sid=${SID}`;
-            frame.setAttribute('frameborder', '0');
             container.innerHTML = '';
             container.appendChild(frame);
             view.style.display = 'block';
@@ -277,22 +314,24 @@
             const overlay = document.getElementById('weather-overlay');
             overlay.innerHTML = '';
             if (type === 'none') return;
-            for (let i = 0; i < 60; i++) {
+            for (let i = 0; i < 50; i++) {
                 const el = document.createElement('div');
                 el.className = 'weather-item';
                 el.style.left = Math.random() * 100 + '%';
-                el.style.animationDuration = (0.5 + Math.random() * 2) + 's';
+                el.style.animationDuration = (Math.random() * 2 + 1) + 's';
                 el.style.animationDelay = `-${Math.random() * 5}s`;
                 if (type === 'rain') {
-                    el.style.width = '1px'; el.style.height = '30px';
-                    el.style.background = 'rgba(255,255,255,0.2)';
+                    el.style.width = '1px'; el.style.height = '20px'; el.style.background = 'var(--secondary-text)';
                 } else {
-                    el.style.width = '4px'; el.style.height = '4px';
-                    el.style.background = '#fff'; el.style.borderRadius = '50%';
+                    el.style.width = '3px'; el.style.height = '3px'; el.style.background = '#fff'; el.style.borderRadius = '50%';
                 }
                 overlay.appendChild(el);
             }
         }
+
+        // Init
+        const savedCloak = localStorage.getItem('vault-cloak');
+        if (savedCloak) setCloak(savedCloak);
     </script>
 </body>
 </html>
