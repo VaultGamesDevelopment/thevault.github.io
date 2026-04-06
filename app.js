@@ -1,42 +1,41 @@
 const BASE_URL = "https://biology.science.geometry.project.computer.archivomemoria-audiovisualcsb.org/";
 
-// ------------------------
-// SETTINGS
-// ------------------------
+// Optional proxy fallback (helps bypass hotlink blocking)
+const PROXY = "https://images.weserv.nl/?url=";
+
+// Settings
 const settings = {
   showDesc: true,
   darkMode: true
 };
 
-// Load settings from localStorage
 function loadSettings() {
   const saved = localStorage.getItem("vault_settings");
-  if (saved) {
-    Object.assign(settings, JSON.parse(saved));
-  }
+  if (saved) Object.assign(settings, JSON.parse(saved));
 }
 
-// Save settings
 function saveSettings() {
   localStorage.setItem("vault_settings", JSON.stringify(settings));
 }
 
-// ------------------------
-// IMAGE FIX
-// ------------------------
+// Fix image URLs + fallback proxy
 function getImageUrl(path) {
   if (!path) return "";
+
+  // Absolute URL
   if (path.startsWith("http")) return path;
-  return BASE_URL + path;
+
+  const direct = BASE_URL + path;
+
+  // Proxy fallback (encoded)
+  const proxyUrl = PROXY + encodeURIComponent(direct);
+
+  return direct; // start with direct
 }
 
-// ------------------------
-// RENDER UI
-// ------------------------
+// Render
 const container = document.getElementById("gamesContainer");
 const searchInput = document.getElementById("searchInput");
-const toggleDescBtn = document.getElementById("toggleDesc");
-const toggleThemeBtn = document.getElementById("toggleTheme");
 
 function renderGames(filter = "") {
   container.innerHTML = "";
@@ -50,10 +49,16 @@ function renderGames(filter = "") {
     card.className = "game-card";
 
     const img = document.createElement("img");
-    img.src = getImageUrl(game.image);
 
+    const directUrl = getImageUrl(game.image);
+
+    // Try direct first
+    img.src = directUrl;
+
+    // If fails → fallback proxy
     img.onerror = () => {
-      img.src = "https://via.placeholder.com/300x150?text=No+Image";
+      img.onerror = null;
+      img.src = "https://images.weserv.nl/?url=" + encodeURIComponent(BASE_URL + game.image);
     };
 
     const content = document.createElement("div");
@@ -81,35 +86,29 @@ function renderGames(filter = "") {
   });
 }
 
-// ------------------------
-// EVENTS
-// ------------------------
+// UI Controls
+document.getElementById("toggleDesc").onclick = () => {
+  settings.showDesc = !settings.showDesc;
+  saveSettings();
+  renderGames(searchInput.value);
+};
+
+document.getElementById("toggleTheme").onclick = () => {
+  settings.darkMode = !settings.darkMode;
+  saveSettings();
+  applyTheme();
+};
+
 searchInput.addEventListener("input", (e) => {
   renderGames(e.target.value);
 });
 
-toggleDescBtn.addEventListener("click", () => {
-  settings.showDesc = !settings.showDesc;
-  saveSettings();
-  renderGames(searchInput.value);
-});
-
-toggleThemeBtn.addEventListener("click", () => {
-  settings.darkMode = !settings.darkMode;
-  saveSettings();
-  applyTheme();
-});
-
-// ------------------------
-// THEME
-// ------------------------
+// Theme
 function applyTheme() {
   document.body.className = settings.darkMode ? "dark" : "light";
 }
 
-// ------------------------
-// INIT
-// ------------------------
+// Init
 loadSettings();
 applyTheme();
 renderGames();
