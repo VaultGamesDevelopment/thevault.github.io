@@ -10,31 +10,25 @@
 
 <body>
 
-<!-- WEATHER -->
 <div id="weatherFx" class="weather-bg"></div>
 
-<!-- HEADER -->
 <header class="header">
   <h1>VAULT</h1>
 
   <input id="searchInput" placeholder="Search games...">
 
-  <div class="header-actions">
-    <button onclick="openSettings()">⚙️</button>
-  </div>
+  <button class="btn-ghost" onclick="openSettings()">⚙️</button>
 </header>
 
-<!-- MAIN -->
 <main id="gameGrid" class="grid"></main>
 
-<!-- FAVORITES -->
 <div id="favorites" class="sidebar"></div>
 
 <!-- GAME VIEW -->
 <div id="gameViewer" class="game-viewer">
   <div class="topbar">
-    <button onclick="closeGame()">EXIT</button>
-    <button onclick="toggleFullscreen()">FULLSCREEN</button>
+    <button class="btn-danger" onclick="closeGame()">EXIT</button>
+    <button class="btn" onclick="toggleFullscreen()">FULLSCREEN</button>
   </div>
   <iframe id="gameFrame"></iframe>
 </div>
@@ -67,7 +61,7 @@
       <option value="blob">Google Docs</option>
     </select>
 
-    <button onclick="applySettings()">Apply</button>
+    <button class="btn" onclick="applySettings()">Apply</button>
   </div>
 </div>
 
