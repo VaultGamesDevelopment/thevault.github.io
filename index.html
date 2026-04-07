@@ -543,15 +543,26 @@ if (savedVolume !== null) {
     music.volume = 0.5;
 }
 
-// Autoplay if previously enabled
-if (musicEnabled) {
-    music.play().catch(() => {});
+// Proper user-gesture unlock
+let musicUnlocked = false;
+
+function unlockMusic() {
+    if (musicUnlocked) return;
+    musicUnlocked = true;
+
+    if (musicEnabled) {
+        music.play().catch(() => {});
+    }
+
+    document.removeEventListener("click", unlockMusic);
 }
+
+document.addEventListener("click", unlockMusic);
 
 // Toggle play/pause
 function toggleMusic() {
     if (music.paused) {
-        music.play().catch(() => {});
+        music.play().catch(err => console.log(err));
         localStorage.setItem("vault_music_enabled", "true");
     } else {
         music.pause();
@@ -567,13 +578,6 @@ if (volumeSlider) {
         localStorage.setItem("vault_music_volume", val);
     });
 }
-
-// Ensure music starts after user interaction (browser policy)
-document.addEventListener("click", () => {
-    if (localStorage.getItem("vault_music_enabled") === "true") {
-        music.play().catch(() => {});
-    }
-}, { once: true });
     </script>
 </body>
 </html>
