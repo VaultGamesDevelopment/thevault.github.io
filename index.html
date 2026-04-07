@@ -14,153 +14,178 @@
 
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
     <style>
-        :root {
-            --bg-color: #050505;
-            --text-color: #ffffff;
-            --accent-color: #3b82f6;
-            --card-bg: #0f0f0f;
-            --border-color: #262626;
-            --nav-bg: rgba(5, 5, 5, 0.8);
-            --secondary-text: #a3a3a3;
-            --glass: rgba(255, 255, 255, 0.03);
-        }
+       :root {
+    /* Default Dark Theme */
+    --bg-color: #050505;
+    --text-color: #ffffff;
+    --accent-color: #3b82f6;
+    --card-bg: #0f0f0f;
+    --border-color: #262626;
+    --nav-bg: rgba(5, 5, 5, 0.8);
+    --secondary-text: #a3a3a3;
+    --glass: rgba(255, 255, 255, 0.03);
+}
 
-        [data-theme="light"] {
-            --bg-color: #f5f5f5; --text-color: #171717; --card-bg: #ffffff;
-            --border-color: #e5e5e5; --nav-bg: rgba(245, 245, 245, 0.8); --secondary-text: #737373;
-        }
-
-        [data-theme="midnight"] {
-            --bg-color: #020617; --text-color: #f1f5f9; --card-bg: #0f172a;
-            --border-color: #1e293b; --accent-color: #38bdf8; --secondary-text: #94a3b8;
-        }
-
-        [data-theme="forest"] {
-            --bg-color: #052e16; --text-color: #f0fdf4; --card-bg: #064e3b;
-            --border-color: #065f46; --accent-color: #4ade80; --secondary-text: #a7f3d0;
-        }
-
-        [data-theme="crimson"] {
-            --bg-color: #450a0a; --text-color: #fef2f2; --card-bg: #7f1d1d;
-            --border-color: #991b1b; --accent-color: #f87171; --secondary-text: #fca5a5;
-        }
-
-        /* Deep Space: A darker blue with purple neon accents */
+/* --- THEME ENGINE --- */
+[data-theme="light"] {
+    --bg-color: #f5f5f5; --text-color: #171717; --card-bg: #ffffff;
+    --border-color: #e5e5e5; --nav-bg: rgba(245, 245, 245, 0.8); --secondary-text: #737373;
+}
+[data-theme="midnight"] {
+    --bg-color: #020617; --text-color: #f1f5f9; --card-bg: #0f172a;
+    --border-color: #1e293b; --accent-color: #38bdf8; --secondary-text: #94a3b8;
+}
+[data-theme="forest"] {
+    --bg-color: #052e16; --text-color: #f0fdf4; --card-bg: #064e3b;
+    --border-color: #065f46; --accent-color: #4ade80; --secondary-text: #a7f3d0;
+}
+[data-theme="crimson"] {
+    --bg-color: #450a0a; --text-color: #fef2f2; --card-bg: #7f1d1d;
+    --border-color: #991b1b; --accent-color: #f87171; --secondary-text: #fca5a5;
+}
 [data-theme="space"] {
-    --bg-color: #020205;
-    --text-color: #e2e8f0;
-    --card-bg: #090915;
-    --border-color: #1e1b4b;
-    --accent-color: #a855f7;
-    --secondary-text: #94a3b8;
+    --bg-color: #020205; --text-color: #e2e8f0; --card-bg: #090915;
+    --border-color: #1e1b4b; --accent-color: #a855f7; --secondary-text: #94a3b8;
 }
-
-/* Rose Quartz: A sophisticated dark mode with pinkish hues */
 [data-theme="rose"] {
-    --bg-color: #1a0f14;
-    --text-color: #fff1f2;
-    --card-bg: #2d1a22;
-    --border-color: #4c1d2f;
-    --accent-color: #fb7185;
-    --secondary-text: #fda4af;
+    --bg-color: #1a0f14; --text-color: #fff1f2; --card-bg: #2d1a22;
+    --border-color: #4c1d2f; --accent-color: #fb7185; --secondary-text: #fda4af;
 }
-
-/* Gold Edition: A premium black and gold aesthetic */
 [data-theme="gold"] {
-    --bg-color: #0a0a05;
-    --text-color: #fafaf9;
-    --card-bg: #1c1917;
-    --border-color: #44403c;
-    --accent-color: #eab308;
-    --secondary-text: #d6d3d1;
+    --bg-color: #0a0a05; --text-color: #fafaf9; --card-bg: #1c1917;
+    --border-color: #44403c; --accent-color: #eab308; --secondary-text: #d6d3d1;
 }
-
-/* Ultraviolet: High energy purple and cyan */
 [data-theme="uv"] {
-    --bg-color: #0f0720;
-    --text-color: #f5f3ff;
-    --card-bg: #1c1033;
-    --border-color: #3b0764;
-    --accent-color: #22d3ee;
-    --secondary-text: #a78bfa;
+    --bg-color: #0f0720; --text-color: #f5f3ff; --card-bg: #1c1033;
+    --border-color: #3b0764; --accent-color: #22d3ee; --secondary-text: #a78bfa;
 }
 
-        body, html {
-            margin: 0; padding: 0; height: 100%;
-            font-family: 'Inter', sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            overflow-x: hidden;
-        }
+/* --- CORE LAYOUT --- */
+body, html {
+    margin: 0; padding: 0; height: 100%;
+    font-family: 'Inter', sans-serif;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    overflow-x: hidden;
+}
 
-        /* Particles & Stars */
-        #weather-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1; }
-        .weather-item { position: absolute; top: -50px; animation: fall linear infinite; }
-        @keyframes fall { to { transform: translateY(110vh); } }
-        
-        #star-field {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            pointer-events: none; z-index: 0; transition: opacity 1s; opacity: 0;
-        }
-        .star {
-            position: absolute; background: #fff; border-radius: 50%;
-            animation: twinkle var(--duration) ease-in-out infinite;
-        }
-        @keyframes twinkle { 0%, 100% { opacity: 0.3; transform: scale(1); } 50% { opacity: 1; transform: scale(1.2); } }
+/* --- ATMOSPHERE (STARS & PARTICLES) --- */
+#star-field {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    pointer-events: none; z-index: 0; transition: opacity 1s; opacity: 0;
+}
+.star {
+    position: absolute; background: #fff; border-radius: 50%;
+    animation: twinkle var(--duration) ease-in-out infinite;
+}
+@keyframes twinkle { 0%, 100% { opacity: 0.3; transform: scale(1); } 50% { opacity: 1; transform: scale(1.2); } }
 
-        /* UI Elements */
-        header {
-            position: sticky; top: 0; padding: 1.2rem 5%;
-            display: flex; justify-content: space-between; align-items: center;
-            background: var(--nav-bg); backdrop-filter: blur(20px);
-            z-index: 100; border-bottom: 1px solid var(--border-color);
-        }
-        .logo { font-weight: 800; font-size: 1.2rem; cursor: pointer; letter-spacing: -0.05em; }
-        nav { display: flex; gap: 20px; }
-        nav a { color: var(--secondary-text); text-decoration: none; font-size: 0.8rem; font-weight: 600; cursor: pointer; text-transform: uppercase; transition: 0.2s; }
-        nav a.active { color: var(--text-color); }
+#weather-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1; }
+.weather-item { position: absolute; top: -50px; animation: fall linear infinite; }
+@keyframes fall { to { transform: translateY(110vh); } }
 
-        .search-container { flex-grow: 1; max-width: 300px; margin: 0 20px; }
-        #game-search {
-            width: 100%; padding: 12px 20px; font-family: inherit;
-            background: var(--glass); border: 1px solid var(--border-color);
-            border-radius: 12px; color: var(--text-color); outline: none; transition: 0.3s;
-        }
+/* --- HEADER & NAVIGATION --- */
+header {
+    position: sticky; top: 0; padding: 1.2rem 5%;
+    display: flex; justify-content: space-between; align-items: center;
+    background: var(--nav-bg); backdrop-filter: blur(20px);
+    z-index: 100; border-bottom: 1px solid var(--border-color);
+}
+.logo { font-weight: 800; font-size: 1.2rem; cursor: pointer; letter-spacing: -0.05em; }
+nav { display: flex; gap: 20px; }
+nav a { color: var(--secondary-text); text-decoration: none; font-size: 0.8rem; font-weight: 600; cursor: pointer; text-transform: uppercase; transition: 0.2s; }
+nav a.active { color: var(--text-color); }
 
-        .view-section { display: none; padding: 2.5rem 5%; position: relative; z-index: 2; }
-        .view-section.active { display: block; animation: fadeIn 0.4s ease; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+.search-container { flex-grow: 1; max-width: 300px; margin: 0 20px; }
+#game-search {
+    width: 100%; padding: 12px 20px; font-family: inherit;
+    background: var(--glass); border: 1px solid var(--border-color);
+    border-radius: 12px; color: var(--text-color); outline: none; transition: 0.3s;
+}
+#game-search:focus { border-color: var(--accent-color); background: rgba(255,255,255,0.08); }
 
-        .grid-container { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 20px; }
-        .game-card {
-            background: var(--card-bg); border: 1px solid var(--border-color);
-            border-radius: 14px; overflow: hidden; cursor: pointer; transition: 0.3s;
-        }
-        .game-card:hover {
-    transform: translateY(-5px);
-    border-color: var(--accent-color);
+/* --- GAME GRIDS --- */
+.view-section { display: none; padding: 2.5rem 5%; position: relative; z-index: 2; }
+.view-section.active { display: block; animation: fadeIn 0.4s ease; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+.grid-container { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 20px; }
+.game-card {
+    background: var(--card-bg); border: 1px solid var(--border-color);
+    border-radius: 14px; overflow: hidden; cursor: pointer; transition: 0.3s;
+}
+.game-card:hover { 
+    transform: translateY(-5px); 
+    border-color: var(--accent-color); 
     box-shadow: 0 10px 20px -5px var(--accent-color);
 }
-        .game-card img { width: 100%; aspect-ratio: 1/1; object-fit: cover; }
-        .game-info { padding: 12px; text-align: center; }
-        .game-info h3 { margin: 0; font-size: 0.8rem; font-weight: 600; }
+.game-card img { width: 100%; aspect-ratio: 1/1; object-fit: cover; }
+.game-info { padding: 12px; text-align: center; }
+.game-info h3 { margin: 0; font-size: 0.8rem; font-weight: 600; }
 
-        /* Settings */
-        #settings-modal {
-            display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
-            background: var(--card-bg); padding: 35px; border-radius: 24px; z-index: 1000;
-            width: 90%; max-width: 450px; border: 1px solid var(--border-color);
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7);
-        }
-        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 999; backdrop-filter: blur(10px); }
-        .setting-section { margin-bottom: 25px; }
-        .setting-title { font-size: 0.7rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.1em; color: var(--secondary-text); margin-bottom: 12px; display: block; }
-        .btn-row { display: flex; flex-wrap: wrap; gap: 8px; }
-        .opt-btn { padding: 8px 14px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--glass); color: var(--text-color); cursor: pointer; font-size: 0.75rem; font-weight: 600; transition: 0.2s; }
-        .opt-btn:hover { border-color: var(--text-color); }
-        
-        #game-view { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 2000; }
+/* --- PARTNER CARDS (RE-STYLED) --- */
+.partner-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 24px;
+    padding: 32px 24px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+    transition: all 0.3s ease;
+}
+.partner-card:hover {
+    transform: translateY(-8px);
+    border-color: var(--accent-color);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
+}
+.p-icon {
+    width: 80px; height: 80px; border-radius: 20px;
+    background: #000; display: flex; align-items: center; justify-content: center;
+    overflow: hidden; border: 1px solid var(--border-color); margin-bottom: 8px;
+}
+.p-icon img { width: 100%; height: 100%; object-fit: cover; }
+.partner-link {
+    width: 100%; padding: 14px; border-radius: 12px;
+    background: var(--accent-color); color: #fff;
+    text-decoration: none; font-size: 0.85rem; font-weight: 800;
+    transition: filter 0.2s; margin-top: 10px;
+}
+.partner-link:hover { filter: brightness(1.2); }
+
+/* --- SETTINGS MODAL --- */
+#settings-modal {
+    display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+    background: var(--card-bg); padding: 35px; border-radius: 24px; z-index: 1000;
+    width: 90%; max-width: 450px; border: 1px solid var(--border-color);
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7);
+}
+.modal-overlay { 
+    display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+    background: rgba(0,0,0,0.85); z-index: 999; backdrop-filter: blur(10px); 
+}
+.setting-section { margin-bottom: 25px; }
+.setting-title { 
+    font-size: 0.7rem; font-weight: 800; text-transform: uppercase; 
+    letter-spacing: 0.1em; color: var(--secondary-text); margin-bottom: 12px; display: block; 
+}
+.btn-row { display: flex; flex-wrap: wrap; gap: 8px; }
+.opt-btn { 
+    padding: 8px 14px; border-radius: 8px; border: 1px solid var(--border-color); 
+    background: var(--glass); color: var(--text-color); cursor: pointer; 
+    font-size: 0.75rem; font-weight: 600; transition: 0.2s; 
+}
+.opt-btn:hover { border-color: var(--text-color); }
+.opt-btn.active { background: var(--text-color); color: var(--bg-color); }
+
+/* --- GAME VIEWER --- */
+#game-view { 
+    display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+    background: #000; z-index: 2000; 
+}
     </style>
 </head>
 <body>
