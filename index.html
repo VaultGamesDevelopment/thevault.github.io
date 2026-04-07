@@ -1,243 +1,463 @@
 <!DOCTYPE html>
 <html lang="en" data-theme="dark">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>The Vault | Premium Arcade</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title id="tab-title">The Vault | Premium Arcade</title>
+    
+    <link id="tab-favicon" rel="icon" type="image/png" href="/favicon-96x96.png" sizes="96x96" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <meta name="apple-mobile-web-app-title" content="The Vault" />
+    <link rel="manifest" href="/site.webmanifest" />
 
-<link rel="icon" href="/favicon-96x96.png">
-
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
-
-<style>
-:root {
-    --bg-color:#050505; --text-color:#fff; --accent-color:#3b82f6;
-    --card-bg:#0f0f0f; --border-color:#262626;
-    --nav-bg:rgba(5,5,5,.8); --secondary-text:#a3a3a3;
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+       :root {
+    /* Default Dark Theme */
+    --bg-color: #050505;
+    --text-color: #ffffff;
+    --accent-color: #3b82f6;
+    --card-bg: #0f0f0f;
+    --border-color: #262626;
+    --nav-bg: rgba(5, 5, 5, 0.8);
+    --secondary-text: #a3a3a3;
+    --glass: rgba(255, 255, 255, 0.03);
 }
 
-[data-theme="midnight"] {--bg-color:#020617;--card-bg:#0f172a;--accent-color:#38bdf8;}
-[data-theme="space"] {--bg-color:#020205;--card-bg:#090915;--accent-color:#a855f7;}
-[data-theme="rose"] {--bg-color:#1a0f14;--card-bg:#2d1a22;--accent-color:#fb7185;}
-[data-theme="gold"] {--bg-color:#0a0a05;--card-bg:#1c1917;--accent-color:#eab308;}
-[data-theme="uv"] {--bg-color:#0f0720;--card-bg:#1c1033;--accent-color:#22d3ee;}
-
-body {margin:0;font-family:Inter;background:var(--bg-color);color:var(--text-color);}
-
-/* HEADER */
-header{
-display:flex;justify-content:space-between;align-items:center;
-padding:1rem 5%;position:sticky;top:0;
-background:var(--nav-bg);backdrop-filter:blur(20px);
-border-bottom:1px solid var(--border-color);
+/* --- THEME ENGINE --- */
+[data-theme="light"] {
+    --bg-color: #f5f5f5; --text-color: #171717; --card-bg: #ffffff;
+    --border-color: #e5e5e5; --nav-bg: rgba(245, 245, 245, 0.8); --secondary-text: #737373;
 }
-nav{display:flex;gap:20px}
-nav a{cursor:pointer;color:var(--secondary-text);font-size:.8rem}
-nav a.active{color:#fff}
-.logo{font-weight:800;cursor:pointer}
-
-#game-search{
-padding:10px;border-radius:10px;
-background:#111;border:1px solid var(--border-color);
-color:#fff;
+[data-theme="midnight"] {
+    --bg-color: #020617; --text-color: #f1f5f9; --card-bg: #0f172a;
+    --border-color: #1e293b; --accent-color: #38bdf8; --secondary-text: #94a3b8;
 }
-
-/* GRID */
-.view-section{display:none;padding:2rem 5%}
-.view-section.active{display:block}
-
-.grid-container{
-display:grid;
-grid-template-columns:repeat(auto-fill,minmax(180px,1fr));
-gap:15px;
+[data-theme="forest"] {
+    --bg-color: #052e16; --text-color: #f0fdf4; --card-bg: #064e3b;
+    --border-color: #065f46; --accent-color: #4ade80; --secondary-text: #a7f3d0;
+}
+[data-theme="crimson"] {
+    --bg-color: #450a0a; --text-color: #fef2f2; --card-bg: #7f1d1d;
+    --border-color: #991b1b; --accent-color: #f87171; --secondary-text: #fca5a5;
+}
+[data-theme="space"] {
+    --bg-color: #020205; --text-color: #e2e8f0; --card-bg: #090915;
+    --border-color: #1e1b4b; --accent-color: #a855f7; --secondary-text: #94a3b8;
+}
+[data-theme="rose"] {
+    --bg-color: #1a0f14; --text-color: #fff1f2; --card-bg: #2d1a22;
+    --border-color: #4c1d2f; --accent-color: #fb7185; --secondary-text: #fda4af;
+}
+[data-theme="gold"] {
+    --bg-color: #0a0a05; --text-color: #fafaf9; --card-bg: #1c1917;
+    --border-color: #44403c; --accent-color: #eab308; --secondary-text: #d6d3d1;
+}
+[data-theme="uv"] {
+    --bg-color: #0f0720; --text-color: #f5f3ff; --card-bg: #1c1033;
+    --border-color: #3b0764; --accent-color: #22d3ee; --secondary-text: #a78bfa;
 }
 
-.game-card{
-background:var(--card-bg);
-border:1px solid var(--border-color);
-border-radius:12px;
-overflow:hidden;
-cursor:pointer;
-transition:.2s;
-}
-.game-card:hover{
-transform:translateY(-4px);
-border-color:var(--accent-color);
+/* --- CORE LAYOUT --- */
+body {
+    margin: 0; padding: 0; height: 100%;
+    font-family: 'Inter', sans-serif;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    overflow-x: hidden;
 }
 
-.game-card img{width:100%;aspect-ratio:1/1;object-fit:cover}
-.game-info{text-align:center;padding:10px}
+/* Smooth Scroll & Selection */
+html { scroll-behavior: smooth; }
+::selection { background: var(--accent-color); color: white; }
 
-/* SETTINGS */
-#settings-modal{
-display:none;position:fixed;top:50%;left:50%;
-transform:translate(-50%,-50%);
-background:var(--card-bg);
-padding:25px;border-radius:16px;
-z-index:1000;width:90%;max-width:400px;
-}
-.modal-overlay{
-display:none;position:fixed;inset:0;
-background:rgba(0,0,0,.8);
-z-index:999;
-}
-.btn-row{display:flex;flex-wrap:wrap;gap:8px}
-.opt-btn{
-padding:8px 12px;border-radius:8px;
-border:1px solid var(--border-color);
-background:#111;color:#fff;cursor:pointer;
+/* Interactive Hover Glow for the Logo */
+.logo:hover {
+    color: var(--accent-color);
+    text-shadow: 0 0 15px var(--accent-color);
+    transition: 0.3s;
 }
 
-/* GAME VIEW */
-#game-view{
-display:none;position:fixed;inset:0;
-background:#000;z-index:2000;
+/* Skeleton Loading Animation */
+@keyframes shimmer {
+    0% { background-position: -468px 0; }
+    100% { background-position: 468px 0; }
 }
-</style>
+.loading-skeleton {
+    background: #f6f7f8;
+    background-image: linear-gradient(to right, var(--card-bg) 0%, var(--border-color) 20%, var(--card-bg) 40%, var(--card-bg) 100%);
+    background-repeat: no-repeat;
+    background-size: 800px 104px;
+    animation: shimmer 1.5s linear infinite forwards;
+}
+
+/* Notification Toast */
+#toast {
+    position: fixed; bottom: 20px; right: 20px; padding: 12px 24px;
+    background: var(--card-bg); border: 1px solid var(--accent-color);
+    border-radius: 12px; color: #fff; font-weight: 600; font-size: 0.8rem;
+    transform: translateY(100px); transition: 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    z-index: 9999; box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+}
+#toast.show { transform: translateY(0); }
+
+/* --- ATMOSPHERE (STARS & PARTICLES) --- */
+#star-field {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    pointer-events: none; z-index: 0; transition: opacity 1s; opacity: 0;
+}
+.star {
+    position: absolute; background: #fff; border-radius: 50%;
+    animation: twinkle var(--duration) ease-in-out infinite;
+}
+@keyframes twinkle { 0%, 100% { opacity: 0.3; transform: scale(1); } 50% { opacity: 1; transform: scale(1.2); } }
+
+#weather-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1; }
+.weather-item { position: absolute; top: -50px; animation: fall linear infinite; }
+@keyframes fall { to { transform: translateY(110vh); } }
+
+/* Update within your existing style or add this specific rule */
+.weather-item.snow {
+    width: 6px;
+    height: 6px;
+    background: #fff;
+    border-radius: 50%;
+    filter: blur(1px);
+    opacity: 0.8;
+}
+
+/* --- HEADER & NAVIGATION --- */
+header {
+    position: sticky; top: 0; padding: 1.2rem 5%;
+    display: flex; justify-content: space-between; align-items: center;
+    background: var(--nav-bg); backdrop-filter: blur(20px);
+    z-index: 100; border-bottom: 1px solid var(--border-color);
+}
+.logo { font-weight: 800; font-size: 1.2rem; cursor: pointer; letter-spacing: -0.05em; }
+nav { display: flex; gap: 20px; }
+nav a { color: var(--secondary-text); text-decoration: none; font-size: 0.8rem; font-weight: 600; cursor: pointer; text-transform: uppercase; transition: 0.2s; }
+nav a.active { color: var(--text-color); }
+
+.search-container { flex-grow: 1; max-width: 300px; margin: 0 20px; }
+#game-search {
+    width: 100%; padding: 12px 20px; font-family: inherit;
+    background: var(--glass); border: 1px solid var(--border-color);
+    border-radius: 12px; color: var(--text-color); outline: none; transition: 0.3s;
+}
+#game-search:focus { border-color: var(--accent-color); background: rgba(255,255,255,0.08); }
+
+/* --- GAME GRIDS --- */
+.view-section { display: none; padding: 2.5rem 5%; position: relative; z-index: 2; }
+.view-section.active { display: block; animation: fadeIn 0.4s ease; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+.grid-container { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 20px; }
+.game-card {
+    background: var(--card-bg); border: 1px solid var(--border-color);
+    border-radius: 14px; overflow: hidden; cursor: pointer; transition: 0.3s;
+}
+.game-card:hover { 
+    transform: translateY(-5px); 
+    border-color: var(--accent-color); 
+    box-shadow: 0 10px 20px -5px var(--accent-color);
+}
+.game-card img { width: 100%; aspect-ratio: 1/1; object-fit: cover; }
+.game-info { padding: 12px; text-align: center; }
+.game-info h3 { margin: 0; font-size: 0.8rem; font-weight: 600; }
+
+/* --- PARTNER CARDS (RE-STYLED) --- */
+.partner-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 24px;
+    padding: 32px 24px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+    transition: all 0.3s ease;
+}
+.partner-card:hover {
+    transform: translateY(-8px);
+    border-color: var(--accent-color);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
+}
+.p-icon {
+    width: 80px; height: 80px; border-radius: 20px;
+    background: #000; display: flex; align-items: center; justify-content: center;
+    overflow: hidden; border: 1px solid var(--border-color); margin-bottom: 8px;
+}
+.p-icon img { width: 100%; height: 100%; object-fit: cover; }
+.partner-link {
+    width: 100%; padding: 14px; border-radius: 12px;
+    background: var(--accent-color); color: #fff;
+    text-decoration: none; font-size: 0.85rem; font-weight: 800;
+    transition: filter 0.2s; margin-top: 10px;
+}
+.partner-link:hover { filter: brightness(1.2); }
+
+/* --- SETTINGS MODAL --- */
+#settings-modal {
+    display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+    background: var(--card-bg); padding: 35px; border-radius: 24px; z-index: 1000;
+    width: 90%; max-width: 450px; border: 1px solid var(--border-color);
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7);
+}
+.modal-overlay { 
+    display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+    background: rgba(0,0,0,0.85); z-index: 999; backdrop-filter: blur(10px); 
+}
+.setting-section { margin-bottom: 25px; }
+.setting-title { 
+    font-size: 0.7rem; font-weight: 800; text-transform: uppercase; 
+    letter-spacing: 0.1em; color: var(--secondary-text); margin-bottom: 12px; display: block; 
+}
+.btn-row { display: flex; flex-wrap: wrap; gap: 8px; }
+.opt-btn { 
+    padding: 8px 14px; border-radius: 8px; border: 1px solid var(--border-color); 
+    background: var(--glass); color: var(--text-color); cursor: pointer; 
+    font-size: 0.75rem; font-weight: 600; transition: 0.2s; 
+}
+.opt-btn:hover { border-color: var(--text-color); }
+.opt-btn.active { background: var(--text-color); color: var(--bg-color); }
+
+/* --- GAME VIEWER --- */
+#game-view { 
+    display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+    background: #000; z-index: 2000; 
+}
+    </style>
 </head>
-
 <body>
 
-<header>
-<div class="logo" onclick="showView('home')">THE VAULT</div>
+    <div id="star-field"></div>
+    <div id="weather-overlay"></div>
 
-<nav>
-<a id="nav-home" class="active" onclick="showView('home')">Arcade</a>
-<a id="nav-cdn" onclick="showView('cdn')">Archive</a>
-</nav>
+    <header>
+        <div class="logo" onclick="showView('home')">THE VAULT</div>
+        <nav>
+            <a onclick="showView('home')" id="nav-home" class="active">Arcade</a>
+            <a onclick="showView('cdn')" id="nav-cdn">Archive</a>
+            <a onclick="showView('partners')" id="nav-partners">Partners</a>
+        </nav>
+        <div class="search-container">
+            <input type="text" id="game-search" placeholder="Search archive..." onkeyup="universalFilter()">
+        </div>
+        <button class="opt-btn" onclick="toggleSettings(true)" style="border-radius: 30px; padding: 8px 20px;">Settings</button>
+    </header>
 
-<input id="game-search" placeholder="Search..." onkeyup="universalFilter()">
+    <section id="view-home" class="view-section active"><div class="grid-container" id="arcade-grid"></div><div id="sentinel"></div></section>
+    <section id="view-cdn" class="view-section"><div class="grid-container" id="cdn-grid"></div></section>
+    <section id="view-partners" class="view-section">
+    <div class="grid-container" style="justify-content: center; max-width: 1000px; margin: 0 auto; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));">
+        
+        <div class="partner-card">
+            <div class="p-icon">
+                <img src="https://www.gamepix.com/icons/favicon-96x96.png" alt="GamePix Logo">
+            </div>
+            <h3>GamePix</h3>
+            <p>Global provider of high-quality HTML5 games. Powering the archive with premium arcade titles.</p>
+            <a href="https://www.gamepix.com" target="_blank" class="partner-link">Official Site</a>
+        </div>
 
-<button class="opt-btn" onclick="toggleSettings(true)">Settings</button>
-</header>
+        <div class="partner-card">
+            <div class="p-icon">
+                <img src="https://lh3.googleusercontent.com/sitesv/APaQ0STKajB0IejOtdWMZTjJvW2tV1X7BhGg9Uy2oQZnX_bLgNcaoTljt8XTB0408SFkBUfOcbCot79ToyxPlkb_6VZixhlneuZ9zwl6_Y5PRDj4hix-zdVf4xvZ-nGEDpCfu5ugVAXeTvJZ23JrpuwGVySI6BSanhaDMb30lSu1weFaSqsC5HAuE5rhRBY=w16383" alt="Jaime's Logo">
+            </div>
+            <h3>Jaime's Cheese Grater</h3>
+            <p>Another W games site. A curated collection of unique web experiences and custom titles.</p>
+            <a href="https://sites.google.com/view/jaimescheesegrater" target="_blank" class="partner-link">Visit Site</a>
+        </div>
 
-<!-- HOME -->
-<section id="view-home" class="view-section active">
-<div class="grid-container" id="arcade-grid"></div>
-<div id="sentinel"></div>
+    </div>
 </section>
 
-<!-- CDN -->
-<section id="view-cdn" class="view-section">
-<div class="grid-container" id="cdn-grid"></div>
-</section>
-
-<!-- SETTINGS -->
-<div class="modal-overlay" id="modal-overlay" onclick="toggleSettings(false)"></div>
-
-<div id="settings-modal">
-<h3>Settings</h3>
-
-<div>
-<p>Theme</p>
-<div class="btn-row">
-<button class="opt-btn" onclick="setTheme('dark')">Dark</button>
-<button class="opt-btn" onclick="setTheme('midnight')">Midnight</button>
-<button class="opt-btn" onclick="setTheme('space')">Space</button>
+    <div class="modal-overlay" id="modal-overlay" onclick="toggleSettings(false)"></div>
+    <div id="settings-modal">
+        <h2 style="margin: 0 0 30px 0; font-size: 1.4rem;">System Preferences</h2>
+        <div class="setting-section">
+    <span class="setting-title">Cloak Protocol</span>
+    <div class="btn-row">
+        <button class="opt-btn" onclick="setCloak('none')">None</button>
+        <button class="opt-btn" onclick="setCloak('google')">Google</button>
+        <button class="opt-btn" onclick="setCloak('drive')">Drive</button>
+        <button class="opt-btn" onclick="setCloak('classroom')">Classroom</button>
+    </div>
 </div>
+        <div class="setting-section">
+    <span class="setting-title">Appearance</span>
+    <div class="btn-row">
+        <button class="opt-btn" onclick="setTheme('dark')">Dark</button>
+        <button class="opt-btn" onclick="setTheme('midnight')">Midnight</button>
+        <button class="opt-btn" onclick="setTheme('forest')">Forest</button>
+        <button class="opt-btn" onclick="setTheme('crimson')">Crimson</button>
+        <button class="opt-btn" onclick="setTheme('space')">Space</button>
+        <button class="opt-btn" onclick="setTheme('rose')">Rose</button>
+        <button class="opt-btn" onclick="setTheme('gold')">Gold</button>
+        <button class="opt-btn" onclick="setTheme('uv')">UV</button>
+    </div>
 </div>
-
-<div>
-<p>Cloak</p>
-<div class="btn-row">
-<button class="opt-btn" onclick="setCloak('none')">None</button>
-<button class="opt-btn" onclick="setCloak('google')">Google</button>
-<button class="opt-btn" onclick="setCloak('drive')">Drive</button>
-<button class="opt-btn" onclick="setCloak('classroom')">Classroom</button>
+        <div class="setting-section">
+    <span class="setting-title">Atmosphere</span>
+    <div class="btn-row">
+        <button class="opt-btn" onclick="setWeather('none')">None</button>
+        <button class="opt-btn" onclick="setWeather('rain')">Rain</button>
+        <button class="opt-btn" onclick="setWeather('snow')">Snow</button>
+        <button class="opt-btn" onclick="setWeather('stars')">Stars</button>
+    </div>
 </div>
-</div>
-
-<button style="margin-top:15px;width:100%" onclick="toggleSettings(false)">Close</button>
-</div>
-
-<!-- GAME VIEW -->
-<div id="game-view">
-<button onclick="closeGame()">EXIT</button>
-<div id="iframe-container" style="width:100%;height:100%"></div>
+    <button style="width:100%; padding:15px; border-radius:12px; background:var(--text-color); color:var(--bg-color); font-weight:800; border:none; cursor:pointer;" onclick="toggleSettings(false)">Apply & Exit</button>
 </div>
 
-<script>
-const SID="1";
-let arcadeNextUrl=`https://feeds.gamepix.com/v2/json?pagination=48&sid=${SID}`;
-let isLoading=false;
+    <div id="game-view"><button style="position:absolute; top:20px; left:20px; z-index:2001;" class="opt-btn" onclick="closeGame()">← EXIT</button><div id="iframe-container" style="width:100%; height:100%;"></div></div>
 
-function showView(v){
-document.querySelectorAll('.view-section').forEach(s=>s.classList.remove('active'));
-document.getElementById(`view-${v}`).classList.add('active');
+    <script>
+        const SID = "1";
+        const CONFIG = { zones: "https://cdn.jsdelivr.net/gh/gn-math/assets@latest/zones.json", covers: "https://cdn.jsdelivr.net/gh/gn-math/covers@main", baseHtml: "https://cdn.jsdelivr.net/gh/gn-math/html@main/" };
+        let arcadeNextUrl = `https://feeds.gamepix.com/v2/json?order=quality&pagination=48&sid=${SID}`;
+        let cdnAllGames = []; let isArcadeLoading = false;
+
+        const save = (k, v) => localStorage.setItem(`vlt_v6_${k}`, v);
+        const load = (k) => localStorage.getItem(`vlt_v6_${k}`);
+
+        function showView(v) {
+            document.querySelectorAll('.view-section').forEach(s => s.classList.remove('active'));
+            document.getElementById(`view-${v}`).classList.add('active');
+            document.querySelectorAll('nav a').forEach(a => a.classList.remove('active'));
+            document.getElementById(`nav-${v}`).classList.add('active');
+            if(v === 'cdn' && cdnAllGames.length === 0) loadCdnGames();
+        }
+
+        async function loadCdnGames() {
+            try {
+                const res = await fetch(CONFIG.zones);
+                const data = await res.json();
+                cdnAllGames = data.filter(g => String(g.id) !== "-1");
+                const grid = document.getElementById('cdn-grid');
+                cdnAllGames.forEach(game => {
+                    const card = document.createElement('div');
+                    card.className = 'game-card'; card.setAttribute('data-title', game.name.toLowerCase());
+                    card.onclick = () => launchCdnGame(game.id);
+                    card.innerHTML = `<img src="${CONFIG.covers}/${game.id}.png" onerror="this.src='https://via.placeholder.com/150/111/fff?text=App'"><div class="game-info"><h3>${game.name}</h3></div>`;
+                    grid.appendChild(card);
+                });
+            } catch(e) {}
+        }
+
+        function launchCdnGame(id) {
+            const win = window.open('about:blank', '_blank');
+            fetch(`${CONFIG.baseHtml}${id}.html`).then(r => r.text()).then(html => {
+                win.document.open(); win.document.write(`<style>body,html{margin:0;padding:0;width:100%;height:100%;overflow:hidden;background:#000;}</style>${html}`); win.document.close();
+            });
+        }
+
+        async function fetchArcade() {
+            if (isArcadeLoading || !arcadeNextUrl) return;
+            isArcadeLoading = true;
+            try {
+                const res = await fetch(arcadeNextUrl);
+                const data = await res.json();
+                const grid = document.getElementById('arcade-grid');
+                data.items.forEach(item => {
+                    const card = document.createElement('div');
+                    card.className = 'game-card'; card.setAttribute('data-title', item.title.toLowerCase());
+                    card.onclick = () => {
+                        document.getElementById('iframe-container').innerHTML = `<iframe src="https://play.gamepix.com/${item.namespace}/embed?sid=${SID}" style="width:100%;height:100%;border:none;"></iframe>`;
+                        document.getElementById('game-view').style.display = 'block';
+                    };
+                    card.innerHTML = `<img src="${item.banner_image}"><div class="game-info"><h3>${item.title}</h3></div>`;
+                    grid.appendChild(card);
+                });
+                arcadeNextUrl = data.next_url;
+            } catch (e) {} finally { isArcadeLoading = false; }
+        }
+
+        function universalFilter() {
+            const q = document.getElementById('game-search').value.toLowerCase();
+            document.querySelectorAll('.game-card').forEach(c => c.style.display = c.getAttribute('data-title').includes(q) ? 'block' : 'none');
+        }
+
+        function setTheme(t) { document.documentElement.setAttribute('data-theme', t); save('theme', t); }
+
+        function setWeather(type) {
+    const overlay = document.getElementById('weather-overlay');
+    const stars = document.getElementById('star-field');
+    overlay.innerHTML = ''; 
+    stars.style.opacity = (type === 'stars' ? '1' : '0');
+    save('weather', type);
+    
+    if(type === 'none' || type === 'stars') return;
+    
+    for(let i=0; i<150; i++) {
+        const el = document.createElement('div'); 
+        el.className = 'weather-item';
+        el.style.left = Math.random() * 100 + '%'; 
+        el.style.animationDuration = (Math.random() * 2 + 1) + 's'; // Slightly slower for snow
+        
+        if(type === 'rain') {
+            el.style.width = '1px'; el.style.height = '30px'; 
+            el.style.background = 'rgba(255,255,255,0.3)';
+        } else if(type === 'snow') {
+            el.classList.add('snow'); // Uses the CSS rule above
+        }
+        overlay.appendChild(el);
+    }
 }
 
-async function fetchArcade(){
-if(isLoading||!arcadeNextUrl)return;
-isLoading=true;
-
-let res=await fetch(arcadeNextUrl);
-let data=await res.json();
-
-const grid=document.getElementById('arcade-grid');
-
-data.items.forEach(item=>{
-let card=document.createElement('div');
-card.className='game-card';
-card.setAttribute('data-title',item.title.toLowerCase());
-
-card.onclick=()=>launchArcade(item);
-
-card.innerHTML=`
-<img src="${item.banner_image}">
-<div class="game-info"><h4>${item.title}</h4></div>
-`;
-
-grid.appendChild(card);
-});
-
-arcadeNextUrl=data.next_url;
-isLoading=false;
+function setCloak(type) {
+    const favicon = document.getElementById('tab-favicon');
+    const presets = {
+        'google': { t: 'Google', i: 'https://www.google.com/favicon.ico' },
+        'drive': { t: 'My Drive - Google Drive', i: 'https://ssl.gstatic.com/images/branding/product/1x/drive_2020q4_48dp.png' },
+        'classroom': { t: 'Classes', i: 'https://ssl.gstatic.com/classroom/favicon.png' }, // Restored
+        'none': { t: 'The Vault', i: '/favicon-96x96.png' }
+    };
+    document.title = presets[type].t; 
+    favicon.href = presets[type].i; 
+    save('cloak', type);
 }
 
-function launchArcade(item){
-document.getElementById('iframe-container').innerHTML=
-`<iframe src="https://play.gamepix.com/${item.namespace}/embed?sid=${SID}" style="width:100%;height:100%;border:none;"></iframe>`;
-document.getElementById('game-view').style.display='block';
-}
+        function initStars() {
+            const field = document.getElementById('star-field');
+            for(let i=0; i<200; i++) {
+                const star = document.createElement('div'); star.className = 'star';
+                const size = Math.random() * 3;
+                star.style.width = size + 'px'; star.style.height = size + 'px';
+                star.style.left = Math.random() * 100 + '%'; star.style.top = Math.random() * 100 + '%';
+                star.style.setProperty('--duration', (Math.random() * 3 + 2) + 's');
+                field.appendChild(star);
+            }
+        }
 
-function closeGame(){
-document.getElementById('game-view').style.display='none';
-}
+        function setCloak(type) {
+            const favicon = document.getElementById('tab-favicon');
+            const presets = {
+                'google': { t: 'Google', i: 'https://www.google.com/favicon.ico' },
+                'drive': { t: 'My Drive - Google Drive', i: 'https://ssl.gstatic.com/images/branding/product/1x/drive_2020q4_48dp.png' },
+                'classroom': { t: 'Classes', i: 'https://ssl.gstatic.com/classroom/favicon.png' },
+                'none': { t: 'The Vault', i: './g/assets/imgs/favicon-96x96.png'}
+            };
+            document.title = presets[type].t; 
+            favicon.href = presets[type].i; 
+            save('cloak', type);
+        }
 
-function universalFilter(){
-let q=document.getElementById('game-search').value.toLowerCase();
-document.querySelectorAll('.game-card').forEach(c=>{
-c.style.display=c.dataset.title.includes(q)?'block':'none';
-});
-}
+        function closeGame() { document.getElementById('game-view').style.display = 'none'; document.getElementById('iframe-container').innerHTML = ''; }
+        function toggleSettings(s) { document.getElementById('settings-modal').style.display = s ? 'block' : 'none'; document.getElementById('modal-overlay').style.display = s ? 'block' : 'none'; }
 
-function toggleSettings(s){
-document.getElementById('settings-modal').style.display=s?'block':'none';
-document.getElementById('modal-overlay').style.display=s?'block':'none';
-}
+        const observer = new IntersectionObserver(e => { if(e[0].isIntersecting && document.getElementById('view-home').classList.contains('active')) fetchArcade(); });
+        observer.observe(document.getElementById('sentinel'));
 
-function setTheme(t){
-document.documentElement.setAttribute('data-theme',t);
-}
-
-function setCloak(type){
-const presets={
-google:{t:"Google",i:"https://www.google.com/favicon.ico"},
-drive:{t:"Drive",i:"https://ssl.gstatic.com/images/branding/product/1x/drive_48dp.png"},
-classroom:{t:"Classes",i:"https://ssl.gstatic.com/classroom/favicon.png"},
-none:{t:"The Vault",i:"/favicon-96x96.png"}
-};
-document.title=presets[type].t;
-document.querySelector("link[rel='icon']").href=presets[type].i;
-}
-
-const observer=new IntersectionObserver(e=>{
-if(e[0].isIntersecting)fetchArcade();
-});
-observer.observe(document.getElementById('sentinel'));
-
-fetchArcade();
-</script>
-
+        window.onload = () => {
+            initStars();
+            setTheme(load('theme') || 'dark');
+            setWeather(load('weather') || 'none');
+            setCloak(load('cloak') || 'none');
+        };
+    </script>
 </body>
 </html>
