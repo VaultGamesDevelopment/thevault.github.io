@@ -336,38 +336,72 @@ nav a.active { color: var(--text-color); }
 
         async function loadCdnGames() {
     try {
-        const res = await fetch(CONFIG.gamerJson);
+        const res = await fetch(CONFIG.gamerJson, { cache: "no-store" });
+
+        if (!res.ok) {
+            throw new Error("Failed to fetch gamer.json");
+        }
+
         const data = await res.json();
-        cdnAllGames = data; // Store the array from gamer.json
+
+        // ✅ Support BOTH array and single object (your current issue)
+        const games = Array.isArray(data) ? data : [data];
+        cdnAllGames = games;
+
         const grid = document.getElementById('cdn-grid');
-        
-        cdnAllGames.forEach(game => {
+        grid.innerHTML = ""; // prevent duplicates
+
+        games.forEach(game => {
+            if (!game.name || !game.url) return;
+
             const card = document.createElement('div');
-            card.className = 'game-card'; 
+            card.className = 'game-card';
             card.setAttribute('data-title', game.name.toLowerCase());
-            
-            // Changed: Now uses game.url directly from your JSON
-            card.onclick = () => launchCdnGame(game.url); 
-            
-            // Changed: Uses game.image for the source
+
+            card.onclick = () => launchCdnGame(game.url);
+
             card.innerHTML = `
-                <img src="${game.image}" onerror="this.src='https://via.placeholder.com/150/111/fff?text=App'">
+                <img src="${game.image || ''}" 
+                     onerror="this.src='https://via.placeholder.com/150/111/fff?text=App'">
                 <div class="game-info"><h3>${game.name}</h3></div>
             `;
+
             grid.appendChild(card);
         });
-    } catch(e) { 
-        console.error("Error loading gamer.json:", e); 
+
+    } catch (e) {
+        console.error("Error loading gamer.json:", e);
     }
 }
 
         function launchCdnGame(url) {
-    const win = window.open('about:blank', '_blank');
-    // Injects the CSS for a clean look and points the iframe to your game.url
+    const win = window.open('', '_blank');
+
+    if (!win) {
+        alert("Popup blocked! Please allow popups.");
+        return;
+    }
+
     win.document.write(`
-        <style>body,html{margin:0;padding:0;width:100%;height:100%;overflow:hidden;background:#000;}</style>
-        <iframe src="${url}" style="width:100%;height:100%;border:none;"></iframe>
+        <style>
+            html, body {
+                margin: 0;
+                padding: 0;
+                width: 100%;
+                height: 100%;
+                background: black;
+                overflow: hidden;
+            }
+            iframe {
+                width: 100%;
+                height: 100%;
+                border: none;
+            }
+        </style>
+        <iframe src="${url}" allowfullscreen></iframe>
     `);
+
+    win.document.close();
 }
 
         async function fetchArcade() {
