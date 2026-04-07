@@ -4,7 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title id="tab-title">The Vault | Premium Arcade</title>
-    <link id="tab-favicon" rel="icon" type="image/png" href="https://www.gamepix.com/favicon.ico">
+    
+    <link id="tab-favicon" rel="icon" type="image/png" href="/favicon-96x96.png" sizes="96x96" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <meta name="apple-mobile-web-app-title" content="The Vault" />
+    <link rel="manifest" href="/site.webmanifest" />
+
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -183,8 +190,8 @@
         let arcadeNextUrl = `https://feeds.gamepix.com/v2/json?order=quality&pagination=48&sid=${SID}`;
         let cdnAllGames = []; let isArcadeLoading = false;
 
-        const save = (k, v) => localStorage.setItem(`vlt_v4_${k}`, v);
-        const load = (k) => localStorage.getItem(`vlt_v4_${k}`);
+        const save = (k, v) => localStorage.setItem(`vlt_v6_${k}`, v);
+        const load = (k) => localStorage.getItem(`vlt_v6_${k}`);
 
         function showView(v) {
             document.querySelectorAll('.view-section').forEach(s => s.classList.remove('active'));
@@ -251,7 +258,6 @@
             overlay.innerHTML = ''; stars.style.opacity = (type === 'stars' ? '1' : '0');
             save('weather', type);
             if(type === 'none' || type === 'stars') return;
-            // Increased Particles (150+)
             for(let i=0; i<150; i++) {
                 const el = document.createElement('div'); el.className='weather-item';
                 el.style.left = Math.random()*100+'%'; el.style.animationDuration = (Math.random()*1.5+0.5)+'s';
@@ -279,9 +285,11 @@
                 'google': { t: 'Google', i: 'https://www.google.com/favicon.ico' },
                 'drive': { t: 'My Drive - Google Drive', i: 'https://ssl.gstatic.com/images/branding/product/1x/drive_2020q4_48dp.png' },
                 'classroom': { t: 'Classes', i: 'https://ssl.gstatic.com/classroom/favicon.png' },
-                'none': { t: 'The Vault', i: 'https://www.gamepix.com/favicon.ico' }
+                'none': { t: 'The Vault', i: '/favicon-96x96.png' }
             };
-            document.title = presets[type].t; favicon.href = presets[type].i; save('cloak', type);
+            document.title = presets[type].t; 
+            favicon.href = presets[type].i; 
+            save('cloak', type);
         }
 
         function closeGame() { document.getElementById('game-view').style.display = 'none'; document.getElementById('iframe-container').innerHTML = ''; }
