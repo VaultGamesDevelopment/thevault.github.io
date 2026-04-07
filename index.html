@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title id="tab-title">The Vault | Premium Arcade</title>
-    <link id="tab-favicon" rel="icon" type="image/x-icon" href="g/assets/imgs/vault_os.jpg">
+    <link id="tab-favicon" rel="icon" type="image/png" href="https://www.gamepix.com/favicon.ico">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -47,17 +47,22 @@
             overflow-x: hidden;
         }
 
-        /* Weather Overlays */
+        /* Particles & Stars */
         #weather-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1; }
         .weather-item { position: absolute; top: -50px; animation: fall linear infinite; }
         @keyframes fall { to { transform: translateY(110vh); } }
         
-        .fog-layer { 
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
-            background: rgba(255,255,255,0.05); filter: blur(40px); opacity: 0; transition: 1s; z-index: 1;
+        #star-field {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none; z-index: 0; transition: opacity 1s; opacity: 0;
         }
+        .star {
+            position: absolute; background: #fff; border-radius: 50%;
+            animation: twinkle var(--duration) ease-in-out infinite;
+        }
+        @keyframes twinkle { 0%, 100% { opacity: 0.3; transform: scale(1); } 50% { opacity: 1; transform: scale(1.2); } }
 
-        /* Header & Nav */
+        /* UI Elements */
         header {
             position: sticky; top: 0; padding: 1.2rem 5%;
             display: flex; justify-content: space-between; align-items: center;
@@ -69,16 +74,13 @@
         nav a { color: var(--secondary-text); text-decoration: none; font-size: 0.8rem; font-weight: 600; cursor: pointer; text-transform: uppercase; transition: 0.2s; }
         nav a.active { color: var(--text-color); }
 
-        /* Search Bar */
         .search-container { flex-grow: 1; max-width: 300px; margin: 0 20px; }
         #game-search {
             width: 100%; padding: 12px 20px; font-family: inherit;
             background: var(--glass); border: 1px solid var(--border-color);
             border-radius: 12px; color: var(--text-color); outline: none; transition: 0.3s;
         }
-        #game-search:focus { border-color: var(--secondary-text); background: rgba(255,255,255,0.08); }
 
-        /* Grids */
         .view-section { display: none; padding: 2.5rem 5%; position: relative; z-index: 2; }
         .view-section.active { display: block; animation: fadeIn 0.4s ease; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
@@ -88,22 +90,12 @@
             background: var(--card-bg); border: 1px solid var(--border-color);
             border-radius: 14px; overflow: hidden; cursor: pointer; transition: 0.3s;
         }
-        .game-card:hover { transform: translateY(-5px); border-color: var(--text-color); box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        .game-card:hover { transform: translateY(-5px); border-color: var(--text-color); }
         .game-card img { width: 100%; aspect-ratio: 1/1; object-fit: cover; }
         .game-info { padding: 12px; text-align: center; }
         .game-info h3 { margin: 0; font-size: 0.8rem; font-weight: 600; }
 
-        /* Partner Cards */
-        .partner-card {
-            background: var(--card-bg); border: 1px solid var(--border-color);
-            border-radius: 20px; padding: 40px 24px; text-align: center;
-            display: flex; flex-direction: column; align-items: center; gap: 15px;
-        }
-        .p-icon { width: 70px; height: 70px; border-radius: 18px; overflow: hidden; border: 1px solid var(--border-color); }
-        .p-icon img { width: 100%; height: 100%; object-fit: cover; }
-        .partner-link { width: 100%; padding: 12px; border-radius: 10px; background: var(--text-color); color: var(--bg-color); text-decoration: none; font-size: 0.85rem; font-weight: 800; }
-
-        /* Settings Popup (Cleaned Up) */
+        /* Settings */
         #settings-modal {
             display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
             background: var(--card-bg); padding: 35px; border-radius: 24px; z-index: 1000;
@@ -111,25 +103,19 @@
             box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7);
         }
         .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 999; backdrop-filter: blur(10px); }
-        
         .setting-section { margin-bottom: 25px; }
         .setting-title { font-size: 0.7rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.1em; color: var(--secondary-text); margin-bottom: 12px; display: block; }
         .btn-row { display: flex; flex-wrap: wrap; gap: 8px; }
-        
-        .opt-btn { 
-            padding: 8px 14px; border-radius: 8px; border: 1px solid var(--border-color); 
-            background: var(--glass); color: var(--text-color); cursor: pointer; font-size: 0.75rem; font-weight: 600; transition: 0.2s;
-        }
+        .opt-btn { padding: 8px 14px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--glass); color: var(--text-color); cursor: pointer; font-size: 0.75rem; font-weight: 600; transition: 0.2s; }
         .opt-btn:hover { border-color: var(--text-color); }
-        .opt-btn.active { background: var(--text-color); color: var(--bg-color); border-color: var(--text-color); }
-
+        
         #game-view { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 2000; }
     </style>
 </head>
 <body>
 
+    <div id="star-field"></div>
     <div id="weather-overlay"></div>
-    <div id="fog-overlay" class="fog-layer"></div>
 
     <header>
         <div class="logo" onclick="showView('home')">THE VAULT</div>
@@ -148,52 +134,45 @@
     <section id="view-cdn" class="view-section"><div class="grid-container" id="cdn-grid"></div></section>
     <section id="view-partners" class="view-section">
         <div class="grid-container">
-            <div class="partner-card">
-                <div class="p-icon"><img src="https://lh3.googleusercontent.com/sitesv/APaQ0STKajB0IejOtdWMZTjJvW2tV1X7BhGg9Uy2oQZnX_bLgNcaoTljt8XTB0408SFkBUfOcbCot79ToyxPlkb_6VZixhlneuZ9zwl6_Y5PRDj4hix-zdVf4xvZ-nGEDpCfu5ugVAXeTvJZ23JrpuwGVySI6BSanhaDMb30lSu1weFaSqsC5HAuE5rhRBY=w16383"></div>
-                <h3>Jaime's Cheese Grater</h3>
-                <p style="color: var(--secondary-text); font-size: 0.8rem;">Another W games site</p>
-                <a href="https://sites.google.com/view/jaimescheesegrater" target="_blank" class="partner-link">Visit Site</a>
+            <div class="partner-card" style="background:var(--card-bg); border:1px solid var(--border-color); border-radius:20px; padding:40px; text-align:center;">
+                <img src="https://lh3.googleusercontent.com/sitesv/APaQ0STKajB0IejOtdWMZTjJvW2tV1X7BhGg9Uy2oQZnX_bLgNcaoTljt8XTB0408SFkBUfOcbCot79ToyxPlkb_6VZixhlneuZ9zwl6_Y5PRDj4hix-zdVf4xvZ-nGEDpCfu5ugVAXeTvJZ23JrpuwGVySI6BSanhaDMb30lSu1weFaSqsC5HAuE5rhRBY=w16383" style="width:70px; border-radius:18px; margin-bottom:15px;">
+                <h3 style="margin:0">Jaime's Cheese Grater</h3>
+                <p style="color:var(--secondary-text); font-size:0.8rem; margin-bottom:20px;">Another W games site</p>
+                <a href="https://sites.google.com/view/jaimescheesegrater" target="_blank" style="display:block; width:100%; padding:12px; background:var(--text-color); color:var(--bg-color); text-decoration:none; border-radius:10px; font-weight:800;">Visit Site</a>
             </div>
         </div>
     </section>
 
     <div class="modal-overlay" id="modal-overlay" onclick="toggleSettings(false)"></div>
     <div id="settings-modal">
-        <h2 style="margin: 0 0 30px 0; font-size: 1.4rem; letter-spacing: -0.04em;">System Preferences</h2>
-
+        <h2 style="margin: 0 0 30px 0; font-size: 1.4rem;">System Preferences</h2>
         <div class="setting-section">
             <span class="setting-title">Cloak Protocol</span>
-            <div class="btn-row" id="cloak-opts">
+            <div class="btn-row">
                 <button class="opt-btn" onclick="setCloak('none')">None</button>
                 <button class="opt-btn" onclick="setCloak('google')">Google</button>
                 <button class="opt-btn" onclick="setCloak('drive')">Drive</button>
                 <button class="opt-btn" onclick="setCloak('classroom')">Classroom</button>
-                <button class="opt-btn" onclick="setCloak('zoom')">Zoom</button>
             </div>
         </div>
-
         <div class="setting-section">
             <span class="setting-title">Appearance</span>
             <div class="btn-row">
                 <button class="opt-btn" onclick="setTheme('dark')">Dark</button>
-                <button class="opt-btn" onclick="setTheme('light')">Light</button>
                 <button class="opt-btn" onclick="setTheme('midnight')">Midnight</button>
                 <button class="opt-btn" onclick="setTheme('forest')">Forest</button>
-                <button class="opt-btn" onclick="setTheme('crimson')">Crimson</button>
             </div>
         </div>
-
         <div class="setting-section">
             <span class="setting-title">Atmosphere</span>
             <div class="btn-row">
                 <button class="opt-btn" onclick="setWeather('none')">None</button>
                 <button class="opt-btn" onclick="setWeather('rain')">Rain</button>
                 <button class="opt-btn" onclick="setWeather('snow')">Snow</button>
-                <button class="opt-btn" onclick="setWeather('fog')">Fog</button>
+                <button class="opt-btn" onclick="setWeather('stars')">Stars</button>
             </div>
         </div>
-
-        <button style="width:100%; margin-top:20px; padding: 15px; border-radius: 12px; background: var(--text-color); color: var(--bg-color); font-weight: 800; border: none; cursor: pointer;" onclick="toggleSettings(false)">Apply & Exit</button>
+        <button style="width:100%; padding:15px; border-radius:12px; background:var(--text-color); color:var(--bg-color); font-weight:800; border:none; cursor:pointer;" onclick="toggleSettings(false)">Apply & Exit</button>
     </div>
 
     <div id="game-view"><button style="position:absolute; top:20px; left:20px; z-index:2001;" class="opt-btn" onclick="closeGame()">← EXIT</button><div id="iframe-container" style="width:100%; height:100%;"></div></div>
@@ -204,8 +183,8 @@
         let arcadeNextUrl = `https://feeds.gamepix.com/v2/json?order=quality&pagination=48&sid=${SID}`;
         let cdnAllGames = []; let isArcadeLoading = false;
 
-        const save = (k, v) => localStorage.setItem(`vlt_v2_${k}`, v);
-        const load = (k) => localStorage.getItem(`vlt_v2_${k}`);
+        const save = (k, v) => localStorage.setItem(`vlt_v4_${k}`, v);
+        const load = (k) => localStorage.getItem(`vlt_v4_${k}`);
 
         function showView(v) {
             document.querySelectorAll('.view-section').forEach(s => s.classList.remove('active'));
@@ -223,8 +202,7 @@
                 const grid = document.getElementById('cdn-grid');
                 cdnAllGames.forEach(game => {
                     const card = document.createElement('div');
-                    card.className = 'game-card';
-                    card.setAttribute('data-title', game.name.toLowerCase());
+                    card.className = 'game-card'; card.setAttribute('data-title', game.name.toLowerCase());
                     card.onclick = () => launchCdnGame(game.id);
                     card.innerHTML = `<img src="${CONFIG.covers}/${game.id}.png" onerror="this.src='https://via.placeholder.com/150/111/fff?text=App'"><div class="game-info"><h3>${game.name}</h3></div>`;
                     grid.appendChild(card);
@@ -248,8 +226,7 @@
                 const grid = document.getElementById('arcade-grid');
                 data.items.forEach(item => {
                     const card = document.createElement('div');
-                    card.className = 'game-card';
-                    card.setAttribute('data-title', item.title.toLowerCase());
+                    card.className = 'game-card'; card.setAttribute('data-title', item.title.toLowerCase());
                     card.onclick = () => {
                         document.getElementById('iframe-container').innerHTML = `<iframe src="https://play.gamepix.com/${item.namespace}/embed?sid=${SID}" style="width:100%;height:100%;border:none;"></iframe>`;
                         document.getElementById('game-view').style.display = 'block';
@@ -267,33 +244,44 @@
         }
 
         function setTheme(t) { document.documentElement.setAttribute('data-theme', t); save('theme', t); }
-        
+
         function setWeather(type) {
             const overlay = document.getElementById('weather-overlay');
-            const fog = document.getElementById('fog-overlay');
-            overlay.innerHTML = ''; fog.style.opacity = (type === 'fog' ? '1' : '0');
+            const stars = document.getElementById('star-field');
+            overlay.innerHTML = ''; stars.style.opacity = (type === 'stars' ? '1' : '0');
             save('weather', type);
-            if(type === 'none' || type === 'fog') return;
-            for(let i=0; i<60; i++) {
+            if(type === 'none' || type === 'stars') return;
+            // Increased Particles (150+)
+            for(let i=0; i<150; i++) {
                 const el = document.createElement('div'); el.className='weather-item';
-                el.style.left = Math.random()*100+'%'; el.style.animationDuration = (Math.random()*2+1)+'s';
-                if(type==='rain') { el.style.width='1px'; el.style.height='25px'; el.style.background='rgba(255,255,255,0.2)'; }
-                else { el.style.width='5px'; el.style.height='5px'; el.style.background='#fff'; el.style.borderRadius='50%'; el.style.opacity='0.4'; }
+                el.style.left = Math.random()*100+'%'; el.style.animationDuration = (Math.random()*1.5+0.5)+'s';
+                if(type==='rain') { el.style.width='1px'; el.style.height='30px'; el.style.background='rgba(255,255,255,0.3)'; }
+                else { el.style.width='4px'; el.style.height='4px'; el.style.background='#fff'; el.style.borderRadius='50%'; el.style.opacity='0.6'; }
                 overlay.appendChild(el);
             }
         }
 
+        function initStars() {
+            const field = document.getElementById('star-field');
+            for(let i=0; i<200; i++) {
+                const star = document.createElement('div'); star.className = 'star';
+                const size = Math.random() * 3;
+                star.style.width = size + 'px'; star.style.height = size + 'px';
+                star.style.left = Math.random() * 100 + '%'; star.style.top = Math.random() * 100 + '%';
+                star.style.setProperty('--duration', (Math.random() * 3 + 2) + 's');
+                field.appendChild(star);
+            }
+        }
+
         function setCloak(type) {
+            const favicon = document.getElementById('tab-favicon');
             const presets = {
                 'google': { t: 'Google', i: 'https://www.google.com/favicon.ico' },
                 'drive': { t: 'My Drive - Google Drive', i: 'https://ssl.gstatic.com/images/branding/product/1x/drive_2020q4_48dp.png' },
                 'classroom': { t: 'Classes', i: 'https://ssl.gstatic.com/classroom/favicon.png' },
-                'zoom': { t: 'Zoom Personal', i: 'https://st1.zoom.us/zoom.ico' },
-                'none': { t: 'The Vault', i: 'g/assets/imgs/vault_os.jpg' }
+                'none': { t: 'The Vault', i: 'https://www.gamepix.com/favicon.ico' }
             };
-            document.title = presets[type].t;
-            document.getElementById('tab-favicon').href = presets[type].i;
-            save('cloak', type);
+            document.title = presets[type].t; favicon.href = presets[type].i; save('cloak', type);
         }
 
         function closeGame() { document.getElementById('game-view').style.display = 'none'; document.getElementById('iframe-container').innerHTML = ''; }
@@ -303,6 +291,7 @@
         observer.observe(document.getElementById('sentinel'));
 
         window.onload = () => {
+            initStars();
             setTheme(load('theme') || 'dark');
             setWeather(load('weather') || 'none');
             setCloak(load('cloak') || 'none');
