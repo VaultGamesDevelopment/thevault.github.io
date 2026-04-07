@@ -54,13 +54,13 @@
             z-index: 100;
             border-bottom: 1px solid var(--border-color);
         }
-        .logo-group { display: flex; align-items: center; gap: 30px; }
+        .logo-group { display: flex; align-items: center; gap: 25px; }
         .logo { font-weight: 800; font-size: 1.1rem; letter-spacing: -0.05em; cursor: pointer; }
-        nav { display: flex; gap: 20px; }
-        nav a { color: var(--secondary-text); text-decoration: none; font-size: 0.85rem; font-weight: 500; cursor: pointer; transition: 0.2s; }
+        nav { display: flex; gap: 15px; }
+        nav a { color: var(--secondary-text); text-decoration: none; font-size: 0.8rem; font-weight: 600; cursor: pointer; transition: 0.2s; text-transform: uppercase; letter-spacing: 0.05em; }
         nav a.active { color: var(--text-color); }
 
-        .search-container { flex-grow: 1; max-width: 350px; margin: 0 20px; }
+        .search-container { flex-grow: 1; max-width: 300px; margin: 0 20px; }
         #game-search {
             width: 100%; padding: 10px 16px; font-family: inherit;
             background: var(--bg-color); border: 1px solid var(--border-color);
@@ -72,87 +72,43 @@
         .view-section.active { display: block; }
 
         /* Grids */
-        .game-grid, .partners-grid {
-            display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 24px;
+        .grid-container {
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 20px;
         }
 
-        /* Partner Cards Styling */
-        .partner-card {
-            background: var(--card-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 16px;
-            padding: 32px 24px;
-            text-align: center;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 12px;
-            transition: border-color 0.3s ease;
-        }
-        .partner-card:hover { border-color: var(--text-color); }
-        
-        .p-icon {
-            width: 64px; height: 64px;
-            background: var(--border-color);
-            border-radius: 14px;
-            display: flex; align-items: center; justify-content: center;
-            overflow: hidden;
-            border: 1px solid rgba(255,255,255,0.05);
-            margin-bottom: 8px;
-        }
-        .p-icon img { width: 100%; height: 100%; object-fit: cover; }
-        .partner-card h3 { margin: 0; font-size: 1.1rem; letter-spacing: -0.02em; }
-        .partner-card p { margin: 0; font-size: 0.85rem; color: var(--secondary-text); margin-bottom: 12px; }
-
-        /* Partner Action Button */
-        .partner-link {
-            width: 100%;
-            padding: 10px;
-            border-radius: 8px;
-            background: var(--text-color);
-            color: var(--bg-color);
-            text-decoration: none;
-            font-size: 0.8rem;
-            font-weight: 700;
-            transition: opacity 0.2s;
-        }
-        .partner-link:hover { opacity: 0.85; }
-
-        /* Game Cards */
         .game-card {
             background: var(--card-bg); border: 1px solid var(--border-color);
             border-radius: 12px; overflow: hidden; cursor: pointer;
             transition: all 0.2s ease;
         }
         .game-card:hover { border-color: var(--text-color); transform: translateY(-4px); }
-        .game-card img { width: 100%; aspect-ratio: 1/1; object-fit: cover; }
-        .game-info { padding: 12px; }
-        .game-info h3 { margin: 0; font-size: 0.85rem; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .game-card img { width: 100%; aspect-ratio: 1/1; object-fit: cover; background: #111; }
+        .game-info { padding: 12px; text-align: center; }
+        .game-info h3 { margin: 0; font-size: 0.8rem; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
-        /* Settings Modal */
+        /* Partner Cards */
+        .partner-card {
+            background: var(--card-bg); border: 1px solid var(--border-color);
+            border-radius: 16px; padding: 32px 24px; text-align: center;
+            display: flex; flex-direction: column; align-items: center; gap: 12px;
+        }
+        .p-icon { width: 64px; height: 64px; background: var(--border-color); border-radius: 14px; overflow: hidden; }
+        .p-icon img { width: 100%; height: 100%; object-fit: cover; }
+        .partner-link { width: 100%; padding: 10px; border-radius: 8px; background: var(--text-color); color: var(--bg-color); text-decoration: none; font-size: 0.8rem; font-weight: 700; }
+
+        /* Modals */
         #settings-modal {
-            display: none; position: fixed; top: 50%; left: 50%;
-            transform: translate(-50%, -50%); background: var(--bg-color);
-            padding: 2.5rem; border-radius: 16px; z-index: 1000;
+            display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            background: var(--bg-color); padding: 2rem; border-radius: 16px; z-index: 1000;
             width: 90%; max-width: 400px; border: 1px solid var(--border-color);
         }
-        .modal-overlay {
-            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.7); z-index: 999; backdrop-filter: blur(8px);
-        }
-
-        .setting-label { font-size: 11px; font-weight: 700; color: var(--secondary-text); text-transform: uppercase; margin: 20px 0 8px; display: block; }
-        .btn-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 999; backdrop-filter: blur(8px); }
+        .btn-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 10px; }
         
-        button {
-            padding: 10px; border-radius: 8px; border: 1px solid var(--border-color);
-            background: var(--bg-color); color: var(--text-color);
-            font-weight: 600; cursor: pointer; font-size: 0.8rem; transition: 0.2s;
-        }
+        button { padding: 10px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--bg-color); color: var(--text-color); cursor: pointer; font-size: 0.8rem; }
         button:hover { background: var(--text-color); color: var(--bg-color); }
 
         #game-view { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 2000; }
-        iframe { border: none; width: 100%; height: 100%; }
     </style>
 </head>
 <body>
@@ -164,193 +120,182 @@
             <div class="logo" onclick="showView('home')">THE VAULT</div>
             <nav>
                 <a onclick="showView('home')" id="nav-home" class="active">Arcade</a>
+                <a onclick="showView('cdn')" id="nav-cdn">CDN Archive</a>
                 <a onclick="showView('partners')" id="nav-partners">Partners</a>
             </nav>
         </div>
-        <div class="search-container" id="search-wrapper">
-            <input type="text" id="game-search" placeholder="Search archive..." onkeyup="filterGames()">
+        <div class="search-container">
+            <input type="text" id="game-search" placeholder="Search archive..." onkeyup="universalFilter()">
         </div>
         <button onclick="toggleSettings(true)">Settings</button>
     </header>
 
     <section id="view-home" class="view-section active">
-        <div class="game-grid" id="game-grid"></div>
-        <div id="loader" style="text-align: center; padding: 40px; color: var(--secondary-text); font-size: 0.8rem;">SYNCING...</div>
+        <div class="grid-container" id="arcade-grid"></div>
+        <div id="loader" style="text-align: center; padding: 40px; color: var(--secondary-text);">FETCHING ASSETS...</div>
         <div id="sentinel"></div>
     </section>
 
-    <section id="view-partners" class="view-section">
-        <div style="margin-bottom: 40px;">
-            <h1 style="font-size: 2.5rem; letter-spacing: -0.06em; margin-bottom: 8px;">Network Partners</h1>
-            <p style="color: var(--secondary-text);">The ecosystem supporting high-performance web entertainment.</p>
+    <section id="view-cdn" class="view-section">
+        <div style="margin-bottom: 30px;">
+            <h1 style="font-size: 2rem; letter-spacing: -0.05em;">CDN Archive</h1>
+            <p style="color: var(--secondary-text);">Static assets served via jsDelivr.</p>
         </div>
-        
-        <div class="partners-grid">
+        <div class="grid-container" id="cdn-grid"></div>
+    </section>
+
+    <section id="view-partners" class="view-section">
+        <div class="grid-container">
             <div class="partner-card">
-                <div class="p-icon">
-                    <img src="https://lh3.googleusercontent.com/sitesv/APaQ0STKajB0IejOtdWMZTjJvW2tV1X7BhGg9Uy2oQZnX_bLgNcaoTljt8XTB0408SFkBUfOcbCot79ToyxPlkb_6VZixhlneuZ9zwl6_Y5PRDj4hix-zdVf4xvZ-nGEDpCfu5ugVAXeTvJZ23JrpuwGVySI6BSanhaDMb30lSu1weFaSqsC5HAuE5rhRBY=w16383" alt="Jaime's Icon">
-                </div>
+                <div class="p-icon"><img src="https://lh3.googleusercontent.com/d/1X-50S0S0S0S0S0S0S0S0S0S0S0S0S0S=s128"></div>
                 <h3>Jaime's Cheese Grater</h3>
                 <p>Another W games site</p>
                 <a href="https://sites.google.com/view/jaimescheesegrater" target="_blank" class="partner-link">Visit Site</a>
             </div>
-
-            <div class="partner-card">
-                <div class="p-icon" style="font-size: 1.2rem; font-weight: 800;">GP</div>
-                <h3>GamePix</h3>
-                <p>Official Content Library</p>
-                <a href="https://www.gamepix.com" target="_blank" class="partner-link">Visit Site</a>
-            </div>
         </div>
     </section>
 
+    <div class="modal-overlay" id="modal-overlay" onclick="toggleSettings(false)"></div>
+    <div id="settings-modal">
+        <h3 style="margin-top:0">System</h3>
+        <div class="btn-grid"><button onclick="setTheme('dark')">Dark</button><button onclick="setTheme('light')">Light</button></div>
+        <div class="btn-grid"><button onclick="setWeather('rain')">Rain</button><button onclick="setWeather('none')">None</button></div>
+        <div class="btn-grid" style="grid-template-columns: 1fr;"><button onclick="setCloak('google')">Cloak: Google</button></div>
+        <button style="width:100%; margin-top:20px; background:var(--text-color); color:var(--bg-color);" onclick="toggleSettings(false)">Close</button>
+    </div>
+
     <div id="game-view">
-        <button style="position:absolute; top:20px; left:20px; z-index:2001;" onclick="closeGame()">← Close Terminal</button>
+        <button style="position:absolute; top:20px; left:20px; z-index:2001;" onclick="closeGame()">← EXIT</button>
         <div id="iframe-container" style="width: 100%; height: 100%;"></div>
     </div>
 
-    <div class="modal-overlay" id="modal-overlay" onclick="toggleSettings(false)"></div>
-    <div id="settings-modal">
-        <h3 style="margin:0">System Preferences</h3>
-        
-        <span class="setting-label">Cloak Protocol</span>
-        <div class="btn-grid">
-            <button onclick="setCloak('none')">Default</button>
-            <button onclick="setCloak('google')">Google</button>
-            <button onclick="setCloak('classroom')">Classroom</button>
-            <button onclick="setCloak('drive')">Drive</button>
-        </div>
-
-        <span class="setting-label">Appearance</span>
-        <div class="btn-grid">
-            <button onclick="setTheme('dark')">Dark</button>
-            <button onclick="setTheme('light')">Light</button>
-        </div>
-
-        <span class="setting-label">Atmosphere</span>
-        <div class="btn-grid">
-            <button onclick="setWeather('none')">None</button>
-            <button onclick="setWeather('rain')">Rain</button>
-            <button onclick="setWeather('snow')">Snow</button>
-        </div>
-        <button style="width:100%; margin-top:30px; background:var(--text-color); color:var(--bg-color);" onclick="toggleSettings(false)">Apply Changes</button>
-    </div>
-
     <script>
+        // --- CONFIGS ---
         const SID = "1";
-        let nextUrl = `https://feeds.gamepix.com/v2/json?order=quality&pagination=48&sid=${SID}`;
-        let isLoading = false;
+        const CDN_CONFIG = {
+            zones: "https://cdn.jsdelivr.net/gh/gn-math/assets@latest/zones.json",
+            covers: "https://cdn.jsdelivr.net/gh/gn-math/covers@main",
+            baseHtml: "https://cdn.jsdelivr.net/gh/gn-math/html@main/"
+        };
 
-        // --- PERSISTENCE ENGINE ---
-        function save(key, val) { localStorage.setItem(`vault_${key}`, val); }
-        function load(key) { return localStorage.getItem(`vault_${key}`); }
+        let arcadeNextUrl = `https://feeds.gamepix.com/v2/json?order=quality&pagination=48&sid=${SID}`;
+        let cdnGamesData = [];
+        let isArcadeLoading = false;
 
-        function applySavedSettings() {
-            setTheme(load('theme') || 'dark');
-            setWeather(load('weather') || 'none');
-            setCloak(load('cloak') || 'none');
-        }
+        // --- PERSISTENCE ---
+        const save = (k, v) => localStorage.setItem(`vlt_${k}`, v);
+        const load = (k) => localStorage.getItem(`vlt_${k}`);
 
-        // --- SETTINGS LOGIC ---
-        function setTheme(t) { 
-            document.documentElement.setAttribute('data-theme', t);
-            save('theme', t);
-        }
-
-        function setWeather(type) {
-            const overlay = document.getElementById('weather-overlay');
-            overlay.innerHTML = '';
-            save('weather', type);
-            if (type === 'none') return;
-            for (let i = 0; i < 60; i++) {
-                const el = document.createElement('div');
-                el.className = 'weather-item';
-                el.style.left = Math.random() * 100 + '%';
-                el.style.animationDuration = (Math.random() * 2 + 1) + 's';
-                el.style.animationDelay = `-${Math.random() * 5}s`;
-                if (type === 'rain') {
-                    el.style.width = '1px'; el.style.height = '25px'; el.style.background = 'rgba(255,255,255,0.2)';
-                } else {
-                    el.style.width = '4px'; el.style.height = '4px'; el.style.background = '#fff'; el.style.borderRadius = '50%'; el.style.opacity = '0.3';
-                }
-                overlay.appendChild(el);
-            }
-        }
-
-        function setCloak(type) {
-            const title = document.getElementById('tab-title');
-            const favicon = document.getElementById('tab-favicon');
-            const presets = {
-                'google': { title: 'Google', icon: 'https://www.google.com/favicon.ico' },
-                'classroom': { title: 'Classes', icon: 'https://ssl.gstatic.com/classroom/favicon.png' },
-                'drive': { title: 'My Drive - Google Drive', icon: 'https://ssl.gstatic.com/images/branding/product/1x/drive_2020q4_48dp.png' },
-                'none': { title: 'The Vault | Premium Arcade', icon: 'https://www.gamepix.com/favicon.ico' }
-            };
-            title.innerText = presets[type].title;
-            favicon.href = presets[type].icon;
-            save('cloak', type);
-        }
-
-        // --- NAVIGATION ---
+        // --- CORE LOGIC ---
         function showView(v) {
             document.querySelectorAll('.view-section').forEach(s => s.classList.remove('active'));
             document.getElementById(`view-${v}`).classList.add('active');
             document.querySelectorAll('nav a').forEach(a => a.classList.remove('active'));
             document.getElementById(`nav-${v}`).classList.add('active');
-            document.getElementById('search-wrapper').style.opacity = (v === 'home') ? '1' : '0';
-            document.getElementById('search-wrapper').style.pointerEvents = (v === 'home') ? 'auto' : 'none';
+            if(v === 'cdn' && cdnGamesData.length === 0) loadCdnGames();
         }
 
-        // --- DATA ---
-        async function fetchGames() {
-            if (isLoading || !nextUrl) return;
-            isLoading = true;
+        // --- CDN LOGIC ---
+        async function loadCdnGames() {
             try {
-                const res = await fetch(nextUrl);
+                const res = await fetch(CDN_CONFIG.zones);
+                cdnGamesData = await res.json();
+                renderCdnGames(cdnGamesData);
+            } catch(e) { console.error("CDN Fetch Failed"); }
+        }
+
+        function renderCdnGames(data) {
+            const grid = document.getElementById('cdn-grid');
+            grid.innerHTML = '';
+            data.forEach(game => {
+                const card = document.createElement('div');
+                card.className = 'game-card cdn-item';
+                card.setAttribute('data-title', game.name.toLowerCase());
+                card.onclick = () => launchCdnGame(game.id);
+                card.innerHTML = `
+                    <img src="${CDN_CONFIG.covers}/${game.id}.png" onerror="this.src='https://via.placeholder.com/150/111/fff?text=CDN'">
+                    <div class="game-info"><h3>${game.name}</h3></div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        function launchCdnGame(gameId) {
+            const win = window.open('about:blank', '_blank');
+            fetch(`${CDN_CONFIG.baseHtml}${gameId}.html`)
+                .then(r => r.text())
+                .then(html => {
+                    win.document.open();
+                    win.document.write(`<style>body,html{margin:0;padding:0;width:100%;height:100%;overflow:hidden;background:#000;}</style>${html}`);
+                    win.document.close();
+                });
+        }
+
+        // --- ARCADE LOGIC ---
+        async function fetchArcade() {
+            if (isArcadeLoading || !arcadeNextUrl) return;
+            isArcadeLoading = true;
+            try {
+                const res = await fetch(arcadeNextUrl);
                 const data = await res.json();
-                const grid = document.getElementById('game-grid');
+                const grid = document.getElementById('arcade-grid');
                 data.items.forEach(item => {
                     const card = document.createElement('div');
-                    card.className = 'game-card';
+                    card.className = 'game-card arcade-item';
                     card.setAttribute('data-title', item.title.toLowerCase());
-                    card.onclick = () => launchGame(item.namespace);
-                    card.innerHTML = `<img src="${item.banner_image}" loading="lazy"><div class="game-info"><h3>${item.title}</h3></div>`;
+                    card.onclick = () => launchArcadeGame(item.namespace);
+                    card.innerHTML = `<img src="${item.banner_image}"><div class="game-info"><h3>${item.title}</h3></div>`;
                     grid.appendChild(card);
                 });
-                nextUrl = data.next_url;
-            } catch (e) {} finally { 
-                isLoading = false; 
-                document.getElementById('loader').style.display = 'none'; 
-            }
+                arcadeNextUrl = data.next_url;
+            } catch (e) {} finally { isArcadeLoading = false; document.getElementById('loader').style.display='none'; }
         }
 
-        function filterGames() {
+        function launchArcadeGame(ns) {
+            const container = document.getElementById('iframe-container');
+            container.innerHTML = `<iframe src="https://play.gamepix.com/${ns}/embed?sid=${SID}" style="width:100%;height:100%;border:none;"></iframe>`;
+            document.getElementById('game-view').style.display = 'block';
+        }
+
+        // --- SEARCH ---
+        function universalFilter() {
             const q = document.getElementById('game-search').value.toLowerCase();
             document.querySelectorAll('.game-card').forEach(c => {
                 c.style.display = c.getAttribute('data-title').includes(q) ? 'block' : 'none';
             });
         }
 
-        const observer = new IntersectionObserver((e) => {
-            if (e[0].isIntersecting && document.getElementById('view-home').classList.contains('active')) fetchGames();
-        });
+        // --- UTILS ---
+        function closeGame() { document.getElementById('game-view').style.display = 'none'; document.getElementById('iframe-container').innerHTML = ''; }
+        function toggleSettings(s) { document.getElementById('settings-modal').style.display = s ? 'block' : 'none'; document.getElementById('modal-overlay').style.display = s ? 'block' : 'none'; }
+        function setTheme(t) { document.documentElement.setAttribute('data-theme', t); save('theme', t); }
+        function setCloak(type) {
+            const presets = { 'google': { title: 'Google', icon: 'https://www.google.com/favicon.ico' }, 'none': { title: 'The Vault', icon: '' } };
+            document.title = presets[type].title;
+            document.getElementById('tab-favicon').href = presets[type].icon;
+            save('cloak', type);
+        }
+        function setWeather(type) {
+            const overlay = document.getElementById('weather-overlay');
+            overlay.innerHTML = ''; save('weather', type);
+            if(type === 'none') return;
+            for(let i=0; i<50; i++) {
+                const el = document.createElement('div');
+                el.className='weather-item'; el.style.left = Math.random()*100+'%';
+                el.style.animationDuration = (Math.random()*2+1)+'s';
+                el.style.width='1px'; el.style.height='20px'; el.style.background='rgba(255,255,255,0.2)';
+                overlay.appendChild(el);
+            }
+        }
+
+        const observer = new IntersectionObserver(e => { if(e[0].isIntersecting && document.getElementById('view-home').classList.contains('active')) fetchArcade(); });
         observer.observe(document.getElementById('sentinel'));
 
-        function launchGame(ns) {
-            const frame = document.createElement('iframe');
-            frame.src = `https://play.gamepix.com/${ns}/embed?sid=${SID}`;
-            document.getElementById('iframe-container').innerHTML = '';
-            document.getElementById('iframe-container').appendChild(frame);
-            document.getElementById('game-view').style.display = 'block';
-        }
-
-        function closeGame() { document.getElementById('game-view').style.display = 'none'; }
-        function toggleSettings(s) {
-            document.getElementById('settings-modal').style.display = s ? 'block' : 'none';
-            document.getElementById('modal-overlay').style.display = s ? 'block' : 'none';
-        }
-
-        window.onload = applySavedSettings;
+        window.onload = () => {
+            setTheme(load('theme') || 'dark');
+            setWeather(load('weather') || 'none');
+            setCloak(load('cloak') || 'none');
+        };
     </script>
 </body>
 </html>
