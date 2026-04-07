@@ -45,6 +45,46 @@
             --border-color: #991b1b; --accent-color: #f87171; --secondary-text: #fca5a5;
         }
 
+        /* Deep Space: A darker blue with purple neon accents */
+[data-theme="space"] {
+    --bg-color: #020205;
+    --text-color: #e2e8f0;
+    --card-bg: #090915;
+    --border-color: #1e1b4b;
+    --accent-color: #a855f7;
+    --secondary-text: #94a3b8;
+}
+
+/* Rose Quartz: A sophisticated dark mode with pinkish hues */
+[data-theme="rose"] {
+    --bg-color: #1a0f14;
+    --text-color: #fff1f2;
+    --card-bg: #2d1a22;
+    --border-color: #4c1d2f;
+    --accent-color: #fb7185;
+    --secondary-text: #fda4af;
+}
+
+/* Gold Edition: A premium black and gold aesthetic */
+[data-theme="gold"] {
+    --bg-color: #0a0a05;
+    --text-color: #fafaf9;
+    --card-bg: #1c1917;
+    --border-color: #44403c;
+    --accent-color: #eab308;
+    --secondary-text: #d6d3d1;
+}
+
+/* Ultraviolet: High energy purple and cyan */
+[data-theme="uv"] {
+    --bg-color: #0f0720;
+    --text-color: #f5f3ff;
+    --card-bg: #1c1033;
+    --border-color: #3b0764;
+    --accent-color: #22d3ee;
+    --secondary-text: #a78bfa;
+}
+
         body, html {
             margin: 0; padding: 0; height: 100%;
             font-family: 'Inter', sans-serif;
@@ -97,7 +137,11 @@
             background: var(--card-bg); border: 1px solid var(--border-color);
             border-radius: 14px; overflow: hidden; cursor: pointer; transition: 0.3s;
         }
-        .game-card:hover { transform: translateY(-5px); border-color: var(--text-color); }
+        .game-card:hover {
+    transform: translateY(-5px);
+    border-color: var(--accent-color);
+    box-shadow: 0 10px 20px -5px var(--accent-color);
+}
         .game-card img { width: 100%; aspect-ratio: 1/1; object-fit: cover; }
         .game-info { padding: 12px; text-align: center; }
         .game-info h3 { margin: 0; font-size: 0.8rem; font-weight: 600; }
@@ -163,13 +207,18 @@
             </div>
         </div>
         <div class="setting-section">
-            <span class="setting-title">Appearance</span>
-            <div class="btn-row">
-                <button class="opt-btn" onclick="setTheme('dark')">Dark</button>
-                <button class="opt-btn" onclick="setTheme('midnight')">Midnight</button>
-                <button class="opt-btn" onclick="setTheme('forest')">Forest</button>
-            </div>
-        </div>
+    <span class="setting-title">Appearance</span>
+    <div class="btn-row">
+        <button class="opt-btn" onclick="setTheme('dark')">Dark</button>
+        <button class="opt-btn" onclick="setTheme('midnight')">Midnight</button>
+        <button class="opt-btn" onclick="setTheme('forest')">Forest</button>
+        <button class="opt-btn" onclick="setTheme('crimson')">Crimson</button>
+        <button class="opt-btn" onclick="setTheme('space')">Space</button>
+        <button class="opt-btn" onclick="setTheme('rose')">Rose</button>
+        <button class="opt-btn" onclick="setTheme('gold')">Gold</button>
+        <button class="opt-btn" onclick="setTheme('uv')">UV</button>
+    </div>
+</div>
         <div class="setting-section">
             <span class="setting-title">Atmosphere</span>
             <div class="btn-row">
