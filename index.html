@@ -68,6 +68,134 @@
         .partner-link { width: 100%; max-width: 200px; padding: 14px; border-radius: 16px; background: #f8faff; color: #050505; text-decoration: none; font-size: 0.95rem; font-weight: 800; transition: 0.2s; margin-top: 10px; }
         .partner-link:hover { filter: brightness(0.9); transform: scale(1.02); }
 
+<<<<<<< HEAD
+/* --- ATMOSPHERE (STARS & PARTICLES) --- */
+#star-field {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    pointer-events: none; z-index: 0; transition: opacity 1s; opacity: 0;
+}
+.star {
+    position: absolute; background: #fff; border-radius: 50%;
+    animation: twinkle var(--duration) ease-in-out infinite;
+}
+@keyframes twinkle { 0%, 100% { opacity: 0.3; transform: scale(1); } 50% { opacity: 1; transform: scale(1.2); } }
+
+#weather-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1; }
+.weather-item { position: absolute; top: -50px; animation: fall linear infinite; }
+@keyframes fall { to { transform: translateY(110vh); } }
+
+/* Update within your existing style or add this specific rule */
+.weather-item.snow {
+    width: 6px;
+    height: 6px;
+    background: #fff;
+    border-radius: 50%;
+    filter: blur(1px);
+    opacity: 0.8;
+}
+
+/* --- HEADER & NAVIGATION --- */
+header {
+    position: sticky; top: 0; padding: 1.2rem 5%;
+    display: flex; justify-content: space-between; align-items: center;
+    background: var(--nav-bg); backdrop-filter: blur(20px);
+    z-index: 100; border-bottom: 1px solid var(--border-color);
+}
+.logo { font-weight: 800; font-size: 1.2rem; cursor: pointer; letter-spacing: -0.05em; }
+nav { display: flex; gap: 20px; }
+nav a { color: var(--secondary-text); text-decoration: none; font-size: 0.8rem; font-weight: 600; cursor: pointer; text-transform: uppercase; transition: 0.2s; }
+nav a.active { color: var(--text-color); }
+
+.search-container { flex-grow: 1; max-width: 300px; margin: 0 20px; }
+#game-search {
+    width: 100%; padding: 12px 20px; font-family: inherit;
+    background: var(--glass); border: 1px solid var(--border-color);
+    border-radius: 12px; color: var(--text-color); outline: none; transition: 0.3s;
+}
+#game-search:focus { border-color: var(--accent-color); background: rgba(255,255,255,0.08); }
+
+/* --- GAME GRIDS --- */
+.view-section { display: none; padding: 2.5rem 5%; position: relative; z-index: 2; }
+.view-section.active { display: block; animation: fadeIn 0.4s ease; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+.grid-container { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 20px; }
+.game-card {
+    background: var(--card-bg); border: 1px solid var(--border-color);
+    border-radius: 14px; overflow: hidden; cursor: pointer; transition: 0.3s;
+}
+.game-card:hover { 
+    transform: translateY(-5px); 
+    border-color: var(--accent-color); 
+    box-shadow: 0 10px 20px -5px var(--accent-color);
+}
+.game-card img { width: 100%; aspect-ratio: 1/1; object-fit: cover; }
+.game-info { padding: 12px; text-align: center; }
+.game-info h3 { margin: 0; font-size: 0.8rem; font-weight: 600; }
+
+/* --- PARTNER CARDS (RE-STYLED) --- */
+.partner-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 24px;
+    padding: 32px 24px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+    transition: all 0.3s ease;
+}
+.partner-card:hover {
+    transform: translateY(-8px);
+    border-color: var(--accent-color);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
+}
+.p-icon {
+    width: 80px; height: 80px; border-radius: 20px;
+    background: #000; display: flex; align-items: center; justify-content: center;
+    overflow: hidden; border: 1px solid var(--border-color); margin-bottom: 8px;
+}
+.p-icon img { width: 100%; height: 100%; object-fit: cover; }
+.partner-link {
+    width: 100%; padding: 14px; border-radius: 12px;
+    background: var(--accent-color); color: #fff;
+    text-decoration: none; font-size: 0.85rem; font-weight: 800;
+    transition: filter 0.2s; margin-top: 10px;
+}
+.partner-link:hover { filter: brightness(1.2); }
+
+/* --- SETTINGS MODAL --- */
+#settings-modal {
+    display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+    background: var(--card-bg); padding: 35px; border-radius: 24px; z-index: 1000;
+    width: 90%; max-width: 450px; border: 1px solid var(--border-color);
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7);
+}
+.modal-overlay { 
+    display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+    background: rgba(0,0,0,0.85); z-index: 999; backdrop-filter: blur(10px); 
+}
+.setting-section { margin-bottom: 25px; }
+.setting-title { 
+    font-size: 0.7rem; font-weight: 800; text-transform: uppercase; 
+    letter-spacing: 0.1em; color: var(--secondary-text); margin-bottom: 12px; display: block; 
+}
+.btn-row { display: flex; flex-wrap: wrap; gap: 8px; }
+.opt-btn { 
+    padding: 8px 14px; border-radius: 8px; border: 1px solid var(--border-color); 
+    background: var(--glass); color: var(--text-color); cursor: pointer; 
+    font-size: 0.75rem; font-weight: 600; transition: 0.2s; 
+}
+.opt-btn:hover { border-color: var(--text-color); }
+.opt-btn.active { background: var(--text-color); color: var(--bg-color); }
+
+/* --- GAME VIEWER --- */
+#game-view { 
+    display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+    background: #000; z-index: 2000; 
+}
+=======
         /* SETTINGS & MODALS */
         #settings-modal { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: var(--card-bg); padding: 35px; border-radius: 24px; z-index: 1000; width: 90%; max-width: 450px; border: 1px solid var(--border-color); }
         .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 999; backdrop-filter: blur(10px); }
@@ -79,6 +207,7 @@
         
         #toast { position: fixed; bottom: 20px; right: 20px; padding: 12px 24px; background: var(--card-bg); border: 1px solid var(--accent-color); border-radius: 12px; color: #fff; font-weight: 600; font-size: 0.8rem; transform: translateY(100px); transition: 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); z-index: 9999; }
         #toast.show { transform: translateY(0); }
+>>>>>>> 48a1ca15cd5cd7faf3ed1cce65de2a21ce701879
     </style>
 </head>
 <body>
@@ -130,6 +259,14 @@
     <div id="settings-modal">
         <h2 style="margin: 0 0 20px 0; font-size: 1.2rem;">System Preferences</h2>
         <div class="setting-section">
+    <span class="setting-title">Cloak Protocol</span>
+    <div class="btn-row">
+        <button class="opt-btn" onclick="setCloak('none')">None</button>
+        <button class="opt-btn" onclick="setCloak('google')">Google</button>
+        <button class="opt-btn" onclick="setCloak('drive')">Drive</button>
+        <button class="opt-btn" onclick="setCloak('classroom')">Classroom</button>
+    </div>
+</div>
             <span class="setting-title">Cloak Protocol</span>
             <div class="btn-row">
                 <button class="opt-btn" onclick="setCloak('none')">None</button>
@@ -149,6 +286,12 @@
             </div>
         </div>
         <div class="setting-section">
+    <span class="setting-title">Atmosphere</span>
+    <div class="btn-row">
+        <button class="opt-btn" onclick="setWeather('none')">None</button>
+        <button class="opt-btn" onclick="setWeather('rain')">Rain</button>
+        <button class="opt-btn" onclick="setWeather('snow')">Snow</button>
+        <button class="opt-btn" onclick="setWeather('stars')">Stars</button>
             <span class="setting-title">Atmosphere</span>
             <div class="btn-row">
                 <button class="opt-btn" onclick="setWeather('none')">None</button>
@@ -158,6 +301,9 @@
         </div>
         <button style="width:100%; padding:12px; border-radius:10px; background:var(--text-color); color:var(--bg-color); font-weight:800; border:none; cursor:pointer;" onclick="toggleSettings(false)">Apply</button>
     </div>
+</div>
+    <button style="width:100%; padding:15px; border-radius:12px; background:var(--text-color); color:var(--bg-color); font-weight:800; border:none; cursor:pointer;" onclick="toggleSettings(false)">Apply & Exit</button>
+</div>
 
     <div id="game-view">
         <button style="position:absolute; top:20px; left:20px; z-index:2001;" class="opt-btn" onclick="closeGame()">← EXIT</button>
@@ -239,19 +385,42 @@
         function setTheme(t) { document.documentElement.setAttribute('data-theme', t); save('theme', t); }
 
         function setWeather(type) {
-            const overlay = document.getElementById('weather-overlay');
-            const stars = document.getElementById('star-field');
-            overlay.innerHTML = ''; stars.style.opacity = (type === 'stars' ? '1' : '0');
-            save('weather', type);
-            if(type === 'none' || type === 'stars') return;
-            for(let i=0; i<150; i++) {
-                const el = document.createElement('div'); el.className='weather-item';
-                el.style.left = Math.random()*100+'%'; el.style.animationDuration = (Math.random()*1.5+0.5)+'s';
-                if(type==='rain') { el.style.width='1px'; el.style.height='30px'; el.style.background='rgba(255,255,255,0.3)'; }
-                else { el.style.width='4px'; el.style.height='4px'; el.style.background='#fff'; el.style.borderRadius='50%'; el.style.opacity='0.6'; }
-                overlay.appendChild(el);
-            }
+    const overlay = document.getElementById('weather-overlay');
+    const stars = document.getElementById('star-field');
+    overlay.innerHTML = ''; 
+    stars.style.opacity = (type === 'stars' ? '1' : '0');
+    save('weather', type);
+    
+    if(type === 'none' || type === 'stars') return;
+    
+    for(let i=0; i<150; i++) {
+        const el = document.createElement('div'); 
+        el.className = 'weather-item';
+        el.style.left = Math.random() * 100 + '%'; 
+        el.style.animationDuration = (Math.random() * 2 + 1) + 's'; // Slightly slower for snow
+        
+        if(type === 'rain') {
+            el.style.width = '1px'; el.style.height = '30px'; 
+            el.style.background = 'rgba(255,255,255,0.3)';
+        } else if(type === 'snow') {
+            el.classList.add('snow'); // Uses the CSS rule above
         }
+        overlay.appendChild(el);
+    }
+}
+
+function setCloak(type) {
+    const favicon = document.getElementById('tab-favicon');
+    const presets = {
+        'google': { t: 'Google', i: 'https://www.google.com/favicon.ico' },
+        'drive': { t: 'My Drive - Google Drive', i: 'https://ssl.gstatic.com/images/branding/product/1x/drive_2020q4_48dp.png' },
+        'classroom': { t: 'Classes', i: 'https://ssl.gstatic.com/classroom/favicon.png' }, // Restored
+        'none': { t: 'The Vault', i: '/favicon-96x96.png' }
+    };
+    document.title = presets[type].t; 
+    favicon.href = presets[type].i; 
+    save('cloak', type);
+}
 
         function initStars() {
             const field = document.getElementById('star-field');
