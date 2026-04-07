@@ -225,6 +225,11 @@ nav a.active { color: var(--text-color); }
 .opt-btn:hover { border-color: var(--text-color); }
 .opt-btn.active { background: var(--text-color); color: var(--bg-color); }
 
+#music-volume {
+    width: 100%;
+    cursor: pointer;
+}
+
 /* --- GAME VIEWER --- */
 #game-view { 
     display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
@@ -312,6 +317,22 @@ nav a.active { color: var(--text-color); }
 </div>
     <button style="width:100%; padding:15px; border-radius:12px; background:var(--text-color); color:var(--bg-color); font-weight:800; border:none; cursor:pointer;" onclick="toggleSettings(false)">Apply & Exit</button>
 </div>
+
+<div class="setting-section">
+    <span class="setting-title">Background Music</span>
+
+    <div class="btn-row">
+        <button class="opt-btn" onclick="toggleMusic()">Play / Pause</button>
+    </div>
+
+    <div style="margin-top:10px;">
+        <input type="range" id="music-volume" min="0" max="100" value="50">
+    </div>
+</div>
+
+<audio id="bg-music" loop>
+  <source src="./bgmusic.mp3" type="audio/mpeg">
+</audio>
 
     <div id="game-view"><button style="position:absolute; top:20px; left:20px; z-index:2001;" class="opt-btn" onclick="closeGame()">← EXIT</button><div id="iframe-container" style="width:100%; height:100%;"></div></div>
 
@@ -507,6 +528,52 @@ function setCloak(type) {
             setWeather(load('weather') || 'none');
             setCloak(load('cloak') || 'none');
         };
+
+        const music = document.getElementById("bg-music");
+const volumeSlider = document.getElementById("music-volume");
+
+// Load saved settings
+const savedVolume = localStorage.getItem("vault_music_volume");
+const musicEnabled = localStorage.getItem("vault_music_enabled") === "true";
+
+if (savedVolume !== null) {
+    music.volume = savedVolume / 100;
+    if (volumeSlider) volumeSlider.value = savedVolume;
+} else {
+    music.volume = 0.5;
+}
+
+// Autoplay if previously enabled
+if (musicEnabled) {
+    music.play().catch(() => {});
+}
+
+// Toggle play/pause
+function toggleMusic() {
+    if (music.paused) {
+        music.play().catch(() => {});
+        localStorage.setItem("vault_music_enabled", "true");
+    } else {
+        music.pause();
+        localStorage.setItem("vault_music_enabled", "false");
+    }
+}
+
+// Volume control
+if (volumeSlider) {
+    volumeSlider.addEventListener("input", () => {
+        const val = volumeSlider.value;
+        music.volume = val / 100;
+        localStorage.setItem("vault_music_volume", val);
+    });
+}
+
+// Ensure music starts after user interaction (browser policy)
+document.addEventListener("click", () => {
+    if (localStorage.getItem("vault_music_enabled") === "true") {
+        music.play().catch(() => {});
+    }
+}, { once: true });
     </script>
 </body>
 </html>
