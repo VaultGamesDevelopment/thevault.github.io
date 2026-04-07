@@ -61,7 +61,7 @@
 }
 
 /* --- CORE LAYOUT --- */
-body, html {
+body {
     margin: 0; padding: 0; height: 100%;
     font-family: 'Inter', sans-serif;
     background-color: var(--bg-color);
@@ -69,6 +69,40 @@ body, html {
     transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
     overflow-x: hidden;
 }
+
+/* Smooth Scroll & Selection */
+html { scroll-behavior: smooth; }
+::selection { background: var(--accent-color); color: white; }
+
+/* Interactive Hover Glow for the Logo */
+.logo:hover {
+    color: var(--accent-color);
+    text-shadow: 0 0 15px var(--accent-color);
+    transition: 0.3s;
+}
+
+/* Skeleton Loading Animation */
+@keyframes shimmer {
+    0% { background-position: -468px 0; }
+    100% { background-position: 468px 0; }
+}
+.loading-skeleton {
+    background: #f6f7f8;
+    background-image: linear-gradient(to right, var(--card-bg) 0%, var(--border-color) 20%, var(--card-bg) 40%, var(--card-bg) 100%);
+    background-repeat: no-repeat;
+    background-size: 800px 104px;
+    animation: shimmer 1.5s linear infinite forwards;
+}
+
+/* Notification Toast */
+#toast {
+    position: fixed; bottom: 20px; right: 20px; padding: 12px 24px;
+    background: var(--card-bg); border: 1px solid var(--accent-color);
+    border-radius: 12px; color: #fff; font-weight: 600; font-size: 0.8rem;
+    transform: translateY(100px); transition: 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    z-index: 9999; box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+}
+#toast.show { transform: translateY(0); }
 
 /* --- ATMOSPHERE (STARS & PARTICLES) --- */
 #star-field {
