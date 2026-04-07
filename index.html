@@ -11,19 +11,19 @@
 
 <style>
 :root {
-    --bg-color:#050505; --text-color:#fff; --accent:#3b82f6;
-    --card:#0f0f0f; --border:#262626; --nav:rgba(5,5,5,.8);
-    --secondary:#a3a3a3; --glass:rgba(255,255,255,.04);
+--bg:#050505;--text:#fff;--accent:#3b82f6;
+--card:#0f0f0f;--border:#262626;
+--nav:rgba(5,5,5,.8);--secondary:#a3a3a3;
+--glass:rgba(255,255,255,.05);
 }
 
-/* THEMES */
-[data-theme="midnight"]{--bg-color:#020617;--card:#0f172a;--accent:#38bdf8;}
-[data-theme="space"]{--bg-color:#020205;--card:#090915;--accent:#a855f7;}
-[data-theme="rose"]{--bg-color:#1a0f14;--card:#2d1a22;--accent:#fb7185;}
-[data-theme="gold"]{--bg-color:#0a0a05;--card:#1c1917;--accent:#eab308;}
-[data-theme="uv"]{--bg-color:#0f0720;--card:#1c1033;--accent:#22d3ee;}
+[data-theme="midnight"]{--bg:#020617;--card:#0f172a;--accent:#38bdf8;}
+[data-theme="space"]{--bg:#020205;--card:#090915;--accent:#a855f7;}
+[data-theme="rose"]{--bg:#1a0f14;--card:#2d1a22;--accent:#fb7185;}
+[data-theme="gold"]{--bg:#0a0a05;--card:#1c1917;--accent:#eab308;}
+[data-theme="uv"]{--bg:#0f0720;--card:#1c1033;--accent:#22d3ee;}
 
-body{margin:0;font-family:Inter;background:var(--bg-color);color:var(--text-color);overflow-x:hidden}
+body{margin:0;font-family:Inter;background:var(--bg);color:var(--text);overflow-x:hidden}
 
 /* HEADER */
 header{
@@ -31,7 +31,6 @@ display:flex;align-items:center;justify-content:space-between;
 padding:1rem 5%;position:sticky;top:0;
 background:var(--nav);backdrop-filter:blur(20px);
 border-bottom:1px solid var(--border);
-z-index:100;
 }
 .logo{font-weight:800;cursor:pointer}
 nav{display:flex;gap:20px}
@@ -98,9 +97,7 @@ padding:8px 14px;border-radius:10px;
 border:1px solid var(--border);
 background:var(--glass);color:#fff;
 cursor:pointer;font-size:.75rem;
-transition:.2s;
 }
-.opt-btn:hover{border-color:#fff}
 
 /* ATMOSPHERE */
 #star-field,#weather-overlay{
@@ -110,10 +107,7 @@ position:fixed;inset:0;pointer-events:none;
 position:absolute;background:#fff;border-radius:50%;
 animation:twinkle var(--d) infinite;
 }
-@keyframes twinkle{
-0%,100%{opacity:.3}
-50%{opacity:1}
-}
+@keyframes twinkle{0%,100%{opacity:.3}50%{opacity:1}}
 
 .weather-item{
 position:absolute;top:-50px;
@@ -123,7 +117,7 @@ animation:fall linear infinite;
 
 .weather-item.snow{
 width:6px;height:6px;border-radius:50%;
-background:#fff;opacity:.8;
+background:#fff;
 }
 
 /* GAME VIEW */
@@ -213,13 +207,13 @@ let loading=false;
 const save=(k,v)=>localStorage.setItem("vault_"+k,v);
 const load=k=>localStorage.getItem("vault_"+k);
 
-/* VIEWS */
+/* VIEW */
 function showView(v){
 document.querySelectorAll('.view-section').forEach(s=>s.classList.remove('active'));
 document.getElementById(`view-${v}`).classList.add('active');
 }
 
-/* GAMES */
+/* FETCH */
 async function fetchArcade(){
 if(loading||!next)return;
 loading=true;
@@ -234,10 +228,7 @@ let c=document.createElement('div');
 c.className='game-card';
 c.dataset.title=g.title.toLowerCase();
 
-c.onclick=()=>{
-launchArcade(g);
-updateRecents(g);
-};
+c.onclick=()=>launchArcade(g);
 
 c.innerHTML=`<img src="${g.banner_image}">
 <div class="game-info"><h4>${g.title}</h4></div>`;
@@ -248,19 +239,19 @@ next=d.next_url;
 loading=false;
 }
 
+/* GAME */
 function launchArcade(g){
 document.getElementById('iframe-container').innerHTML=
 `<iframe src="https://play.gamepix.com/${g.namespace}/embed?sid=${SID}" style="width:100%;height:100%;border:none;"></iframe>`;
 document.getElementById('game-view').style.display='block';
 }
-
 function closeGame(){
 document.getElementById('game-view').style.display='none';
 }
 
 /* SEARCH */
 function universalFilter(){
-let q=game-search.value.toLowerCase();
+const q=document.getElementById('game-search').value.toLowerCase();
 document.querySelectorAll('.game-card').forEach(c=>{
 c.style.display=c.dataset.title.includes(q)?'block':'none';
 });
@@ -268,10 +259,11 @@ c.style.display=c.dataset.title.includes(q)?'block':'none';
 
 /* SETTINGS */
 function toggleSettings(s){
-settings-modal.style.display=s?'block':'none';
-modal-overlay.style.display=s?'block':'none';
+document.getElementById('settings-modal').style.display=s?'block':'none';
+document.getElementById('modal-overlay').style.display=s?'block':'none';
 }
 
+/* THEME */
 function setTheme(t){
 document.documentElement.setAttribute('data-theme',t);
 save("theme",t);
@@ -281,12 +273,11 @@ save("theme",t);
 function setWeather(type){
 const overlay=document.getElementById('weather-overlay');
 const stars=document.getElementById('star-field');
-overlay.innerHTML="";
-stars.innerHTML="";
+overlay.innerHTML=""; stars.innerHTML="";
 save("weather",type);
 
 if(type==="stars"){
-for(let i=0;i<150;i++){
+for(let i=0;i<120;i++){
 let s=document.createElement("div");
 s.className="star";
 s.style.left=Math.random()*100+"%";
@@ -300,7 +291,7 @@ return;
 
 if(type==="none") return;
 
-for(let i=0;i<120;i++){
+for(let i=0;i<100;i++){
 let el=document.createElement("div");
 el.className="weather-item";
 el.style.left=Math.random()*100+"%";
@@ -327,13 +318,6 @@ none:{t:"The Vault",i:"/favicon-96x96.png"}
 document.title=presets[type].t;
 document.getElementById("tab-favicon").href=presets[type].i;
 save("cloak",type);
-}
-
-/* RECENTS */
-function updateRecents(g){
-let r=JSON.parse(load("recents")||"[]");
-r=[g,...r.filter(x=>x.id!==g.id)].slice(0,4);
-save("recents",JSON.stringify(r));
 }
 
 /* INIT */
