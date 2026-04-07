@@ -209,15 +209,28 @@ nav a.active { color: var(--text-color); }
     <section id="view-home" class="view-section active"><div class="grid-container" id="arcade-grid"></div><div id="sentinel"></div></section>
     <section id="view-cdn" class="view-section"><div class="grid-container" id="cdn-grid"></div></section>
     <section id="view-partners" class="view-section">
-        <div class="grid-container">
-            <div class="partner-card" style="background:var(--card-bg); border:1px solid var(--border-color); border-radius:20px; padding:40px; text-align:center;">
-                <img src="https://lh3.googleusercontent.com/sitesv/APaQ0STKajB0IejOtdWMZTjJvW2tV1X7BhGg9Uy2oQZnX_bLgNcaoTljt8XTB0408SFkBUfOcbCot79ToyxPlkb_6VZixhlneuZ9zwl6_Y5PRDj4hix-zdVf4xvZ-nGEDpCfu5ugVAXeTvJZ23JrpuwGVySI6BSanhaDMb30lSu1weFaSqsC5HAuE5rhRBY=w16383" style="width:70px; border-radius:18px; margin-bottom:15px;">
-                <h3 style="margin:0">Jaime's Cheese Grater</h3>
-                <p style="color:var(--secondary-text); font-size:0.8rem; margin-bottom:20px;">Another W games site</p>
-                <a href="https://sites.google.com/view/jaimescheesegrater" target="_blank" style="display:block; width:100%; padding:12px; background:var(--text-color); color:var(--bg-color); text-decoration:none; border-radius:10px; font-weight:800;">Visit Site</a>
+    <div class="grid-container" style="justify-content: center; max-width: 1000px; margin: 0 auto; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));">
+        
+        <div class="partner-card">
+            <div class="p-icon">
+                <img src="https://www.gamepix.com/icons/favicon-96x96.png" alt="GamePix Logo">
             </div>
+            <h3>GamePix</h3>
+            <p>Global provider of high-quality HTML5 games. Powering the archive with premium arcade titles.</p>
+            <a href="https://www.gamepix.com" target="_blank" class="partner-link">Official Site</a>
         </div>
-    </section>
+
+        <div class="partner-card">
+            <div class="p-icon">
+                <img src="https://lh3.googleusercontent.com/sitesv/APaQ0STKajB0IejOtdWMZTjJvW2tV1X7BhGg9Uy2oQZnX_bLgNcaoTljt8XTB0408SFkBUfOcbCot79ToyxPlkb_6VZixhlneuZ9zwl6_Y5PRDj4hix-zdVf4xvZ-nGEDpCfu5ugVAXeTvJZ23JrpuwGVySI6BSanhaDMb30lSu1weFaSqsC5HAuE5rhRBY=w16383" alt="Jaime's Logo">
+            </div>
+            <h3>Jaime's Cheese Grater</h3>
+            <p>Another W games site. A curated collection of unique web experiences and custom titles.</p>
+            <a href="https://sites.google.com/view/jaimescheesegrater" target="_blank" class="partner-link">Visit Site</a>
+        </div>
+
+    </div>
+</section>
 
     <div class="modal-overlay" id="modal-overlay" onclick="toggleSettings(false)"></div>
     <div id="settings-modal">
