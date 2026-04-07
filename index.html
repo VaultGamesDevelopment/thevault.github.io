@@ -315,9 +315,6 @@ nav a.active { color: var(--text-color); }
         <button class="opt-btn" onclick="setWeather('stars')">Stars</button>
     </div>
 </div>
-    <button style="width:100%; padding:15px; border-radius:12px; background:var(--text-color); color:var(--bg-color); font-weight:800; border:none; cursor:pointer;" onclick="toggleSettings(false)">Apply & Exit</button>
-</div>
-
 <div class="setting-section">
     <span class="setting-title">Background Music</span>
 
@@ -329,6 +326,10 @@ nav a.active { color: var(--text-color); }
         <input type="range" id="music-volume" min="0" max="100" value="50">
     </div>
 </div>
+    <button style="width:100%; padding:15px; border-radius:12px; background:var(--text-color); color:var(--bg-color); font-weight:800; border:none; cursor:pointer;" onclick="toggleSettings(false)">Apply & Exit</button>
+</div>
+
+
 
 <audio id="bg-music" loop>
   <source src="./bgmusic.mp3" type="audio/mpeg">
