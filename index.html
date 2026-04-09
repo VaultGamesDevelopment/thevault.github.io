@@ -396,15 +396,16 @@ nav a.active { color: var(--text-color); }
     }
 }
 
-        async function launchCdnGame(url) {
+        // --- UPDATED LAUNCH FUNCTION ---
+async function launchCdnGame(url) {
     const container = document.getElementById('iframe-container');
     const gameView = document.getElementById('game-view');
 
     try {
-        // 1. Fetch the actual HTML source code from the URL
+        // 1. Fetch the raw HTML from the URL
         const response = await fetch(url);
         if (!response.ok) throw new Error("Failed to fetch game source.");
-        let rawHtml = await response.text();
+        const rawHtml = await response.text();
 
         // 2. Setup the UI
         container.innerHTML = `<iframe id="cdn-frame" allow="autoplay; fullscreen; keyboard; pointer-lock" style="width:100%; height:100%; border:none;"></iframe>`;
@@ -413,22 +414,53 @@ nav a.active { color: var(--text-color); }
         const frame = document.getElementById('cdn-frame');
         const frameDoc = frame.contentWindow.document;
 
-        // 3. Optional: Logic to ensure a <base> tag exists if the fetched code doesn't have one
-        // This ensures the injected code knows where to find "game.js" and "style/index.css"
-        if (!rawHtml.includes('<base')) {
-            const baseUrl = url.substring(0, url.lastIndexOf('/') + 1);
-            rawHtml = rawHtml.replace('<head>', `<head><base href="${baseUrl}">`);
-        }
-
-        // 4. THE INJECTION
-        // We open the iframe's document and write the raw HTML string directly into it
+        // 3. Inject the code
+        // The code you provided (like Bowmasters) already has a <base> tag.
+        // We write the raw string directly into the frame.
         frameDoc.open();
         frameDoc.write(rawHtml);
         frameDoc.close();
 
     } catch (error) {
         console.error("Injection Error:", error);
-        alert("Error: Could not grab the game code from the source.");
+        // Fallback: If fetch fails, try traditional iframe loading
+        container.innerHTML = `<iframe src="${url}" style="width:100%; height:100%; border:none;"></iframe>`;
+        gameView.style.display = 'block';
+    }
+}
+
+// --- UPDATED LOAD FUNCTION (FIXES ERROR LOOP) ---
+async function loadCdnGames() {
+    try {
+        const res = await fetch(CONFIG.gamerJson, { cache: "no-store" });
+        if (!res.ok) throw new Error("Failed to fetch gamer.json");
+
+        const data = await res.json();
+        const games = Array.isArray(data) ? data : [data];
+        cdnAllGames = games;
+
+        const grid = document.getElementById('cdn-grid');
+        grid.innerHTML = ""; 
+
+        games.forEach(game => {
+            if (!game.name || !game.url) return;
+
+            const card = document.createElement('div');
+            card.className = 'game-card';
+            card.setAttribute('data-title', game.name.toLowerCase());
+            card.onclick = () => launchCdnGame(game.url);
+
+            // FIX: The 'this.onerror=null' prevents the infinite refresh loop
+            card.innerHTML = `
+                <img src="${game.image || ''}" 
+                     onerror="this.onerror=null; this.src='https://via.placeholder.com/150/111/fff?text=App';">
+                <div class="game-info"><h3>${game.name}</h3></div>
+            `;
+
+            grid.appendChild(card);
+        });
+    } catch (e) {
+        console.error("Error loading gamer.json:", e);
     }
 }
         async function fetchArcade() {
