@@ -8,371 +8,271 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
 
 <style>
-:root{
---bg:#050505;
---text:#fff;
---accent:#3b82f6;
---card:#0f0f0f;
---border:#262626;
---glass:rgba(255,255,255,.05);
+:root {
+    --bg:#050507;
+    --card:#0f0f12;
+    --accent:#6366f1;
+    --text:#fff;
+    --border:#1f1f23;
 }
 
 /* THEMES */
-[data-theme="midnight"]{--bg:#020617;--card:#0f172a;--accent:#38bdf8;}
-[data-theme="forest"]{--bg:#052e16;--card:#064e3b;--accent:#4ade80;}
-[data-theme="crimson"]{--bg:#450a0a;--card:#7f1d1d;--accent:#f87171;}
-[data-theme="space"]{--bg:#020205;--card:#090915;--accent:#a855f7;}
-[data-theme="rose"]{--bg:#1a0f14;--card:#2d1a22;--accent:#fb7185;}
-[data-theme="gold"]{--bg:#0a0a05;--card:#1c1917;--accent:#eab308;}
-[data-theme="uv"]{--bg:#0f0720;--card:#1c1033;--accent:#22d3ee;}
-[data-theme="ice"]{--bg:#0b1b2b;--card:#102a43;--accent:#60a5fa;}
-[data-theme="sunset"]{--bg:#2c0b0e;--card:#4a1c1f;--accent:#fb923c;}
-[data-theme="neon"]{--bg:#050505;--card:#0a0a0a;--accent:#00ffcc;}
+[data-theme="midnight"] { --bg:#020617; --card:#0f172a; --accent:#38bdf8; }
+[data-theme="forest"] { --bg:#052e16; --card:#064e3b; --accent:#22c55e; }
+[data-theme="crimson"] { --bg:#450a0a; --card:#7f1d1d; --accent:#ef4444; }
+[data-theme="gold"] { --bg:#0a0a05; --card:#1c1917; --accent:#eab308; }
+[data-theme="uv"] { --bg:#0f0720; --card:#1c1033; --accent:#a855f7; }
 
-/* BASE */
-body{
-margin:0;
-font-family:Inter;
-background:var(--bg);
-color:var(--text);
-overflow-x:hidden;
+body {
+    margin:0;
+    font-family:Inter;
+    background:var(--bg);
+    color:var(--text);
 }
 
 /* NAV */
-header{
-position:sticky;
-top:0;
-display:flex;
-justify-content:space-between;
-align-items:center;
-padding:1rem 5%;
-background:rgba(0,0,0,.7);
-backdrop-filter:blur(20px);
-border-bottom:1px solid var(--border);
-z-index:10;
-animation:fadeDown .5s ease;
+header {
+    display:flex;
+    justify-content:space-between;
+    padding:15px 5%;
+    background:rgba(0,0,0,0.6);
+    backdrop-filter:blur(20px);
 }
 
-@keyframes fadeDown{
-from{opacity:0;transform:translateY(-20px);}
-to{opacity:1;transform:translateY(0);}
+.logo { font-weight:800; cursor:pointer; }
+
+nav a {
+    margin:0 10px;
+    cursor:pointer;
+    color:#aaa;
 }
-
-.logo{font-weight:800;cursor:pointer;}
-.logo:hover{color:var(--accent);}
-
-nav{display:flex;gap:20px;}
-nav a{cursor:pointer;color:#aaa;font-size:.8rem;}
-nav a.active{color:white;}
-
-#search{
-padding:10px;
-border-radius:10px;
-border:1px solid var(--border);
-background:var(--glass);
-color:white;
-}
+nav a.active { color:#fff; }
 
 /* GRID */
-.grid{
-display:grid;
-grid-template-columns:repeat(auto-fill,minmax(190px,1fr));
-gap:20px;
-padding:40px 5%;
-animation:fadeIn .5s ease;
+.grid {
+    display:grid;
+    grid-template-columns:repeat(auto-fill,minmax(180px,1fr));
+    gap:20px;
+    padding:30px;
 }
 
-@keyframes fadeIn{
-from{opacity:0;transform:translateY(10px);}
-to{opacity:1;}
+.card {
+    background:var(--card);
+    border:1px solid var(--border);
+    border-radius:12px;
+    overflow:hidden;
+    cursor:pointer;
+    transition:.3s;
+}
+.card:hover {
+    transform:translateY(-5px);
+    border-color:var(--accent);
 }
 
-.card{
-background:var(--card);
-border:1px solid var(--border);
-border-radius:14px;
-overflow:hidden;
-cursor:pointer;
-transition:.3s;
-}
-.card:hover{
-transform:translateY(-6px) scale(1.02);
-border-color:var(--accent);
-box-shadow:0 0 25px var(--accent);
-}
+.card img { width:100%; height:140px; object-fit:cover; }
 
-.card img{
-width:100%;
-aspect-ratio:1/1;
-object-fit:cover;
-}
-
-/* GAME */
-#game{
-position:fixed;
-inset:0;
-background:black;
-display:none;
-z-index:1000;
-animation:fadeIn .3s ease;
-}
-#game iframe{width:100%;height:100%;border:none;}
-
-/* PARTNERS */
-.partner{
-padding:30px;
-text-align:center;
-border-radius:20px;
-background:var(--card);
-border:1px solid var(--border);
-transition:.3s;
-}
-.partner:hover{
-transform:translateY(-5px);
-border-color:var(--accent);
-}
-
-.partner a{
-display:block;
-margin-top:10px;
-padding:10px;
-background:var(--accent);
-border-radius:10px;
-color:white;
-text-decoration:none;
-font-weight:600;
-}
-
-/* SETTINGS */
-#modal,#overlay{display:none;position:fixed;}
-#overlay{inset:0;background:rgba(0,0,0,.8);}
-#modal{
-top:50%;left:50%;
-transform:translate(-50%,-50%);
-background:var(--card);
-padding:30px;
-border-radius:20px;
-z-index:2000;
-width:420px;
-animation:fadeIn .3s ease;
-}
-
-.btn{
-padding:8px 14px;
-border-radius:8px;
-border:1px solid var(--border);
-background:var(--glass);
-color:white;
-cursor:pointer;
-margin:3px;
+/* GAME VIEW */
+#gameView {
+    display:none;
+    position:fixed;
+    top:0; left:0;
+    width:100%; height:100%;
+    background:black;
+    z-index:1000;
 }
 
 /* WEATHER */
-#weather{position:fixed;inset:0;pointer-events:none;}
-.drop{
-position:absolute;
-width:2px;height:20px;
-background:white;
-opacity:.3;
-animation:fall linear infinite;
-}
-@keyframes fall{to{transform:translateY(110vh);}}
+#weather { position:fixed; top:0; left:0; width:100%; height:100%; pointer-events:none; }
+.weather-item { position:absolute; top:-50px; animation:fall linear infinite; }
 
-.snow{width:5px;height:5px;border-radius:50%;}
+@keyframes fall { to { transform:translateY(110vh); } }
 
-/* STARS */
-#stars{position:fixed;inset:0;opacity:0;}
-.star{
-position:absolute;
-width:2px;height:2px;
-background:white;
-animation:twinkle 2s infinite;
+/* PARTNERS */
+.partner {
+    background:var(--card);
+    padding:20px;
+    border-radius:15px;
+    text-align:center;
 }
-@keyframes twinkle{
-0%,100%{opacity:.3;}
-50%{opacity:1;}
+.partner a {
+    display:block;
+    margin-top:10px;
+    padding:10px;
+    background:var(--accent);
+    color:#fff;
+    text-decoration:none;
+    border-radius:8px;
 }
 </style>
 </head>
 
 <body>
 
-<div id="stars"></div>
 <div id="weather"></div>
 
 <header>
-<div class="logo" onclick="showView('home')">THE VAULT</div>
+<div class="logo" onclick="show('home')">THE VAULT</div>
 
 <nav>
-<a class="active" onclick="showView('home')">Arcade</a>
-<a onclick="showView('partners')">Partners</a>
+<a onclick="show('home')" id="nav-home" class="active">Arcade</a>
+<a onclick="show('partners')" id="nav-partners">Partners</a>
 </nav>
 
 <input id="search" placeholder="Search..." oninput="filterGames()">
-<button class="btn" onclick="toggleSettings(true)">Settings</button>
+
+<button onclick="toggleSettings()">⚙️</button>
 </header>
 
-<div id="home" class="grid"></div>
+<!-- HOME -->
+<div id="home">
+<div class="grid" id="games"></div>
+</div>
 
-<div id="partners" class="grid" style="display:none;">
+<!-- PARTNERS -->
+<div id="partners" style="display:none; padding:30px;">
+<div class="grid">
 
 <div class="partner">
-<img src="https://www.gamepix.com/icons/favicon-96x96.png" width="80">
 <h3>GamePix</h3>
-<p>HTML5 Games</p>
-<a href="https://www.gamepix.com" target="_blank">Visit</a>
+<a href="https://gamepix.com" target="_blank">Visit</a>
 </div>
 
 <div class="partner">
-<img src="https://lh3.googleusercontent.com/sitesv/APaQ0SSdnjuPH8pvbZwjlas6crYpyipCOVZ0Os6Qrdx7_wjte5fopxsjt5yLr4CMeZLSIH5tMhGsqUCDUxcC_wJIG5KkVnM0H8z18ZYoDLwAOS-9MG94ygIB1R79YWTnVH9HBUrBpJ1gbh9xXWlU-5ff7Tf8xe637GuLu80sZ6HQBUXuG-qy8dMaTM6FK38=w16383">
-<h3>Jaime's Site</h3>
-<p>🔥Site made by my friend, Go show some love </p>
+<h3>Cheese Vault</h3>
 <a href="https://sites.google.com/view/jaimescheesegrater" target="_blank">Visit</a>
 </div>
 
 </div>
-
-<div id="game">
-<button onclick="closeGame()" style="position:absolute;z-index:10">← Exit</button>
-<iframe id="frame"></iframe>
 </div>
 
-<div id="overlay" onclick="toggleSettings(false)"></div>
-<div id="modal">
+<!-- GAME VIEW -->
+<div id="gameView">
+<button onclick="closeGame()">Exit</button>
+<div id="frame" style="width:100%;height:100%"></div>
+</div>
+
+<!-- SETTINGS -->
+<div id="settings" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%,-50%); background:#111; padding:20px; border-radius:12px;">
 <h3>Settings</h3>
 
-<p>Themes</p>
-<div>
-<button class="btn" onclick="setTheme('dark')">Dark</button>
-<button class="btn" onclick="setTheme('midnight')">Midnight</button>
-<button class="btn" onclick="setTheme('forest')">Forest</button>
-<button class="btn" onclick="setTheme('neon')">Neon</button>
-<button class="btn" onclick="setTheme('sunset')">Sunset</button>
-<button class="btn" onclick="setTheme('ice')">Ice</button>
-</div>
-
-<br>
-
-<p>Weather</p>
-<button class="btn" onclick="setWeather('rain')">Rain</button>
-<button class="btn" onclick="setWeather('snow')">Snow</button>
-<button class="btn" onclick="setWeather('stars')">Stars</button>
-<button class="btn" onclick="setWeather('none')">None</button>
+<button onclick="setTheme('dark')">Dark</button>
+<button onclick="setTheme('midnight')">Midnight</button>
+<button onclick="setTheme('forest')">Forest</button>
+<button onclick="setTheme('crimson')">Crimson</button>
+<button onclick="setTheme('gold')">Gold</button>
+<button onclick="setTheme('uv')">UV</button>
 
 <br><br>
 
-<p>Music</p>
-<button class="btn" onclick="toggleMusic()">Play / Pause</button>
-<input type="range" id="vol" min="0" max="100">
+<button onclick="setWeather('rain')">Rain</button>
+<button onclick="setWeather('snow')">Snow</button>
+<button onclick="setWeather('stars')">Stars</button>
+<button onclick="setWeather('none')">None</button>
 
 <br><br>
-<button class="btn" onclick="toggleSettings(false)">Close</button>
+
+<button onclick="toggleMusic()">Music</button>
+
+<br><br>
+
+<button onclick="toggleSettings()">Close</button>
 </div>
 
 <audio id="music" loop src="bgmusic.mp3"></audio>
 
 <script>
-let url="https://feeds.gamepix.com/v2/json?pagination=100";
+let url = "https://feeds.gamepix.com/v2/json?sid=1&pagination=100&order=quality";
 
-/* LOAD ALL GAMES (FIXED) */
-async function load(){
-let grid=document.getElementById("home");
+async function loadGames(){
+    const res = await fetch(url);
+    const data = await res.json();
 
-while(url){
-let res=await fetch(url);
-let data=await res.json();
+    const grid = document.getElementById("games");
 
-data.items.forEach(g=>{
-let el=document.createElement("div");
-el.className="card";
-el.setAttribute("data",g.title.toLowerCase());
+    data.items.forEach(g=>{
+        const d = document.createElement("div");
+        d.className="card";
+        d.setAttribute("data",g.title.toLowerCase());
 
-el.onclick=()=>openGame(`https://play.gamepix.com/${g.namespace}/embed`);
+        d.onclick=()=>{
+            document.getElementById("frame").innerHTML=
+            `<iframe src="https://play.gamepix.com/${g.namespace}/embed?sid=1"
+            style="width:100%;height:100%;border:none"></iframe>`;
+            document.getElementById("gameView").style.display="block";
+        };
 
-el.innerHTML=`
-<img src="${g.banner_image}">
-<div style="padding:10px">${g.title}</div>
-`;
-grid.appendChild(el);
-});
-
-url=data.next_url;
-}
+        d.innerHTML=`<img src="${g.banner_image}"><div style="padding:10px">${g.title}</div>`;
+        grid.appendChild(d);
+    });
 }
 
-/* NAV */
-function showView(v){
-home.style.display = v==="home"?"grid":"none";
-partners.style.display = v==="partners"?"grid":"none";
-}
-
-/* GAME */
-function openGame(u){
-game.style.display="block";
-frame.src=u;
-}
-function closeGame(){
-game.style.display="none";
-frame.src="";
-}
-
-/* SEARCH */
 function filterGames(){
-let q=search.value.toLowerCase();
-document.querySelectorAll(".card").forEach(c=>{
-c.style.display=c.getAttribute("data").includes(q)?"block":"none";
-});
+    let q=document.getElementById("search").value.toLowerCase();
+    document.querySelectorAll(".card").forEach(c=>{
+        c.style.display=c.getAttribute("data").includes(q)?"block":"none";
+    });
 }
 
-/* SETTINGS */
-function toggleSettings(s){
-modal.style.display=s?"block":"none";
-overlay.style.display=s?"block":"block";"none";
+function show(v){
+    document.getElementById("home").style.display="none";
+    document.getElementById("partners").style.display="none";
+
+    document.getElementById(v).style.display="block";
+
+    document.querySelectorAll("nav a").forEach(a=>a.classList.remove("active"));
+    document.getElementById("nav-"+v).classList.add("active");
 }
 
-/* THEME */
+function closeGame(){
+    document.getElementById("gameView").style.display="none";
+    document.getElementById("frame").innerHTML="";
+}
+
+function toggleSettings(){
+    let s=document.getElementById("settings");
+    s.style.display=s.style.display==="block"?"none":"block";
+}
+
 function setTheme(t){
-document.documentElement.setAttribute("data-theme",t);
+    document.documentElement.setAttribute("data-theme",t);
 }
 
-/* WEATHER */
 function setWeather(type){
-weather.innerHTML="";
-stars.style.opacity=(type==="stars")?1:0;
+    const w=document.getElementById("weather");
+    w.innerHTML="";
 
-for(let i=0;i<120;i++){
-let el=document.createElement("div");
-el.className="drop";
-if(type==="snow") el.classList.add("snow");
+    if(type==="none") return;
 
-el.style.left=Math.random()*100+"%";
-el.style.animationDuration=(Math.random()*2+1)+"s";
-weather.appendChild(el);
+    for(let i=0;i<100;i++){
+        let d=document.createElement("div");
+        d.className="weather-item";
+        d.style.left=Math.random()*100+"%";
+        d.style.animationDuration=(Math.random()*2+2)+"s";
+
+        if(type==="rain"){
+            d.style.width="2px";
+            d.style.height="20px";
+            d.style.background="white";
+        }
+
+        if(type==="snow"){
+            d.style.width="6px";
+            d.style.height="6px";
+            d.style.background="white";
+            d.style.borderRadius="50%";
+        }
+
+        w.appendChild(d);
+    }
 }
-}
-
-/* MUSIC */
-const music=document.getElementById("music");
-vol.oninput=()=>music.volume=vol.value/100;
 
 function toggleMusic(){
-music.paused?music.play():music.pause();
+    let m=document.getElementById("music");
+    if(m.paused) m.play();
+    else m.pause();
 }
 
-/* STARS */
-function initStars(){
-for(let i=0;i<150;i++){
-let s=document.createElement("div");
-s.className="star";
-s.style.left=Math.random()*100+"%";
-s.style.top=Math.random()*100+"%";
-stars.appendChild(s);
-}
-}
-
-/* INIT */
-initStars();
-load();
+window.onload=loadGames;
 </script>
 
 </body>
