@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
+<meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>The Vault</title>
+<title>The Vault | IDE Arcade</title>
 
 <link rel="stylesheet" href="style.css"/>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
@@ -11,79 +11,88 @@
 
 <body>
 
-<div id="stars"></div>
-<div id="weather"></div>
+<!-- SIDEBAR (VS CODE STYLE) -->
+<div class="sidebar">
+    <div class="logo">⚡ VAULT</div>
 
-<header class="topbar">
-    <div class="logo">THE VAULT</div>
-
-    <input id="search" placeholder="Search games..." oninput="filterGames()" />
-
-    <div class="nav">
-        <button onclick="showPage('home')">Home</button>
-        <button onclick="showPage('partners')">Partners</button>
-        <button onclick="openSettings()">Settings</button>
+    <div class="side-section">
+        <h4>EXPLORER</h4>
+        <button onclick="showView('arcade')">🎮 Arcade</button>
+        <button onclick="showView('partners')">🌐 Partners</button>
+        <button onclick="openSettings()">⚙ Settings</button>
     </div>
-</header>
 
-<!-- HOME -->
-<section id="home" class="page active">
-    <div id="games" class="grid"></div>
-</section>
+    <div class="side-section">
+        <h4>STATUS</h4>
+        <div class="status">● Online</div>
+        <div class="status">GamePix API</div>
+    </div>
+</div>
 
-<!-- PARTNERS -->
-<section id="partners" class="page">
-    <div class="partners">
+<!-- MAIN APP -->
+<div class="main">
 
-        <a class="partner" href="https://www.gamepix.com" target="_blank">
-            GamePix
-        </a>
+    <!-- TOP BAR -->
+    <div class="topbar">
+        <input id="search" placeholder="Search games..." oninput="filterGames()"/>
+        <div class="tabs">
+            <div class="tab active">Arcade</div>
+        </div>
+    </div>
 
-        <a class="partner" href="https://sites.google.com/view/jaimescheesegrater" target="_blank">
-            Jaime's Site
-        </a>
+    <!-- CONTENT -->
+    <div class="content">
+
+        <!-- GAME GRID -->
+        <section id="arcade" class="view active">
+            <div id="games" class="grid"></div>
+        </section>
+
+        <!-- PARTNERS -->
+        <section id="partners" class="view">
+            <div class="partners">
+                <a class="partner" href="https://gamepix.com" target="_blank">GamePix</a>
+                <a class="partner" href="https://sites.google.com/view/jaimescheesegrater" target="_blank">Jaime</a>
+            </div>
+        </section>
 
     </div>
-</section>
 
-<!-- GAME VIEW -->
-<div id="gameView">
-    <button onclick="closeGame()" class="back">← Back</button>
+    <!-- BOTTOM CONSOLE -->
+    <div class="console">
+        <span>System ready...</span>
+    </div>
+</div>
+
+<!-- GAME PANEL (RIGHT EXECUTOR STYLE) -->
+<div id="gamePanel">
+    <button onclick="closeGame()">← Exit</button>
     <iframe id="frame"></iframe>
 </div>
 
 <!-- SETTINGS -->
 <div id="overlay" onclick="closeSettings()"></div>
-
 <div id="settings">
     <h2>Settings</h2>
 
-    <label>Theme</label>
-    <div class="row">
-        <button onclick="setTheme('dark')">Dark</button>
-        <button onclick="setTheme('neon')">Neon</button>
-        <button onclick="setTheme('midnight')">Midnight</button>
-        <button onclick="setTheme('sunset')">Sunset</button>
-        <button onclick="setTheme('void')">Void</button>
-    </div>
+    <button onclick="setTheme('dark')">Dark</button>
+    <button onclick="setTheme('neon')">Neon</button>
+    <button onclick="setTheme('matrix')">Matrix</button>
+    <button onclick="setTheme('sunset')">Sunset</button>
 
-    <label>Weather</label>
-    <div class="row">
-        <button onclick="setWeather('none')">None</button>
-        <button onclick="setWeather('rain')">Rain</button>
-        <button onclick="setWeather('snow')">Snow</button>
-        <button onclick="setWeather('stars')">Stars</button>
-    </div>
+    <button onclick="setWeather('rain')">Rain</button>
+    <button onclick="setWeather('snow')">Snow</button>
+    <button onclick="setWeather('stars')">Stars</button>
 
-    <label>Music</label>
-    <input type="range" min="0" max="100" value="50" id="volume"/>
-
-    <button onclick="toggleMusic()">Play/Pause</button>
+    <button onclick="toggleMusic()">Music</button>
 </div>
 
 <audio id="music" loop>
-    <source src="./bgmusic.mp3" type="audio/mp3">
+<source src="./bgmusic.mp3"/>
 </audio>
+
+<div id="fx-stars"></div>
+<div id="fx-weather"></div>
 
 <script src="app.js"></script>
 </body>

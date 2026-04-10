@@ -1,247 +1,172 @@
 :root {
-    --bg: #070A12;
-    --panel: rgba(255,255,255,0.04);
-    --panel-2: rgba(255,255,255,0.06);
-    --border: rgba(255,255,255,0.08);
-    --text: #ffffff;
-    --muted: rgba(255,255,255,0.6);
-    --accent: #7c3aed;
-    --glow: rgba(124,58,237,0.35);
+    --bg:#0b0f17;
+    --panel:#111827;
+    --panel2:#0f172a;
+    --border:#1f2937;
+    --text:#e5e7eb;
+    --accent:#7c3aed;
 }
 
-[data-theme="neon"] { --accent:#00f5ff; --glow:rgba(0,245,255,0.35); }
-[data-theme="midnight"] { --bg:#020617; --accent:#38bdf8; }
-[data-theme="sunset"] { --bg:#12070a; --accent:#fb7185; }
-[data-theme="void"] { --bg:#000; --accent:#a855f7; }
-[data-theme="green"] { --accent:#22c55e; }
-[data-theme="amber"] { --accent:#f59e0b; }
-
-* {
-    box-sizing: border-box;
-}
+/* THEMES */
+[data-theme="neon"] { --accent:#00f5ff; }
+[data-theme="matrix"] { --accent:#22c55e; --bg:#050805; }
+[data-theme="sunset"] { --accent:#fb7185; }
 
 body {
-    margin: 0;
-    font-family: "Inter", sans-serif;
-    background: radial-gradient(circle at top, #111827 0%, var(--bg) 60%);
-    color: var(--text);
-    overflow-x: hidden;
+    margin:0;
+    font-family:Inter;
+    background:var(--bg);
+    color:var(--text);
+    overflow:hidden;
+    display:flex;
 }
 
-/* ---------------- TOPBAR ---------------- */
-.topbar {
-    position: sticky;
-    top: 0;
-    z-index: 1000;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 14px 18px;
-    background: rgba(10, 10, 18, 0.65);
-    backdrop-filter: blur(18px);
-    border-bottom: 1px solid var(--border);
+/* SIDEBAR */
+.sidebar {
+    width:220px;
+    background:var(--panel);
+    border-right:1px solid var(--border);
+    padding:12px;
 }
 
 .logo {
-    font-weight: 800;
-    letter-spacing: 1px;
-    cursor: pointer;
-    background: linear-gradient(90deg, #fff, var(--accent));
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
+    font-weight:800;
+    margin-bottom:20px;
 }
 
-.nav button {
-    background: var(--panel);
-    border: 1px solid var(--border);
-    color: var(--text);
-    padding: 7px 12px;
-    border-radius: 10px;
-    cursor: pointer;
-    transition: 0.2s;
+.side-section h4 {
+    font-size:11px;
+    opacity:0.6;
 }
 
-.nav button:hover {
-    transform: translateY(-2px);
-    border-color: var(--accent);
-    box-shadow: 0 0 18px var(--glow);
+.side-section button {
+    width:100%;
+    margin:4px 0;
+    padding:8px;
+    background:var(--panel2);
+    border:1px solid var(--border);
+    color:white;
+    cursor:pointer;
+    text-align:left;
 }
 
-/* ---------------- SEARCH ---------------- */
-#search {
-    width: 320px;
-    padding: 10px 14px;
-    border-radius: 12px;
-    border: 1px solid var(--border);
-    background: var(--panel);
-    color: white;
-    outline: none;
-    transition: 0.2s;
+.status {
+    font-size:12px;
+    opacity:0.7;
+    margin:4px 0;
 }
 
-#search:focus {
-    border-color: var(--accent);
-    box-shadow: 0 0 20px var(--glow);
+/* MAIN */
+.main {
+    flex:1;
+    display:flex;
+    flex-direction:column;
 }
 
-/* ---------------- PAGES ---------------- */
-.page {
-    display: none;
-    animation: fade 0.35s ease;
+/* TOPBAR */
+.topbar {
+    display:flex;
+    padding:10px;
+    background:var(--panel);
+    border-bottom:1px solid var(--border);
 }
 
-.page.active {
-    display: block;
+.topbar input {
+    flex:1;
+    padding:8px;
+    background:#0a0f1a;
+    border:1px solid var(--border);
+    color:white;
 }
 
-@keyframes fade {
-    from { opacity: 0; transform: translateY(10px); }
-    to { opacity: 1; transform: translateY(0); }
+/* CONTENT */
+.content {
+    flex:1;
+    overflow:auto;
 }
 
-/* ---------------- GRID ---------------- */
+/* GRID */
 .grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-    gap: 18px;
-    padding: 28px;
+    display:grid;
+    grid-template-columns:repeat(auto-fill,minmax(160px,1fr));
+    gap:12px;
+    padding:12px;
 }
 
-/* ---------------- GAME CARD ---------------- */
 .card {
-    background: linear-gradient(145deg, var(--panel), var(--panel-2));
-    border: 1px solid var(--border);
-    border-radius: 16px;
-    overflow: hidden;
-    cursor: pointer;
-    transition: 0.25s ease;
-    position: relative;
+    background:var(--panel);
+    border:1px solid var(--border);
+    cursor:pointer;
+    transition:0.2s;
 }
 
 .card:hover {
-    transform: translateY(-6px) scale(1.02);
-    border-color: var(--accent);
-    box-shadow: 0 10px 40px rgba(0,0,0,0.6), 0 0 20px var(--glow);
+    border-color:var(--accent);
+    transform:scale(1.05);
 }
 
 .card img {
-    width: 100%;
-    height: 110px;
-    object-fit: cover;
-    filter: saturate(1.1);
+    width:100%;
+    height:90px;
+    object-fit:cover;
 }
 
-.card div {
-    padding: 10px;
-    font-size: 0.85rem;
-    font-weight: 600;
-    color: var(--text);
-}
-
-/* ---------------- PARTNERS ---------------- */
+/* PARTNERS */
 .partners {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 18px;
-    padding: 28px;
+    padding:12px;
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(150px,1fr));
+    gap:10px;
 }
 
 .partner {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 18px;
-    border-radius: 14px;
-    background: var(--panel);
-    border: 1px solid var(--border);
-    text-decoration: none;
-    color: white;
-    font-weight: 700;
-    transition: 0.2s;
+    padding:12px;
+    background:var(--panel);
+    border:1px solid var(--border);
+    text-align:center;
+    text-decoration:none;
+    color:white;
 }
 
-.partner:hover {
-    background: var(--accent);
-    transform: translateY(-4px);
-    box-shadow: 0 0 25px var(--glow);
+/* GAME PANEL (EXECUTOR STYLE) */
+#gamePanel {
+    width:40%;
+    background:black;
+    border-left:1px solid var(--border);
+    display:none;
+    flex-direction:column;
 }
 
-/* ---------------- GAME VIEW ---------------- */
-#gameView {
-    position: fixed;
-    inset: 0;
-    background: black;
-    display: none;
-    z-index: 9999;
+#gamePanel iframe {
+    flex:1;
+    border:none;
 }
 
-#frame {
-    width: 100%;
-    height: 100%;
-    border: none;
+/* CONSOLE */
+.console {
+    height:120px;
+    background:#05070d;
+    border-top:1px solid var(--border);
+    font-size:12px;
+    padding:8px;
+    opacity:0.8;
 }
 
-.back {
-    position: absolute;
-    top: 15px;
-    left: 15px;
-    z-index: 10;
-    padding: 10px 14px;
-    border-radius: 10px;
-    border: 1px solid var(--border);
-    background: rgba(0,0,0,0.6);
-    color: white;
-    cursor: pointer;
-}
-
-/* ---------------- SETTINGS ---------------- */
+/* SETTINGS */
 #settings {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    background: rgba(15,15,20,0.9);
-    border: 1px solid var(--border);
-    border-radius: 18px;
-    padding: 22px;
-    width: 320px;
-    display: none;
-    z-index: 10000;
-    backdrop-filter: blur(20px);
+    position:fixed;
+    top:50%;
+    left:50%;
+    transform:translate(-50%,-50%);
+    background:#111;
+    padding:15px;
+    display:none;
+    z-index:1000;
 }
 
-#overlay {
-    position: fixed;
-    inset: 0;
-    background: rgba(0,0,0,0.6);
-    display: none;
-    z-index: 9999;
-}
-
-#settings h2 {
-    margin-top: 0;
-}
-
-#settings button {
-    margin: 4px;
-    padding: 8px 10px;
-    border-radius: 10px;
-    border: 1px solid var(--border);
-    background: var(--panel);
-    color: white;
-    cursor: pointer;
-    transition: 0.2s;
-}
-
-#settings button:hover {
-    border-color: var(--accent);
-    box-shadow: 0 0 15px var(--glow);
-}
-
-/* ---------------- FX LAYERS ---------------- */
-#stars, #weather {
-    position: fixed;
-    inset: 0;
-    pointer-events: none;
-    z-index: 0;
+/* FX */
+#fx-stars, #fx-weather {
+    position:fixed;
+    inset:0;
+    pointer-events:none;
 }
