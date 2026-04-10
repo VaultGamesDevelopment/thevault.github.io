@@ -399,22 +399,11 @@ nav a.active { color: var(--text-color); }
 
         async function loadCdnGames() {
     const baseUrl = "https://biology.science.geometry.project.computer.archivomemoria-audiovisualcsb.org/";
-    const jsUrl = baseUrl + "js/games.js?v=20260311025500";
 
     try {
-        const res = await fetch(jsUrl);
-        if (!res.ok) throw new Error("Failed to fetch games list");
-        const text = await res.json(); 
-        
-        // If the URL returns a JSON object, we use it. 
-        // If it's the raw JS file you showed, we need to extract the array:
-        let games;
-        if (typeof text === 'object') {
-            games = text;
-        } else {
-            // Regex to grab the array from 'const games = [...];'
-            const match = text.match(/const\s+games\s*=\s*(\[[\s\S]*?\]);/);
-            games = match ? JSON.parse(match[1].replace(/(\w+):/g, '"$1":').replace(/'/g, '"')) : [];
+        // Since we loaded the script in the <head>, 'games' is already defined
+        if (typeof games === 'undefined') {
+            throw new Error("Game list script failed to load or is blocked.");
         }
 
         cdnAllGames = games;
@@ -422,7 +411,7 @@ nav a.active { color: var(--text-color); }
         grid.innerHTML = ""; 
 
         games.forEach(game => {
-            // Prepend the base URL to relative paths
+            // Fix relative paths
             const fullGameUrl = game.url.startsWith('http') ? game.url : baseUrl + game.url;
             const fullImageUrl = game.image.startsWith('http') ? game.image : baseUrl + game.image;
 
@@ -430,10 +419,9 @@ nav a.active { color: var(--text-color); }
             card.className = 'game-card';
             card.setAttribute('data-title', game.title.toLowerCase());
             
-            // Critical: Pass the full constructed URL to the launcher
             card.onclick = () => launchCdnGame(fullGameUrl);
 
-            // FIX: this.onerror=null prevents the 600+ error loop
+            // STOP the error loop and hide broken images until they load
             card.innerHTML = `
                 <img src="${fullImageUrl}" 
                      onerror="this.onerror=null; this.src='https://via.placeholder.com/150/111/fff?text=No+Image';">
@@ -446,6 +434,7 @@ nav a.active { color: var(--text-color); }
         console.error("Error loading Archive:", e);
     }
 }
+
         async function fetchArcade() {
             if (isArcadeLoading || !arcadeNextUrl) return;
             isArcadeLoading = true;
