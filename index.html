@@ -1,109 +1,12 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="dark">
+<html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>The Vault</title>
 
+<link rel="stylesheet" href="style.css"/>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
-
-<style>
-:root {
-    --bg:#050507;
-    --card:#0f0f12;
-    --accent:#6366f1;
-    --text:#fff;
-    --border:#1f1f23;
-}
-
-/* THEMES */
-[data-theme="midnight"] { --bg:#020617; --card:#0f172a; --accent:#38bdf8; }
-[data-theme="forest"] { --bg:#052e16; --card:#064e3b; --accent:#22c55e; }
-[data-theme="crimson"] { --bg:#450a0a; --card:#7f1d1d; --accent:#ef4444; }
-[data-theme="gold"] { --bg:#0a0a05; --card:#1c1917; --accent:#eab308; }
-[data-theme="uv"] { --bg:#0f0720; --card:#1c1033; --accent:#a855f7; }
-
-body {
-    margin:0;
-    font-family:Inter;
-    background:var(--bg);
-    color:var(--text);
-}
-
-/* NAV */
-header {
-    display:flex;
-    justify-content:space-between;
-    padding:15px 5%;
-    background:rgba(0,0,0,0.6);
-    backdrop-filter:blur(20px);
-}
-
-.logo { font-weight:800; cursor:pointer; }
-
-nav a {
-    margin:0 10px;
-    cursor:pointer;
-    color:#aaa;
-}
-nav a.active { color:#fff; }
-
-/* GRID */
-.grid {
-    display:grid;
-    grid-template-columns:repeat(auto-fill,minmax(180px,1fr));
-    gap:20px;
-    padding:30px;
-}
-
-.card {
-    background:var(--card);
-    border:1px solid var(--border);
-    border-radius:12px;
-    overflow:hidden;
-    cursor:pointer;
-    transition:.3s;
-}
-.card:hover {
-    transform:translateY(-5px);
-    border-color:var(--accent);
-}
-
-.card img { width:100%; height:140px; object-fit:cover; }
-
-/* GAME VIEW */
-#gameView {
-    display:none;
-    position:fixed;
-    top:0; left:0;
-    width:100%; height:100%;
-    background:black;
-    z-index:1000;
-}
-
-/* WEATHER */
-#weather { position:fixed; top:0; left:0; width:100%; height:100%; pointer-events:none; }
-.weather-item { position:absolute; top:-50px; animation:fall linear infinite; }
-
-@keyframes fall { to { transform:translateY(110vh); } }
-
-/* PARTNERS */
-.partner {
-    background:var(--card);
-    padding:20px;
-    border-radius:15px;
-    text-align:center;
-}
-.partner a {
-    display:block;
-    margin-top:10px;
-    padding:10px;
-    background:var(--accent);
-    color:#fff;
-    text-decoration:none;
-    border-radius:8px;
-}
-</style>
 </head>
 
 <body>
@@ -111,169 +14,61 @@ nav a.active { color:#fff; }
 <div id="weather"></div>
 
 <header>
-<div class="logo" onclick="show('home')">THE VAULT</div>
+    <div class="logo" onclick="showPage('home')">THE VAULT</div>
 
-<nav>
-<a onclick="show('home')" id="nav-home" class="active">Arcade</a>
-<a onclick="show('partners')" id="nav-partners">Partners</a>
-</nav>
+    <nav>
+        <button onclick="showPage('home')">Arcade</button>
+        <button onclick="showPage('partners')">Partners</button>
+    </nav>
 
-<input id="search" placeholder="Search..." oninput="filterGames()">
+    <input id="search" placeholder="Search games..." oninput="filterGames()">
 
-<button onclick="toggleSettings()">⚙️</button>
+    <button onclick="toggleSettings()">⚙</button>
 </header>
 
 <!-- HOME -->
-<div id="home">
-<div class="grid" id="games"></div>
-</div>
+<section id="home" class="page active">
+    <div id="games" class="grid"></div>
+</section>
 
 <!-- PARTNERS -->
-<div id="partners" style="display:none; padding:30px;">
-<div class="grid">
-
-<div class="partner">
-<h3>GamePix</h3>
-<a href="https://gamepix.com" target="_blank">Visit</a>
-</div>
-
-<div class="partner">
-<h3>Cheese Vault</h3>
-<a href="https://sites.google.com/view/jaimescheesegrater" target="_blank">Visit</a>
-</div>
-
-</div>
-</div>
+<section id="partners" class="page">
+    <div class="grid small">
+        <a class="partner" href="https://gamepix.com" target="_blank">GamePix</a>
+        <a class="partner" href="https://sites.google.com/view/jaimescheesegrater" target="_blank">Cheese Grater</a>
+    </div>
+</section>
 
 <!-- GAME VIEW -->
 <div id="gameView">
-<button onclick="closeGame()">Exit</button>
-<div id="frame" style="width:100%;height:100%"></div>
+    <button onclick="closeGame()">← Exit</button>
+    <div id="frame"></div>
 </div>
 
 <!-- SETTINGS -->
-<div id="settings" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%,-50%); background:#111; padding:20px; border-radius:12px;">
-<h3>Settings</h3>
+<div id="settings">
+    <h3>Settings</h3>
 
-<button onclick="setTheme('dark')">Dark</button>
-<button onclick="setTheme('midnight')">Midnight</button>
-<button onclick="setTheme('forest')">Forest</button>
-<button onclick="setTheme('crimson')">Crimson</button>
-<button onclick="setTheme('gold')">Gold</button>
-<button onclick="setTheme('uv')">UV</button>
+    <button onclick="setTheme('dark')">Dark</button>
+    <button onclick="setTheme('midnight')">Midnight</button>
+    <button onclick="setTheme('forest')">Forest</button>
+    <button onclick="setTheme('crimson')">Crimson</button>
 
-<br><br>
+    <hr>
 
-<button onclick="setWeather('rain')">Rain</button>
-<button onclick="setWeather('snow')">Snow</button>
-<button onclick="setWeather('stars')">Stars</button>
-<button onclick="setWeather('none')">None</button>
+    <button onclick="setWeather('rain')">Rain</button>
+    <button onclick="setWeather('snow')">Snow</button>
+    <button onclick="setWeather('stars')">Stars</button>
+    <button onclick="setWeather('none')">Clear</button>
 
-<br><br>
+    <hr>
 
-<button onclick="toggleMusic()">Music</button>
-
-<br><br>
-
-<button onclick="toggleSettings()">Close</button>
+    <button onclick="toggleMusic()">Music</button>
+    <button onclick="toggleSettings()">Close</button>
 </div>
 
 <audio id="music" loop src="bgmusic.mp3"></audio>
 
-<script>
-let url = "https://feeds.gamepix.com/v2/json?sid=1&pagination=100&order=quality";
-
-async function loadGames(){
-    const res = await fetch(url);
-    const data = await res.json();
-
-    const grid = document.getElementById("games");
-
-    data.items.forEach(g=>{
-        const d = document.createElement("div");
-        d.className="card";
-        d.setAttribute("data",g.title.toLowerCase());
-
-        d.onclick=()=>{
-            document.getElementById("frame").innerHTML=
-            `<iframe src="https://play.gamepix.com/${g.namespace}/embed?sid=1"
-            style="width:100%;height:100%;border:none"></iframe>`;
-            document.getElementById("gameView").style.display="block";
-        };
-
-        d.innerHTML=`<img src="${g.banner_image}"><div style="padding:10px">${g.title}</div>`;
-        grid.appendChild(d);
-    });
-}
-
-function filterGames(){
-    let q=document.getElementById("search").value.toLowerCase();
-    document.querySelectorAll(".card").forEach(c=>{
-        c.style.display=c.getAttribute("data").includes(q)?"block":"none";
-    });
-}
-
-function show(v){
-    document.getElementById("home").style.display="none";
-    document.getElementById("partners").style.display="none";
-
-    document.getElementById(v).style.display="block";
-
-    document.querySelectorAll("nav a").forEach(a=>a.classList.remove("active"));
-    document.getElementById("nav-"+v).classList.add("active");
-}
-
-function closeGame(){
-    document.getElementById("gameView").style.display="none";
-    document.getElementById("frame").innerHTML="";
-}
-
-function toggleSettings(){
-    let s=document.getElementById("settings");
-    s.style.display=s.style.display==="block"?"none":"block";
-}
-
-function setTheme(t){
-    document.documentElement.setAttribute("data-theme",t);
-}
-
-function setWeather(type){
-    const w=document.getElementById("weather");
-    w.innerHTML="";
-
-    if(type==="none") return;
-
-    for(let i=0;i<100;i++){
-        let d=document.createElement("div");
-        d.className="weather-item";
-        d.style.left=Math.random()*100+"%";
-        d.style.animationDuration=(Math.random()*2+2)+"s";
-
-        if(type==="rain"){
-            d.style.width="2px";
-            d.style.height="20px";
-            d.style.background="white";
-        }
-
-        if(type==="snow"){
-            d.style.width="6px";
-            d.style.height="6px";
-            d.style.background="white";
-            d.style.borderRadius="50%";
-        }
-
-        w.appendChild(d);
-    }
-}
-
-function toggleMusic(){
-    let m=document.getElementById("music");
-    if(m.paused) m.play();
-    else m.pause();
-}
-
-window.onload=loadGames;
-</script>
-
+<script src="script.js"></script>
 </body>
 </html>
