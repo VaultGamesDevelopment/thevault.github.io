@@ -1,27 +1,27 @@
 :root {
-    --bg: #0a0a0c;
+    --bg: #050507;
     --card-bg: rgba(255, 255, 255, 0.03);
-    --glass-border: rgba(255, 255, 255, 0.1);
-    --accent-glow: rgba(79, 70, 229, 0.4);
-    --text-primary: #ffffff;
-    --text-secondary: #a1a1aa;
+    --glass-border: rgba(255, 255, 255, 0.08);
+    --accent: #6366f1;
+    --accent-glow: rgba(99, 102, 241, 0.3);
+    --text: #ffffff;
 }
 
 body {
     margin: 0;
-    font-family: 'Inter', system-ui, -apple-system, sans-serif;
-    background-color: var(--bg);
-    color: var(--text-primary);
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
     overflow-x: hidden;
 }
 
 /* Glassmorphism Navigation */
-nav {
+.glass-nav {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 1rem 4rem;
-    background: rgba(10, 10, 12, 0.8);
+    padding: 1rem 5%;
+    background: rgba(10, 10, 12, 0.7);
     backdrop-filter: blur(20px);
     border-bottom: 1px solid var(--glass-border);
     position: sticky;
@@ -29,11 +29,10 @@ nav {
     z-index: 1000;
 }
 
-nav h1 {
-    font-size: 1.5rem;
+.glass-nav h1 {
     font-weight: 800;
-    letter-spacing: -0.05em;
-    background: linear-gradient(to right, #fff, #6366f1);
+    cursor: pointer;
+    background: linear-gradient(90deg, #fff, var(--accent));
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
 }
@@ -41,85 +40,79 @@ nav h1 {
 #game-search {
     background: rgba(255, 255, 255, 0.05);
     border: 1px solid var(--glass-border);
-    border-radius: 12px;
-    padding: 0.7rem 1.5rem;
+    border-radius: 10px;
+    padding: 0.6rem 1.5rem;
     color: white;
     width: 350px;
-    transition: all 0.3s ease;
+    transition: 0.3s;
 }
 
 #game-search:focus {
     outline: none;
-    border-color: #6366f1;
+    border-color: var(--accent);
     box-shadow: 0 0 15px var(--accent-glow);
 }
 
-/* Refined Game Grid */
-.grid {
+/* Game Grid */
+.game-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
     gap: 25px;
-    padding: 3rem 4rem;
+    padding: 40px 5%;
 }
 
 .game-card {
     background: var(--card-bg);
     border: 1px solid var(--glass-border);
-    border-radius: 16px;
+    border-radius: 12px;
     overflow: hidden;
-    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    position: relative;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .game-card:hover {
-    transform: translateY(-8px) scale(1.02);
-    border-color: rgba(99, 102, 241, 0.5);
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4), 0 0 20px var(--accent-glow);
+    transform: translateY(-5px);
+    border-color: var(--accent);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), 0 0 10px var(--accent-glow);
 }
 
 .game-card img {
     width: 100%;
-    aspect-ratio: 16/10;
+    aspect-ratio: 16/9;
     object-fit: cover;
-    border-bottom: 1px solid var(--glass-border);
 }
 
 .game-info {
     padding: 12px;
-    text-align: left;
 }
 
 .game-info h3 {
     margin: 0;
     font-size: 0.9rem;
-    font-weight: 500;
-    color: var(--text-primary);
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
 }
 
-/* Fullscreen Game Overlay Styling */
-#game-view {
-    background: var(--bg);
-    padding: 0;
+/* Modal Styling */
+.glass-modal {
+    position: fixed;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    background: rgba(20, 20, 25, 0.95);
+    backdrop-filter: blur(20px);
+    padding: 2rem;
+    border-radius: 20px;
+    border: 1px solid var(--glass-border);
+    z-index: 2000;
+    width: 90%; max-width: 400px;
+    display: none;
 }
 
-.game-header {
-    background: rgba(255, 255, 255, 0.03);
-    padding: 10px 20px;
-    display: flex;
-    align-items: center;
-    gap: 20px;
-    border-bottom: 1px solid var(--glass-border);
-}
-
-.game-header button {
-    background: #6366f1;
-    color: white;
-    border: none;
-    padding: 8px 16px;
-    border-radius: 8px;
-    cursor: pointer;
-    font-weight: 600;
+#modal-overlay {
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0,0,0,0.7);
+    display: none;
+    z-index: 1999;
 }

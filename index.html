@@ -1,33 +1,80 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>The Vault</title>
+    <link id="tab-favicon" rel="icon" type="image/png" href="https://ssl.gstatic.com/docs/doclist/images/infinite_drive_2020q4.ico">
     <link rel="stylesheet" href="style.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
 </head>
 <body>
     <div id="star-field"></div>
+    <div id="weather-overlay"></div>
 
     <nav class="glass-nav">
-        <h1>The Vault</h1>
-        <div class="search-container">
+        <div class="nav-left">
+            <h1 onclick="location.reload()">The Vault</h1>
+        </div>
+        <div class="nav-center">
             <input type="text" id="game-search" placeholder="Search games..." oninput="universalFilter()">
         </div>
-        <div class="nav-links">
+        <div class="nav-right">
             <span class="badge">Arcade</span>
-            <button class="settings-trigger" onclick="toggleSettings(true)">⚙️</button>
+            <button class="icon-btn" onclick="toggleSettings(true)">⚙️</button>
         </div>
     </nav>
 
     <main>
-        <section id="view-arcade" class="active">
-            <div class="game-grid" id="arcade-grid">
-                </div>
+        <section id="view-arcade" class="view-section active">
+            <div class="game-grid" id="arcade-grid"></div>
             <div id="sentinel"></div>
         </section>
+
+        <div id="game-view" style="display: none;">
+            <div class="game-header">
+                <button onclick="closeGame()">← Back</button>
+                <h2 id="zoneName">Arcade Game</h2>
+            </div>
+            <div id="iframe-container"></div>
+        </div>
     </main>
+
+    <div id="modal-overlay" onclick="toggleSettings(false)"></div>
+    <div id="settings-modal" class="glass-modal">
+        <h2>Settings</h2>
+        <div class="setting-group">
+            <label>Tab Cloak</label>
+            <select onchange="setCloak(this.value)">
+                <option value="none">None</option>
+                <option value="google">Google</option>
+                <option value="drive">Google Drive</option>
+                <option value="classroom">Google Classroom</option>
+            </select>
+        </div>
+        <div class="setting-group">
+            <label>Theme</label>
+            <button class="ui-btn" onclick="setTheme('dark')">Dark</button>
+            <button class="ui-btn" onclick="setTheme('light')">Light</button>
+        </div>
+        <div class="setting-group">
+            <label>Effects</label>
+            <div class="btn-grid">
+                <button class="ui-btn" onclick="setWeather('rain')">Rain</button>
+                <button class="ui-btn" onclick="setWeather('snow')">Snow</button>
+                <button class="ui-btn" onclick="setWeather('stars')">Stars</button>
+                <button class="ui-btn" onclick="setWeather('none')">Clear</button>
+            </div>
+        </div>
+        <div class="setting-group">
+            <label>Music Volume</label>
+            <input type="range" id="music-volume" min="0" max="100" value="50">
+            <button class="ui-btn" onclick="toggleMusic()">Play/Pause Music</button>
+        </div>
+        <button class="close-btn" onclick="toggleSettings(false)">Close</button>
+    </div>
+
+    <audio id="bg-music" loop src=""></audio>
 
     <script src="script.js"></script>
 </body>

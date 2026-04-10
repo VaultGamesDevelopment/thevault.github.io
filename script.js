@@ -4,7 +4,6 @@ let arcadeNextUrl = `https://feeds.gamepix.com/v2/json?order=quality&pagination=
 const save = (k, v) => localStorage.setItem(`vlt_v6_${k}`, v);
 const load = (k) => localStorage.getItem(`vlt_v6_${k}`);
 
-// Fetch Arcade Games
 async function fetchArcade() {
     try {
         const res = await fetch(arcadeNextUrl);
@@ -22,15 +21,28 @@ async function fetchArcade() {
                      style="width:100%;height:100%;border:none;" allowfullscreen></iframe>`;
                 document.getElementById('game-view').style.display = 'block';
             };
-            card.innerHTML = `
-                <img src="${item.banner_image}">
-                <div class="game-info">
-                    <h3>${item.title}</h3>
-                </div>`;
+            card.innerHTML = `<img src="${item.banner_image}"><div class="game-info"><h3>${item.title}</h3></div>`;
             grid.appendChild(card);
         });
         arcadeNextUrl = data.next_url;
-    } catch (e) { console.error("Arcade error", e); }
+    } catch (e) { console.error("Arcade fetch failed", e); }
+}
+
+function setCloak(type) {
+    const presets = {
+        'google': { t: 'Google', i: 'https://www.google.com/favicon.ico' },
+        'drive': { t: 'My Drive - Google Drive', i: 'https://ssl.gstatic.com/images/branding/product/1x/drive_2020q4_48dp.png' },
+        'classroom': { t: 'Classes', i: 'https://ssl.gstatic.com/classroom/favicon.png' },
+        'none': { t: 'The Vault', i: 'https://ssl.gstatic.com/docs/doclist/images/infinite_drive_2020q4.ico' }
+    };
+    
+    document.title = presets[type].t;
+    const fav = document.getElementById('tab-favicon');
+    // Safety check for null
+    if (fav) {
+        fav.href = presets[type].i;
+    }
+    save('cloak', type);
 }
 
 function universalFilter() {
@@ -40,19 +52,6 @@ function universalFilter() {
     });
 }
 
-function setCloak(type) {
-    const presets = {
-        'google': { t: 'Google', i: 'https://www.google.com/favicon.ico' },
-        'drive': { t: 'My Drive - Google Drive', i: 'https://ssl.gstatic.com/images/branding/product/1x/drive_2020q4_48dp.png' },
-        'classroom': { t: 'Classes', i: 'https://ssl.gstatic.com/classroom/favicon.png' },
-        'none': { t: 'The Vault', i: '/favicon-96x96.png' }
-    };
-    document.title = presets[type].t;
-    document.getElementById('tab-favicon').href = presets[type].i;
-    save('cloak', type);
-}
-
-// UI Utilities
 function closeGame() {
     document.getElementById('game-view').style.display = 'none';
     document.getElementById('iframe-container').innerHTML = '';
@@ -68,9 +67,10 @@ function setTheme(t) {
     save('theme', t);
 }
 
-// Initializers
-const arcadeObserver = new IntersectionObserver(e => { if(e[0].isIntersecting) fetchArcade(); });
-arcadeObserver.observe(document.getElementById('sentinel'));
+// Observer for infinite scroll
+const observer = new IntersectionObserver(e => { if(e[0].isIntersecting) fetchArcade(); });
+const sentinel = document.getElementById('sentinel');
+if (sentinel) observer.observe(sentinel);
 
 window.onload = () => {
     setTheme(load('theme') || 'dark');
