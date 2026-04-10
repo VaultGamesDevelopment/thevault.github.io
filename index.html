@@ -256,55 +256,66 @@ function initLazyLoading() {
     lazyImages.forEach(img => observer.observe(img));
 }
 
-async function launchCdnGame(url) {
+async function launchCdnGame(file) {
+    if (!file.url) return;
+
+    // 1. Setup URLs (Same as your openZone logic)
+    let url = file.url.replace("{COVER_URL}", COVER_BASE).replace("{HTML_URL}", HTML_BASE);
+    
+    // Check if it's an external link
+    if (url.startsWith("http") && !url.includes(HTML_BASE)) {
+        window.open(url, "_blank");
+        return;
+    }
+
+    // 2. Prepare the UI
     const container = document.getElementById('iframe-container');
     const gameView = document.getElementById('game-view');
     gameView.style.display = 'block';
     
+    // Clear and recreate iframe to reset the document state
     container.innerHTML = `<iframe id="cdn-frame" allow="autoplay; fullscreen; keyboard; pointer-lock" style="width:100%; height:100%; border:none;"></iframe>`;
     const frame = document.getElementById('cdn-frame');
 
     try {
         const response = await fetch(url + "?t=" + Date.now());
         if (!response.ok) throw new Error("Network response was not ok");
-        let rawHtml = await response.text();
+        let html = await response.text();
 
+        const frameDoc = frame.contentWindow.document;
         const folderPath = url.substring(0, url.lastIndexOf('/') + 1);
         
-        // 1. Prepare the Base tag and the content
+        // 3. Inject the Base Tag
+        // This prevents the "UnityLoader is not defined" and asset 404 errors
         const baseTag = `<base href="${folderPath}">`;
         
-        // 2. Clean up the HTML to ensure it's treated as a document
-        let processedHtml = rawHtml;
-        if (processedHtml.includes('<head>')) {
-            processedHtml = processedHtml.replace('<head>', `<head>${baseTag}`);
+        if (html.includes('<head>')) {
+            html = html.replace('<head>', `<head>${baseTag}`);
         } else {
-            processedHtml = baseTag + processedHtml;
+            html = baseTag + html;
         }
 
-        // 3. Write directly to the iframe document
-        const frameDoc = frame.contentWindow.document;
+        // 4. Force Render as HTML
         frameDoc.open();
-        // This 'force-renders' the string as HTML rather than text
-        frameDoc.write('<!DOCTYPE html>' + processedHtml);
+        // Adding the DOCTYPE forces the browser out of "Plain Text" mode
+        frameDoc.write('<!DOCTYPE html>' + html);
         frameDoc.close();
 
-        // 4. Manually re-trigger scripts to ensure window.runGame() executes
-        // Some browsers won't run scripts injected via document.write automatically
-        const scripts = Array.from(frameDoc.querySelectorAll('script'));
-        for (const oldScript of scripts) {
-            const newScript = frameDoc.createElement('script');
-            Array.from(oldScript.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value));
-            if (oldScript.src) {
-                newScript.src = oldScript.src;
-            } else {
-                newScript.textContent = oldScript.textContent;
-            }
-            oldScript.parentNode.replaceChild(newScript, oldScript);
+        // 5. Update Metadata for the Vault UI
+        // (Adjust these IDs to match your specific HTML elements)
+        if (document.getElementById('zoneName')) {
+            document.getElementById('zoneName').textContent = file.name;
         }
 
-    } catch (e) {
-        console.warn("High-fidelity injection failed, falling back to standard SRC load.");
+        // 6. Update URL Search Params (History API)
+        try {
+            const urlObj = new URL(window.location);
+            urlObj.searchParams.set('id', file.id);
+            window.history.pushState(null, '', urlObj.toString());
+        } catch(e) {}
+
+    } catch (error) {
+        console.warn("Fetch injection failed, falling back to direct source loading.");
         frame.src = url;
     }
 }
