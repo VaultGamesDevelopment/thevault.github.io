@@ -10,27 +10,35 @@
 
 <style>
 :root {
-    --bg: #050507;
-    --card-bg: rgba(255,255,255,0.04);
-    --border: rgba(255,255,255,0.08);
-    --accent: #6366f1;
-    --text: #fff;
+    --bg:#050507;
+    --card:#0f0f14;
+    --border:#1f1f25;
+    --accent:#6366f1;
+    --text:#fff;
 }
 
+[data-theme="light"] {
+    --bg:#f5f5f5;
+    --card:#ffffff;
+    --border:#e5e5e5;
+    --text:#111;
+}
+
+/* BASE */
 body {
     margin:0;
     font-family:'Inter',sans-serif;
-    background: radial-gradient(circle at top,#0a0a12,#050507);
+    background:var(--bg);
     color:var(--text);
 }
 
 /* NAV */
-.glass-nav {
+.nav {
     display:flex;
     justify-content:space-between;
     align-items:center;
     padding:1rem 5%;
-    background:rgba(10,10,12,0.7);
+    background:rgba(0,0,0,0.7);
     backdrop-filter:blur(20px);
     border-bottom:1px solid var(--border);
     position:sticky;
@@ -38,47 +46,43 @@ body {
     z-index:1000;
 }
 
-h1 {
-    font-size:1.2rem;
+.logo {
+    font-weight:800;
     cursor:pointer;
-    background:linear-gradient(90deg,#fff,var(--accent));
-    -webkit-background-clip:text;
-    -webkit-text-fill-color:transparent;
 }
 
-#game-search {
-    width:300px;
-    padding:10px;
+.nav-links {
+    display:flex;
+    gap:20px;
+}
+
+.nav-links a {
+    cursor:pointer;
+    opacity:0.7;
+}
+
+.nav-links a.active {
+    opacity:1;
+}
+
+#search {
+    padding:8px;
     border-radius:10px;
     border:1px solid var(--border);
-    background:rgba(255,255,255,0.05);
-    color:white;
-}
-
-#game-search:focus {
-    outline:none;
-    border-color:var(--accent);
-}
-
-.icon-btn {
-    background:none;
-    border:1px solid var(--border);
-    border-radius:10px;
-    padding:6px 10px;
-    color:white;
-    cursor:pointer;
+    background:transparent;
+    color:var(--text);
 }
 
 /* GRID */
-.game-grid {
+.grid {
     display:grid;
     grid-template-columns:repeat(auto-fill,minmax(200px,1fr));
     gap:20px;
     padding:30px 5%;
 }
 
-.game-card {
-    background:var(--card-bg);
+.card {
+    background:var(--card);
     border:1px solid var(--border);
     border-radius:12px;
     overflow:hidden;
@@ -86,20 +90,38 @@ h1 {
     transition:0.3s;
 }
 
-.game-card:hover {
+.card:hover {
     transform:translateY(-5px);
     border-color:var(--accent);
 }
 
-.game-card img {
+.card img {
     width:100%;
     height:130px;
     object-fit:cover;
 }
 
-.game-info {
-    padding:10px;
+/* PARTNERS */
+.partner {
+    padding:20px;
+    border-radius:20px;
+    background:var(--card);
+    text-align:center;
 }
+
+.partner a {
+    display:block;
+    margin-top:10px;
+    background:var(--accent);
+    padding:10px;
+    border-radius:10px;
+    color:white;
+    text-decoration:none;
+}
+
+/* VIEWS */
+.view { display:none; }
+.view.active { display:block; }
 
 /* GAME VIEW */
 #game-view {
@@ -112,94 +134,105 @@ h1 {
     z-index:5000;
 }
 
-.game-header {
-    padding:10px;
-    display:flex;
-    gap:10px;
-    background:#050507;
-}
-
-.game-header button {
-    background:var(--accent);
-    border:none;
-    padding:6px 12px;
-    border-radius:6px;
-    color:white;
-    cursor:pointer;
-}
-
-#iframe-container {
+#game-view iframe {
     flex:1;
+    border:none;
 }
 
 /* MODAL */
-#settings-modal {
+#settings {
     position:fixed;
     top:50%;left:50%;
     transform:translate(-50%,-50%) scale(0.9);
     background:#111;
     padding:20px;
     border-radius:15px;
-    border:1px solid var(--border);
     opacity:0;
     pointer-events:none;
     transition:0.3s;
-    z-index:2000;
 }
 
-#settings-modal.active {
+#settings.active {
     opacity:1;
     transform:translate(-50%,-50%) scale(1);
     pointer-events:all;
 }
 
-#modal-overlay {
+.overlay {
     position:fixed;
     top:0;left:0;
     width:100%;height:100%;
     background:rgba(0,0,0,0.7);
     display:none;
-    z-index:1999;
-}
-
-button {
-    margin-top:5px;
 }
 </style>
 </head>
 
 <body>
 
-<nav class="glass-nav">
-    <h1 onclick="location.reload()">The Vault</h1>
-    <input id="game-search" placeholder="Search..." oninput="filterGames()">
-    <button class="icon-btn" onclick="toggleSettings(true)">⚙️</button>
-</nav>
+<!-- NAV -->
+<div class="nav">
+    <div class="logo" onclick="show('home')">THE VAULT</div>
 
-<div class="game-grid" id="arcade-grid"></div>
-<div id="sentinel"></div>
+    <div class="nav-links">
+        <a onclick="show('home')" id="nav-home" class="active">Arcade</a>
+        <a onclick="show('partners')" id="nav-partners">Partners</a>
+    </div>
+
+    <input id="search" placeholder="Search..." oninput="filter()">
+    <button onclick="toggleSettings(true)">⚙️</button>
+</div>
+
+<!-- VIEWS -->
+<div id="home" class="view active">
+    <div class="grid" id="grid"></div>
+    <div id="sentinel"></div>
+</div>
+
+<div id="partners" class="view">
+    <div class="grid">
+        <div class="partner">
+            <h3>GamePix</h3>
+            <p>HTML5 Game Provider</p>
+            <a href="https://gamepix.com" target="_blank">Visit</a>
+        </div>
+
+        <div class="partner">
+            <h3>Jaime's Site</h3>
+            <p>Custom Games</p>
+            <a href="https://sites.google.com/view/jaimescheesegrater" target="_blank">Visit</a>
+        </div>
+    </div>
+</div>
 
 <!-- GAME VIEW -->
 <div id="game-view">
-    <div class="game-header">
-        <button onclick="closeGame()">← Back</button>
-        <h3 id="game-title"></h3>
-    </div>
-    <div id="iframe-container"></div>
+    <button onclick="closeGame()">← Back</button>
+    <iframe id="frame"></iframe>
 </div>
 
 <!-- SETTINGS -->
-<div id="modal-overlay" onclick="toggleSettings(false)"></div>
+<div class="overlay" id="overlay" onclick="toggleSettings(false)"></div>
 
-<div id="settings-modal">
+<div id="settings">
     <h3>Settings</h3>
 
-    <label>Music</label><br>
-    <button onclick="toggleMusic()">Play / Pause</button>
+    <label>Theme</label><br>
+    <button onclick="setTheme('dark')">Dark</button>
+    <button onclick="setTheme('light')">Light</button>
+
     <br><br>
 
-    <label>Volume</label><br>
-    <input type="range" id="volume" min="0" max="100" value="50">
+    <label>Tab Cloak</label><br>
+    <button onclick="cloak('google')">Google</button>
+    <button onclick="cloak('drive')">Drive</button>
+    <button onclick="cloak('none')">None</button>
+
+    <br><br>
+
+    <label>Music</label><br>
+    <button onclick="toggleMusic()">Play/Pause</button><br>
+    <input type="range" id="vol" min="0" max="100" value="50">
 
     <br><br>
     <button onclick="toggleSettings(false)">Close</button>
@@ -208,88 +241,92 @@ button {
 <audio id="music" loop src="./bgmusic.mp3"></audio>
 
 <script>
-const SID = "1";
-let next = `https://feeds.gamepix.com/v2/json?order=quality&pagination=24&sid=${SID}`;
+const SID="1";
+let next=`https://feeds.gamepix.com/v2/json?order=quality&pagination=24&sid=${SID}`;
 
-const grid = document.getElementById("arcade-grid");
+/* NAV */
+function show(v){
+    document.querySelectorAll(".view").forEach(x=>x.classList.remove("active"));
+    document.getElementById(v).classList.add("active");
 
-/* LOAD GAMES */
-async function loadGames() {
-    const res = await fetch(next);
-    const data = await res.json();
+    document.querySelectorAll(".nav-links a").forEach(x=>x.classList.remove("active"));
+    document.getElementById("nav-"+v).classList.add("active");
+}
 
-    data.items.forEach(g => {
-        const card = document.createElement("div");
-        card.className = "game-card";
-        card.setAttribute("data-title", g.title.toLowerCase());
+/* LOAD */
+async function load(){
+    const res=await fetch(next);
+    const data=await res.json();
 
-        card.onclick = () => {
-            document.getElementById("game-title").textContent = g.title;
-            document.getElementById("iframe-container").innerHTML =
-                `<iframe src="https://play.gamepix.com/${g.namespace}/embed?sid=${SID}" style="width:100%;height:100%;border:none;"></iframe>`;
-            document.getElementById("game-view").style.display = "flex";
+    data.items.forEach(g=>{
+        const c=document.createElement("div");
+        c.className="card";
+        c.setAttribute("data",g.title.toLowerCase());
+
+        c.onclick=()=>{
+            document.getElementById("frame").src=
+                `https://play.gamepix.com/${g.namespace}/embed?sid=${SID}`;
+            document.getElementById("game-view").style.display="flex";
         };
 
-        card.innerHTML = `
-            <img src="${g.banner_image}">
-            <div class="game-info"><h4>${g.title}</h4></div>
-        `;
-
-        grid.appendChild(card);
+        c.innerHTML=`<img src="${g.banner_image}"><p>${g.title}</p>`;
+        grid.appendChild(c);
     });
 
-    next = data.next_url;
+    next=data.next_url;
 }
 
 /* SEARCH */
-function filterGames() {
-    const q = document.getElementById("game-search").value.toLowerCase();
-    document.querySelectorAll(".game-card").forEach(c=>{
-        c.style.display = c.dataset.title.includes(q) ? "block":"none";
+function filter(){
+    const q=search.value.toLowerCase();
+    document.querySelectorAll(".card").forEach(c=>{
+        c.style.display=c.getAttribute("data").includes(q)?"block":"none";
     });
 }
 
-/* GAME VIEW */
+/* GAME */
 function closeGame() {
-    document.getElementById("game-view").style.display = "none";
-    document.getElementById("iframe-container").innerHTML = "";
+    game-view.style.display = "none";
+    frame.src="";
 }
 
 /* SETTINGS */
-function toggleSettings(open) {
-    document.getElementById("settings-modal").classList.toggle("active", open);
-    document.getElementById("modal-overlay").style.display = open ? "block":"none";
+function toggleSettings(v){
+    settings.classList.toggle("active",v);
+    overlay.style.display=v?"block":"none";
+}
+
+/* THEME */
+function setTheme(t){
+    document.documentElement.setAttribute("data-theme",t);
+}
+
+/* CLOAK */
+function cloak(t){
+    if(t==="google") document.title="Google";
+    if(t==="drive") document.title="My Drive";
+    if(t==="none") document.title="The Vault";
 }
 
 /* MUSIC */
-const music = document.getElementById("music");
-const volume = document.getElementById("volume");
+const music=document.getElementById("music");
+const vol=document.getElementById("vol");
 
-volume.oninput = () => {
-    music.volume = volume.value / 100;
-};
+vol.oninput=()=>music.volume=vol.value/100;
 
-function toggleMusic() {
-    if (music.paused) {
-        music.play();
-    } else {
-        music.pause();
-    }
+function toggleMusic(){
+    music.paused?music.play():music.pause();
 }
 
-/* USER INTERACTION FIX (IMPORTANT) */
-document.addEventListener("click", () => {
-    music.volume = volume.value / 100;
-}, { once:true });
+document.addEventListener("click",()=>music.play(),{once:true});
 
-/* SCROLL LOAD */
-const observer = new IntersectionObserver(e=>{
-    if(e[0].isIntersecting) loadGames();
+/* SCROLL */
+const obs=new IntersectionObserver(e=>{
+    if(e[0].isIntersecting) load();
 });
-observer.observe(document.getElementById("sentinel"));
+obs.observe(document.getElementById("sentinel"));
 
-/* INIT */
-loadGames();
+load();
 </script>
 
 </body>
