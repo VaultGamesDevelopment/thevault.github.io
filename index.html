@@ -106,7 +106,7 @@
                 <a href="https://www.gamepix.com" target="_blank" class="partner-link">Official Site</a>
             </div>
             <div class="partner-card">
-                <div class="p-icon"><img src="https://lh3.googleusercontent.com/sitesv/APaQ0SRJ4NySTKsMA0jix0YnzwZLJ5dP6raGdFI8Z_Fx3UNCBpyYnwKCO8Xmvh8uGtwy2P81m_3__KUdLWhaDfrGp8vKciWKyQ2pjnVhVW9HLOaUzXFCKxsAF3WMGZrGHnCVD7KhfGLqJkE-7oGN7P_HlcYVcAwWDjAIk2gpkrnDwKeM4EbXpvgq2lxiQcQ=w16383"></div>
+                <div class="p-icon"><img src="https://lh3.googleusercontent.com/sitesv/APaQ0SS0xol8Er0qg8aFrbawfxx8foLLGjjlFkfkHYf50bEX9ilMWRvk5qZ05HyjqwL5__9BFThs7TKC-9Uxrc24zeBAnkglp9vF4xD_lSL27WKCgl7hQskmXaVBuhyHu3CxmkfI4Dc2FcXvXqIai-PXAZpZ-_2FxDqk1E-8ZUrV55KH2GR8Ye0CcahIxZc=w16383"></div>
                 <h3>Jaime's Cheese Grater</h3>
                 <p>A curated collection of unique web experiences.</p>
                 <a href="https://sites.google.com/view/jaimescheesegrater" target="_blank" class="partner-link">Visit Site</a>
@@ -266,37 +266,48 @@ async function launchCdnGame(url) {
 
     try {
         const response = await fetch(url + "?t=" + Date.now());
-        if (!response.ok) throw new Error();
+        if (!response.ok) throw new Error("Network response was not ok");
         let rawHtml = await response.text();
 
-        const frameDoc = frame.contentWindow.document;
         const folderPath = url.substring(0, url.lastIndexOf('/') + 1);
         
-        // Base tag fixes relative paths for Unity and jQuery
+        // 1. Prepare the Base tag and the content
         const baseTag = `<base href="${folderPath}">`;
-        if (rawHtml.includes('<head>')) {
-            rawHtml = rawHtml.replace('<head>', `<head>${baseTag}`);
+        
+        // 2. Clean up the HTML to ensure it's treated as a document
+        let processedHtml = rawHtml;
+        if (processedHtml.includes('<head>')) {
+            processedHtml = processedHtml.replace('<head>', `<head>${baseTag}`);
         } else {
-            rawHtml = baseTag + rawHtml;
+            processedHtml = baseTag + processedHtml;
         }
 
+        // 3. Write directly to the iframe document
+        const frameDoc = frame.contentWindow.document;
         frameDoc.open();
-        frameDoc.write(rawHtml);
-
-        // Force scripts to execute (Original site logic)
-        frameDoc.querySelectorAll('script').forEach(oldScript => {
-            const newScript = frameDoc.createElement('script');
-            if (oldScript.src) newScript.src = oldScript.src;
-            else newScript.textContent = oldScript.textContent;
-            frameDoc.body.appendChild(newScript);
-        });
-
+        // This 'force-renders' the string as HTML rather than text
+        frameDoc.write('<!DOCTYPE html>' + processedHtml);
         frameDoc.close();
+
+        // 4. Manually re-trigger scripts to ensure window.runGame() executes
+        // Some browsers won't run scripts injected via document.write automatically
+        const scripts = Array.from(frameDoc.querySelectorAll('script'));
+        for (const oldScript of scripts) {
+            const newScript = frameDoc.createElement('script');
+            Array.from(oldScript.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value));
+            if (oldScript.src) {
+                newScript.src = oldScript.src;
+            } else {
+                newScript.textContent = oldScript.textContent;
+            }
+            oldScript.parentNode.replaceChild(newScript, oldScript);
+        }
+
     } catch (e) {
-        frame.src = url; // SRC Fallback for filter bypass
+        console.warn("High-fidelity injection failed, falling back to standard SRC load.");
+        frame.src = url;
     }
 }
-
 // --- ARCADE & UI LOGIC ---
 
 async function fetchArcade() {
