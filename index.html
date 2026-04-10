@@ -163,7 +163,6 @@
             if(v === 'cdn') loadCdnGames();
         }
 
-        // --- NEW zones.json LOADING LOGIC ---
         async function loadCdnGames() {
             try {
                 const res = await fetch('./zones.json');
@@ -173,8 +172,8 @@
                 const grid = document.getElementById('cdn-grid');
                 grid.innerHTML = ""; 
 
-                games.forEach(game => {
-                    // Replace placeholders with real CDN URLs
+                // Filter out games with id: -1
+                games.filter(g => g.id !== -1).forEach(game => {
                     const fullGameUrl = game.url.replace("{HTML_URL}", HTML_BASE);
                     const fullImageUrl = game.cover.replace("{COVER_URL}", COVER_BASE);
 
@@ -196,7 +195,6 @@
             }
         }
 
-        // --- Injection with CORS Fallback ---
         async function launchCdnGame(url) {
             const container = document.getElementById('iframe-container');
             const gameView = document.getElementById('game-view');
