@@ -357,53 +357,17 @@ nav a.active { color: var(--text-color); }
             if(v === 'cdn' && cdnAllGames.length === 0) loadCdnGames();
         }
 
-        async function loadCdnGames() {
-    try {
-        const res = await fetch(CONFIG.gamerJson, { cache: "no-store" });
 
-        if (!res.ok) {
-            throw new Error("Failed to fetch gamer.json");
-        }
-
-        const data = await res.json();
-
-        // ✅ Support BOTH array and single object (your current issue)
-        const games = Array.isArray(data) ? data : [data];
-        cdnAllGames = games;
-
-        const grid = document.getElementById('cdn-grid');
-        grid.innerHTML = ""; // prevent duplicates
-
-        games.forEach(game => {
-            if (!game.name || !game.url) return;
-
-            const card = document.createElement('div');
-            card.className = 'game-card';
-            card.setAttribute('data-title', game.name.toLowerCase());
-
-            card.onclick = () => launchCdnGame(game.url);
-
-            card.innerHTML = `
-                <img src="${game.image || ''}" 
-                     onerror="this.src='https://via.placeholder.com/150/111/fff?text=App'">
-                <div class="game-info"><h3>${game.name}</h3></div>
-            `;
-
-            grid.appendChild(card);
-        });
-
-    } catch (e) {
-        console.error("Error loading gamer.json:", e);
-    }
-}
 
         async function loadCdnGames() {
-    const baseUrl = "https://biology.science.geometry.project.computer.archivomemoria-audiovisualcsb.org/";
+    // This is the original site where the actual .html and .jpg files live
+    const remoteBase = "https://biology.science.geometry.project.computer.archivomemoria-audiovisualcsb.org/";
 
     try {
-        // Since we loaded the script in the <head>, 'games' is already defined
+        // Check if the script we put in the head loaded the 'games' array
         if (typeof games === 'undefined') {
-            throw new Error("Game list script failed to load or is blocked.");
+            console.error("games.js loaded but 'games' variable is missing.");
+            return;
         }
 
         cdnAllGames = games;
@@ -411,9 +375,9 @@ nav a.active { color: var(--text-color); }
         grid.innerHTML = ""; 
 
         games.forEach(game => {
-            // Fix relative paths
-            const fullGameUrl = game.url.startsWith('http') ? game.url : baseUrl + game.url;
-            const fullImageUrl = game.image.startsWith('http') ? game.image : baseUrl + game.image;
+            // Prepend the remote base URL to the relative paths in your JS file
+            const fullGameUrl = game.url.startsWith('http') ? game.url : remoteBase + game.url;
+            const fullImageUrl = game.image.startsWith('http') ? game.image : remoteBase + game.image;
 
             const card = document.createElement('div');
             card.className = 'game-card';
@@ -421,7 +385,7 @@ nav a.active { color: var(--text-color); }
             
             card.onclick = () => launchCdnGame(fullGameUrl);
 
-            // STOP the error loop and hide broken images until they load
+            // Added 'this.onerror=null' to prevent the 600+ error refresh loop
             card.innerHTML = `
                 <img src="${fullImageUrl}" 
                      onerror="this.onerror=null; this.src='https://via.placeholder.com/150/111/fff?text=No+Image';">
@@ -431,10 +395,9 @@ nav a.active { color: var(--text-color); }
             grid.appendChild(card);
         });
     } catch (e) {
-        console.error("Error loading Archive:", e);
+        console.error("Error building the Archive grid:", e);
     }
 }
-
         async function fetchArcade() {
             if (isArcadeLoading || !arcadeNextUrl) return;
             isArcadeLoading = true;
