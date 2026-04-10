@@ -1,99 +1,328 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>The Vault | IDE Arcade</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VAULT</title>
 
-<link rel="stylesheet" href="style.css"/>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+
+<style>
+:root{
+    --bg:#0b0f19;
+    --panel:#0f1629;
+    --panel2:#111a2e;
+    --text:#e6e6e6;
+    --muted:#8b93a7;
+    --accent:#6c7cff;
+    --border:rgba(255,255,255,0.08);
+    --glow:rgba(108,124,255,0.25);
+}
+
+*{box-sizing:border-box;font-family:Inter,sans-serif;}
+body{
+    margin:0;
+    background:var(--bg);
+    color:var(--text);
+    overflow:hidden;
+}
+
+/* ===== LAYOUT ===== */
+.app{
+    display:flex;
+    height:100vh;
+}
+
+/* SIDEBAR */
+.sidebar{
+    width:260px;
+    background:var(--panel);
+    border-right:1px solid var(--border);
+    padding:15px;
+    display:flex;
+    flex-direction:column;
+    gap:12px;
+}
+
+.logo{
+    font-weight:800;
+    font-size:18px;
+    letter-spacing:1px;
+}
+
+.section-title{
+    font-size:11px;
+    color:var(--muted);
+    margin-top:10px;
+}
+
+.btn{
+    background:var(--panel2);
+    border:1px solid var(--border);
+    color:var(--text);
+    padding:8px 10px;
+    border-radius:8px;
+    cursor:pointer;
+    transition:.2s;
+    text-align:left;
+}
+.btn:hover{
+    border-color:var(--accent);
+    box-shadow:0 0 12px var(--glow);
+}
+
+/* MAIN */
+.main{
+    flex:1;
+    display:flex;
+    flex-direction:column;
+}
+
+/* TOPBAR */
+.topbar{
+    height:60px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:0 20px;
+    border-bottom:1px solid var(--border);
+    background:rgba(15,22,41,0.7);
+    backdrop-filter:blur(12px);
+}
+
+.search{
+    width:300px;
+    padding:8px 12px;
+    border-radius:8px;
+    border:1px solid var(--border);
+    background:var(--panel);
+    color:white;
+    outline:none;
+}
+
+/* GRID */
+.grid{
+    padding:20px;
+    display:grid;
+    grid-template-columns:repeat(auto-fill,minmax(180px,1fr));
+    gap:15px;
+    overflow:auto;
+}
+
+.card{
+    background:var(--panel);
+    border:1px solid var(--border);
+    border-radius:12px;
+    overflow:hidden;
+    cursor:pointer;
+    transition:.25s;
+}
+.card:hover{
+    transform:translateY(-5px);
+    border-color:var(--accent);
+    box-shadow:0 10px 25px rgba(0,0,0,0.4),0 0 15px var(--glow);
+}
+.card img{
+    width:100%;
+    height:110px;
+    object-fit:cover;
+}
+.card h3{
+    font-size:13px;
+    padding:10px;
+    margin:0;
+}
+
+/* VIEW SWITCH */
+.view{display:none; height:100%;}
+.view.active{display:block;}
+
+/* GAME VIEW */
+.gameview{
+    position:absolute;
+    inset:0;
+    background:black;
+    display:none;
+    flex-direction:column;
+}
+.gamebar{
+    padding:10px;
+    background:#111;
+    display:flex;
+    justify-content:space-between;
+}
+iframe{
+    width:100%;
+    height:100%;
+    border:none;
+}
+
+/* SETTINGS */
+.modal{
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,0.6);
+    display:none;
+    align-items:center;
+    justify-content:center;
+}
+.panel{
+    width:420px;
+    background:var(--panel);
+    border:1px solid var(--border);
+    padding:20px;
+    border-radius:12px;
+}
+</style>
 </head>
 
 <body>
 
-<!-- SIDEBAR (VS CODE STYLE) -->
-<div class="sidebar">
-    <div class="logo">⚡ VAULT</div>
+<div class="app">
 
-    <div class="side-section">
-        <h4>EXPLORER</h4>
-        <button onclick="showView('arcade')">🎮 Arcade</button>
-        <button onclick="showView('partners')">🌐 Partners</button>
-        <button onclick="openSettings()">⚙ Settings</button>
+    <!-- SIDEBAR -->
+    <div class="sidebar">
+        <div class="logo">⚡ VAULT</div>
+
+        <div class="section-title">EXPLORER</div>
+        <button class="btn" onclick="show('arcade')">🎮 Arcade</button>
+        <button class="btn" onclick="show('partners')">🌐 Partners</button>
+        <button class="btn" onclick="openSettings()">⚙ Settings</button>
+
+        <div class="section-title">STATUS</div>
+        <div style="font-size:12px;color:#7CFF9B;">● Online</div>
     </div>
 
-    <div class="side-section">
-        <h4>STATUS</h4>
-        <div class="status">● Online</div>
-        <div class="status">GamePix API</div>
-    </div>
-</div>
+    <!-- MAIN -->
+    <div class="main">
 
-<!-- MAIN APP -->
-<div class="main">
-
-    <!-- TOP BAR -->
-    <div class="topbar">
-        <input id="search" placeholder="Search games..." oninput="filterGames()"/>
-        <div class="tabs">
-            <div class="tab active">Arcade</div>
+        <div class="topbar">
+            <input class="search" id="search" placeholder="Search games..." oninput="filterGames()">
         </div>
-    </div>
 
-    <!-- CONTENT -->
-    <div class="content">
-
-        <!-- GAME GRID -->
-        <section id="arcade" class="view active">
-            <div id="games" class="grid"></div>
-        </section>
+        <!-- ARCADE -->
+        <div id="arcade" class="view active">
+            <div class="grid" id="grid"></div>
+        </div>
 
         <!-- PARTNERS -->
-        <section id="partners" class="view">
-            <div class="partners">
-                <a class="partner" href="https://gamepix.com" target="_blank">GamePix</a>
-                <a class="partner" href="https://sites.google.com/view/jaimescheesegrater" target="_blank">Jaime</a>
+        <div id="partners" class="view">
+            <div class="grid">
+
+                <a class="card" href="https://www.gamepix.com" target="_blank">
+                    <img src="https://www.gamepix.com/icons/favicon-96x96.png">
+                    <h3>GamePix</h3>
+                </a>
+
+                <a class="card" href="https://sites.google.com" target="_blank">
+                    <img src="https://ssl.gstatic.com/classroom/favicon.png">
+                    <h3>Google Classroom</h3>
+                </a>
+
             </div>
-        </section>
+        </div>
 
-    </div>
-
-    <!-- BOTTOM CONSOLE -->
-    <div class="console">
-        <span>System ready...</span>
     </div>
 </div>
 
-<!-- GAME PANEL (RIGHT EXECUTOR STYLE) -->
-<div id="gamePanel">
-    <button onclick="closeGame()">← Exit</button>
+<!-- GAME -->
+<div class="gameview" id="gameview">
+    <div class="gamebar">
+        <button onclick="closeGame()">← Back</button>
+    </div>
     <iframe id="frame"></iframe>
 </div>
 
 <!-- SETTINGS -->
-<div id="overlay" onclick="closeSettings()"></div>
-<div id="settings">
-    <h2>Settings</h2>
-
-    <button onclick="setTheme('dark')">Dark</button>
-    <button onclick="setTheme('neon')">Neon</button>
-    <button onclick="setTheme('matrix')">Matrix</button>
-    <button onclick="setTheme('sunset')">Sunset</button>
-
-    <button onclick="setWeather('rain')">Rain</button>
-    <button onclick="setWeather('snow')">Snow</button>
-    <button onclick="setWeather('stars')">Stars</button>
-
-    <button onclick="toggleMusic()">Music</button>
+<div class="modal" id="modal">
+    <div class="panel">
+        <h3>Settings</h3>
+        <button onclick="setTheme('dark')">Dark</button>
+        <button onclick="setTheme('blue')">Blue</button>
+        <button onclick="setTheme('purple')">Purple</button>
+        <br><br>
+        <button onclick="closeSettings()">Close</button>
+    </div>
 </div>
 
-<audio id="music" loop>
-<source src="./bgmusic.mp3"/>
-</audio>
+<script>
+const SID="1";
+let games=[];
 
-<div id="fx-stars"></div>
-<div id="fx-weather"></div>
+/* FIXED LOAD */
+async function loadGames(){
+    try{
+        const res = await fetch(`https://feeds.gamepix.com/v2/json?sid=${SID}&pagination=100`);
+        const data = await res.json();
 
-<script src="app.js"></script>
+        games = data.items || [];
+
+        const grid=document.getElementById("grid");
+        grid.innerHTML="";
+
+        games.forEach(g=>{
+            const c=document.createElement("div");
+            c.className="card";
+            c.setAttribute("data-title",g.title.toLowerCase());
+
+            c.onclick=()=>{
+                document.getElementById("gameview").style.display="flex";
+                document.getElementById("frame").src=
+                `https://play.gamepix.com/${g.namespace}/embed?sid=${SID}`;
+            };
+
+            c.innerHTML=`
+                <img src="${g.banner_image}">
+                <h3>${g.title}</h3>
+            `;
+            grid.appendChild(c);
+        });
+
+    }catch(e){
+        console.log("Load error:",e);
+    }
+}
+
+/* SEARCH */
+function filterGames(){
+    let q=document.getElementById("search").value.toLowerCase();
+    document.querySelectorAll(".card").forEach(c=>{
+        c.style.display=c.dataset.title.includes(q)?"block":"none";
+    });
+}
+
+/* NAV */
+function show(id){
+    document.querySelectorAll(".view").forEach(v=>v.classList.remove("active"));
+    document.getElementById(id).classList.add("active");
+}
+
+/* GAME */
+function closeGame(){
+    document.getElementById("gameview").style.display="none";
+    document.getElementById("frame").src="";
+}
+
+/* SETTINGS */
+function openSettings(){
+    document.getElementById("modal").style.display="flex";
+}
+function closeSettings(){
+    document.getElementById("modal").style.display="none";
+}
+
+/* THEME */
+function setTheme(t){
+    if(t==="blue"){
+        document.documentElement.style.setProperty("--accent","#4da3ff");
+    }
+    if(t==="purple"){
+        document.documentElement.style.setProperty("--accent","#b46cff");
+    }
+}
+
+loadGames();
+</script>
+
 </body>
 </html>
