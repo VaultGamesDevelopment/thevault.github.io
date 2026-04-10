@@ -172,11 +172,9 @@
         const grid = document.getElementById('cdn-grid');
         grid.innerHTML = ""; 
 
-        games.filter(g => g.id !== -1).forEach(game => {
-            // Safety check: skip if the game object is missing the URL
-            if (!game.url) return;
-
-            // Ensure HTML_BASE doesn't have a double slash
+        // Filter out games with id: -1 and ensure they have a URL
+        games.filter(g => g.id !== -1 && g.url).forEach(game => {
+            // Normalize URLs to prevent "undefined" errors
             const cleanBase = HTML_BASE.endsWith('/') ? HTML_BASE : HTML_BASE + '/';
             const cleanCoverBase = COVER_BASE.endsWith('/') ? COVER_BASE : COVER_BASE + '/';
 
@@ -186,10 +184,7 @@
             const card = document.createElement('div');
             card.className = 'game-card';
             card.setAttribute('data-title', game.name.toLowerCase());
-            
-            // Pass the URL directly to the launcher
             card.onclick = () => launchCdnGame(fullGameUrl);
-
             card.innerHTML = `
                 <img src="${fullImageUrl}" onerror="this.onerror=null; this.src='https://via.placeholder.com/150/111/fff?text=No+Image';">
                 <div class="game-info">
@@ -201,6 +196,45 @@
         });
     } catch (e) {
         console.error("Archive Load Error:", e);
+    }
+}
+
+async function launchCdnGame(url) {
+    if (!url || url.includes('undefined')) return;
+
+    const container = document.getElementById('iframe-container');
+    const gameView = document.getElementById('game-view');
+    gameView.style.display = 'block';
+    
+    // Create the iframe
+    container.innerHTML = `<iframe id="cdn-frame" allow="autoplay; fullscreen; keyboard; pointer-lock" style="width:100%; height:100%; border:none;"></iframe>`;
+    const frame = document.getElementById('cdn-frame');
+
+    try {
+        const response = await fetch(url);
+        if (!response.ok) throw new Error("CORS/Filter Blocked");
+        let rawHtml = await response.text();
+
+        const frameDoc = frame.contentWindow.document;
+        // Calculate the directory of the HTML file (e.g., https://cdn.../games/)
+        const folderPath = url.substring(0, url.lastIndexOf('/') + 1);
+        
+        // Inject <base> tag so UnityLoader.js and .wasm files load from the CDN folder
+        const baseTag = `<base href="${folderPath}">`;
+        if (rawHtml.includes('<head>')) {
+            rawHtml = rawHtml.replace('<head>', `<head>${baseTag}`);
+        } else {
+            rawHtml = baseTag + rawHtml;
+        }
+
+        frameDoc.open();
+        frameDoc.write(rawHtml);
+        frameDoc.close();
+    } catch (e) {
+        // Fallback: If fetch fails (ERR_BLOCKED_BY_CLIENT), load via src
+        // This is the only way to bypass some heavy filters
+        console.warn("Direct injection blocked. Falling back to src.");
+        frame.src = url;
     }
 }
 
