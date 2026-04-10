@@ -181,15 +181,26 @@ async function fetchPopularity(duration) {
     try {
         if (!popularityData[duration]) popularityData[duration] = {};
         const response = await fetch(`https://data.jsdelivr.net/v1/stats/packages/gh/freebuisness/html@main/files?period=${duration}`);
+        
+        if (!response.ok) return;
+        
         const data = await response.json();
-        data.forEach(file => {
-            const idMatch = file.name.match(/\/(\d+)\.html$/);
-            if (idMatch) {
-                const id = parseInt(idMatch[1]);
-                popularityData[duration][id] = file.hits?.total ?? 0;
-            }
-        });
-    } catch (e) { console.warn(`Popularity stats for ${duration} failed.`); }
+        
+        // jsDelivr stats are returned in a 'files' object
+        if (data && data.files) {
+            Object.keys(data.files).forEach(fileName => {
+                // Matches "123.html" or "/123.html"
+                const idMatch = fileName.match(/(\d+)\.html$/);
+                if (idMatch) {
+                    const id = parseInt(idMatch[1]);
+                    // jsDelivr uses 'hits' for total views
+                    popularityData[duration][id] = data.files[fileName].total || 0;
+                }
+            });
+        }
+    } catch (e) { 
+        console.warn(`Popularity stats for ${duration} failed:`, e); 
+    }
 }
 
 async function loadCdnGames() {
