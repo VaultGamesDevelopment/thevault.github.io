@@ -396,71 +396,53 @@ nav a.active { color: var(--text-color); }
     }
 }
 
-        // --- UPDATED LAUNCH FUNCTION ---
-async function launchCdnGame(url) {
-    const container = document.getElementById('iframe-container');
-    const gameView = document.getElementById('game-view');
+        async function loadCdnGames() {
+    const baseUrl = "https://biology.science.geometry.project.computer.archivomemoria-audiovisualcsb.org/";
+    const jsUrl = baseUrl + "js/games.js?v=20260311025500";
 
     try {
-        // 1. Fetch the raw HTML from the URL
-        const response = await fetch(url);
-        if (!response.ok) throw new Error("Failed to fetch game source.");
-        const rawHtml = await response.text();
+        const res = await fetch(jsUrl);
+        if (!res.ok) throw new Error("Failed to fetch games list");
+        const text = await res.json(); 
+        
+        // If the URL returns a JSON object, we use it. 
+        // If it's the raw JS file you showed, we need to extract the array:
+        let games;
+        if (typeof text === 'object') {
+            games = text;
+        } else {
+            // Regex to grab the array from 'const games = [...];'
+            const match = text.match(/const\s+games\s*=\s*(\[[\s\S]*?\]);/);
+            games = match ? JSON.parse(match[1].replace(/(\w+):/g, '"$1":').replace(/'/g, '"')) : [];
+        }
 
-        // 2. Setup the UI
-        container.innerHTML = `<iframe id="cdn-frame" allow="autoplay; fullscreen; keyboard; pointer-lock" style="width:100%; height:100%; border:none;"></iframe>`;
-        gameView.style.display = 'block';
-
-        const frame = document.getElementById('cdn-frame');
-        const frameDoc = frame.contentWindow.document;
-
-        // 3. Inject the code
-        // The code you provided (like Bowmasters) already has a <base> tag.
-        // We write the raw string directly into the frame.
-        frameDoc.open();
-        frameDoc.write(rawHtml);
-        frameDoc.close();
-
-    } catch (error) {
-        console.error("Injection Error:", error);
-        // Fallback: If fetch fails, try traditional iframe loading
-        container.innerHTML = `<iframe src="${url}" style="width:100%; height:100%; border:none;"></iframe>`;
-        gameView.style.display = 'block';
-    }
-}
-
-// --- UPDATED LOAD FUNCTION (FIXES ERROR LOOP) ---
-async function loadCdnGames() {
-    try {
-        const res = await fetch(CONFIG.gamerJson, { cache: "no-store" });
-        if (!res.ok) throw new Error("Failed to fetch gamer.json");
-
-        const data = await res.json();
-        const games = Array.isArray(data) ? data : [data];
         cdnAllGames = games;
-
         const grid = document.getElementById('cdn-grid');
         grid.innerHTML = ""; 
 
         games.forEach(game => {
-            if (!game.name || !game.url) return;
+            // Prepend the base URL to relative paths
+            const fullGameUrl = game.url.startsWith('http') ? game.url : baseUrl + game.url;
+            const fullImageUrl = game.image.startsWith('http') ? game.image : baseUrl + game.image;
 
             const card = document.createElement('div');
             card.className = 'game-card';
-            card.setAttribute('data-title', game.name.toLowerCase());
-            card.onclick = () => launchCdnGame(game.url);
+            card.setAttribute('data-title', game.title.toLowerCase());
+            
+            // Critical: Pass the full constructed URL to the launcher
+            card.onclick = () => launchCdnGame(fullGameUrl);
 
-            // FIX: The 'this.onerror=null' prevents the infinite refresh loop
+            // FIX: this.onerror=null prevents the 600+ error loop
             card.innerHTML = `
-                <img src="${game.image || ''}" 
-                     onerror="this.onerror=null; this.src='https://via.placeholder.com/150/111/fff?text=App';">
-                <div class="game-info"><h3>${game.name}</h3></div>
+                <img src="${fullImageUrl}" 
+                     onerror="this.onerror=null; this.src='https://via.placeholder.com/150/111/fff?text=No+Image';">
+                <div class="game-info"><h3>${game.title}</h3></div>
             `;
 
             grid.appendChild(card);
         });
     } catch (e) {
-        console.error("Error loading gamer.json:", e);
+        console.error("Error loading Archive:", e);
     }
 }
         async function fetchArcade() {
