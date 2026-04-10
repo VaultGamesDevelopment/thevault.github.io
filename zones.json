@@ -9,7 +9,7 @@
     "id": 0,
     "name": "Bowmasters",
     "cover": "{COVER_URL}/0.png",
-    "url": "{HTML_URL}/0.html",
+    "url": "./games/0.html",
     "author": "Azur Games, Playgendary",
     "authorLink": "https://azurgames.com"
   },
@@ -17,7 +17,7 @@
     "id": 1,
     "name": "OvO",
     "cover": "{COVER_URL}/1.png",
-    "url": "{HTML_URL}/1-fde.html",
+    "url": "./games/1-fde.html",
     "author": "Dedra Games",
     "authorLink": "https://dedragames.com"
   },
@@ -25,7 +25,7 @@
     "id": 2,
     "name": "OvO 2",
     "cover": "{COVER_URL}/2.png",
-    "url": "{HTML_URL}/2e.html",
+    "url": "./games/2e.html",
     "author": "Dedra Games",
     "authorLink": "https://dedragames.com"
   },
@@ -33,7 +33,7 @@
     "id": 3,
     "name": "OvO 3 Dimensions",
     "cover": "{COVER_URL}/3.png",
-    "url": "{HTML_URL}/3.html",
+    "url": "./games/3.html",
     "author": "Dedra Games",
     "authorLink": "https://dedragames.com"
   },
@@ -41,7 +41,7 @@
     "id": 4,
     "name": "Gladihoppers",
     "cover": "{COVER_URL}/4.png",
-    "url": "{HTML_URL}/4.html",
+    "url": "./games/4.html",
     "author": "Dreamon Studios",
     "authorLink": "https://dreamonstudios.itch.io/gladihoppers"
   },
@@ -49,7 +49,7 @@
     "id": 5,
     "name": "Ice Dodo",
     "cover": "{COVER_URL}/5.png",
-    "url": "{HTML_URL}/5.html",
+    "url": "./games/5.html",
     "author": "Onionfist Studio",
     "authorLink": "https://onionfist.com"
   },
@@ -57,7 +57,7 @@
     "id": 6,
     "name": "Block Blast",
     "cover": "{COVER_URL}/6.png",
-    "url": "{HTML_URL}/6.html",
+    "url": "./games/6.html",
     "author": "reunbozdo",
     "authorLink": "https://reunbozdo.github.io"
   },
@@ -65,7 +65,7 @@
     "id": 7,
     "name": "Jetpack Joyride",
     "cover": "{COVER_URL}/7.png",
-    "url": "{HTML_URL}/7.html",
+    "url": "./games/7.html",
     "author": "Halfbrick Studios",
     "authorLink": "https://www.halfbrick.com"
   },
@@ -73,7 +73,7 @@
     "id": 8,
     "name": "Friday Night Funkin",
     "cover": "{COVER_URL}/8.png",
-    "url": "{HTML_URL}/8-wow.html",
+    "url": "./games/8-wow.html",
     "author": "ninja-muffin24",
     "authorLink": "https://ninja-muffin24.itch.io/funkin"
   },
@@ -81,7 +81,7 @@
     "id": 9,
     "name": "Sprunki",
     "cover": "{COVER_URL}/9.png",
-    "url": "{HTML_URL}/9.html",
+    "url": "./games/9.html",
     "author": "NyankoBfLol",
     "authorLink": "https://www.cocrea.world/@NyankoBfLmao"
   },
@@ -89,7 +89,7 @@
     "id": 10,
     "name": "Temple Run 2",
     "cover": "{COVER_URL}/10.png",
-    "url": "{HTML_URL}/10.html",
+    "url": "./games/10.html",
     "author": "Imangi STUDIOS",
     "authorLink": "https://imangistudios.com"
   },
@@ -97,7 +97,7 @@
     "id": 11,
     "name": "Stickman Hook",
     "cover": "{COVER_URL}/11.png",
-    "url": "{HTML_URL}/11.html",
+    "url": "./games/11.html",
     "author": "Madbox",
     "authorLink": "https://madbox.io"
   },
@@ -105,7 +105,7 @@
     "id": 13,
     "name": "Attack Hole",
     "cover": "{COVER_URL}/13.png",
-    "url": "{HTML_URL}/13.html",
+    "url": "./games/13.html",
     "author": "Homa Games",
     "authorLink": "https://www.homagames.com"
   },
