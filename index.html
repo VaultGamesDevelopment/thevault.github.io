@@ -11,19 +11,19 @@
 
 <body>
 
+<div id="stars"></div>
 <div id="weather"></div>
 
-<header>
-    <div class="logo" onclick="showPage('home')">THE VAULT</div>
+<header class="topbar">
+    <div class="logo">THE VAULT</div>
 
-    <nav>
-        <button onclick="showPage('home')">Arcade</button>
+    <input id="search" placeholder="Search games..." oninput="filterGames()" />
+
+    <div class="nav">
+        <button onclick="showPage('home')">Home</button>
         <button onclick="showPage('partners')">Partners</button>
-    </nav>
-
-    <input id="search" placeholder="Search games..." oninput="filterGames()">
-
-    <button onclick="toggleSettings()">⚙</button>
+        <button onclick="openSettings()">Settings</button>
+    </div>
 </header>
 
 <!-- HOME -->
@@ -33,42 +33,58 @@
 
 <!-- PARTNERS -->
 <section id="partners" class="page">
-    <div class="grid small">
-        <a class="partner" href="https://gamepix.com" target="_blank">GamePix</a>
-        <a class="partner" href="https://sites.google.com/view/jaimescheesegrater" target="_blank">Cheese Grater</a>
+    <div class="partners">
+
+        <a class="partner" href="https://www.gamepix.com" target="_blank">
+            GamePix
+        </a>
+
+        <a class="partner" href="https://sites.google.com/view/jaimescheesegrater" target="_blank">
+            Jaime's Site
+        </a>
+
     </div>
 </section>
 
 <!-- GAME VIEW -->
 <div id="gameView">
-    <button onclick="closeGame()">← Exit</button>
-    <div id="frame"></div>
+    <button onclick="closeGame()" class="back">← Back</button>
+    <iframe id="frame"></iframe>
 </div>
 
 <!-- SETTINGS -->
+<div id="overlay" onclick="closeSettings()"></div>
+
 <div id="settings">
-    <h3>Settings</h3>
+    <h2>Settings</h2>
 
-    <button onclick="setTheme('dark')">Dark</button>
-    <button onclick="setTheme('midnight')">Midnight</button>
-    <button onclick="setTheme('forest')">Forest</button>
-    <button onclick="setTheme('crimson')">Crimson</button>
+    <label>Theme</label>
+    <div class="row">
+        <button onclick="setTheme('dark')">Dark</button>
+        <button onclick="setTheme('neon')">Neon</button>
+        <button onclick="setTheme('midnight')">Midnight</button>
+        <button onclick="setTheme('sunset')">Sunset</button>
+        <button onclick="setTheme('void')">Void</button>
+    </div>
 
-    <hr>
+    <label>Weather</label>
+    <div class="row">
+        <button onclick="setWeather('none')">None</button>
+        <button onclick="setWeather('rain')">Rain</button>
+        <button onclick="setWeather('snow')">Snow</button>
+        <button onclick="setWeather('stars')">Stars</button>
+    </div>
 
-    <button onclick="setWeather('rain')">Rain</button>
-    <button onclick="setWeather('snow')">Snow</button>
-    <button onclick="setWeather('stars')">Stars</button>
-    <button onclick="setWeather('none')">Clear</button>
+    <label>Music</label>
+    <input type="range" min="0" max="100" value="50" id="volume"/>
 
-    <hr>
-
-    <button onclick="toggleMusic()">Music</button>
-    <button onclick="toggleSettings()">Close</button>
+    <button onclick="toggleMusic()">Play/Pause</button>
 </div>
 
-<audio id="music" loop src="bgmusic.mp3"></audio>
+<audio id="music" loop>
+    <source src="./bgmusic.mp3" type="audio/mp3">
+</audio>
 
-<script src="script.js"></script>
+<script src="app.js"></script>
 </body>
 </html>
