@@ -3,7 +3,6 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
 <title>The Vault</title>
 
 <link rel="icon" href="./g/assets/imgs/favicon.ico">
@@ -26,7 +25,7 @@
 
 body{
     margin:0;
-    background:linear-gradient(180deg,#0b0f19,#070b14);
+    background:var(--bg);
     color:var(--text);
     overflow:hidden;
 }
@@ -35,13 +34,12 @@ body{
 #loader{
     position:fixed;
     inset:0;
-    background:#0b0f19;
     display:flex;
     align-items:center;
     justify-content:center;
-    z-index:9999;
+    background:#0b0f19;
     font-weight:800;
-    letter-spacing:3px;
+    z-index:9999;
     animation:pulse 1.2s infinite;
 }
 @keyframes pulse{
@@ -50,65 +48,63 @@ body{
     100%{opacity:.4}
 }
 
-/* LAYOUT */
-.app{display:flex;height:100vh}
-
-/* SIDEBAR */
-.sidebar{
-    width:250px;
-    background:rgba(15,22,41,0.9);
+/* HEADER */
+.header{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:12px 20px;
+    background:rgba(15,22,41,.8);
     backdrop-filter:blur(20px);
-    border-right:1px solid var(--border);
-    padding:15px;
+    border-bottom:1px solid var(--border);
 }
 
 .logo{
     font-weight:800;
-    margin-bottom:20px;
-    font-size:18px;
+    letter-spacing:1px;
 }
 
-.btn{
-    width:100%;
-    padding:10px;
-    margin-bottom:8px;
+.nav{
+    display:flex;
+    gap:10px;
+}
+
+.nav button{
     background:var(--panel2);
     border:1px solid var(--border);
+    color:white;
+    padding:6px 12px;
     border-radius:8px;
     cursor:pointer;
-    color:white;
-    transition:.2s;
 }
-.btn:hover{
+.nav button:hover{
     border-color:var(--accent);
-    box-shadow:0 0 10px var(--glow);
 }
 
-/* MAIN */
-.main{flex:1;display:flex;flex-direction:column}
-
-/* TOPBAR */
-.topbar{
-    padding:10px;
-    border-bottom:1px solid var(--border);
-}
-
+/* SEARCH */
 .search{
-    width:250px;
-    padding:8px;
+    padding:7px;
     border-radius:6px;
     border:1px solid var(--border);
     background:var(--panel);
     color:white;
 }
 
+/* MAIN */
+.main{
+    height:calc(100vh - 60px);
+    display:flex;
+    flex-direction:column;
+}
+
 /* GRID */
 .grid{
+    flex:1;
+    overflow-y:auto;
     display:grid;
     grid-template-columns:repeat(auto-fill,minmax(180px,1fr));
     gap:15px;
     padding:20px;
-    overflow:auto;
 }
 
 .card{
@@ -119,28 +115,13 @@ body{
     cursor:pointer;
     transition:.25s;
 }
-
 .card:hover{
-    transform:translateY(-6px);
+    transform:translateY(-5px);
     border-color:var(--accent);
-    box-shadow:0 10px 25px rgba(0,0,0,.6),0 0 12px var(--glow);
+    box-shadow:0 10px 20px rgba(0,0,0,.4),0 0 10px var(--glow);
 }
-
-.card img{
-    width:100%;
-    height:110px;
-    object-fit:cover;
-}
-
-.card h3{
-    font-size:13px;
-    padding:10px;
-    margin:0;
-}
-
-/* VIEWS */
-.view{display:none;height:100%}
-.view.active{display:block}
+.card img{width:100%;height:110px;object-fit:cover;}
+.card h3{font-size:13px;padding:10px;margin:0;}
 
 /* GAME VIEW */
 #gameview{
@@ -149,25 +130,19 @@ body{
     background:black;
     display:none;
     flex-direction:column;
-    z-index:5000;
 }
-#gameview iframe{flex:1;border:none}
+#gameview iframe{flex:1;border:none;}
+.gamebar{padding:10px;background:#111}
 
-.gamebar{
-    padding:10px;
-    background:#111;
-}
-
-/* SETTINGS FIX */
+/* MODAL */
 .modal{
     position:fixed;
     inset:0;
-    background:rgba(0,0,0,.6);
-    backdrop-filter:blur(10px);
     display:none;
     align-items:center;
     justify-content:center;
-    z-index:4000;
+    background:rgba(0,0,0,.6);
+    backdrop-filter:blur(10px);
 }
 
 .panel{
@@ -177,20 +152,45 @@ body{
     width:350px;
 }
 
-/* PARTNERS */
-.partner{
-    display:block;
-    padding:15px;
-    border-radius:10px;
-    background:var(--panel);
-    border:1px solid var(--border);
-    text-decoration:none;
-    color:white;
-    transition:.2s;
+/* SETTINGS UI */
+.setting{
+    margin-bottom:15px;
 }
-.partner:hover{
+.setting h4{
+    margin:0 0 5px 0;
+    font-size:13px;
+    color:var(--muted);
+}
+
+.btn{
+    padding:6px 10px;
+    border-radius:6px;
+    border:1px solid var(--border);
+    background:var(--panel2);
+    color:white;
+    cursor:pointer;
+}
+.btn:hover{
     border-color:var(--accent);
-    box-shadow:0 0 10px var(--glow);
+}
+
+/* PARTICLES */
+#particles{
+    position:fixed;
+    inset:0;
+    pointer-events:none;
+    z-index:0;
+}
+.particle{
+    position:absolute;
+    width:2px;
+    height:2px;
+    background:white;
+    opacity:.4;
+    animation:fall linear infinite;
+}
+@keyframes fall{
+    to{transform:translateY(110vh);}
 }
 </style>
 </head>
@@ -199,36 +199,32 @@ body{
 
 <div id="loader">LOADING VAULT...</div>
 
-<div class="app">
+<div id="particles"></div>
 
-<!-- SIDEBAR -->
-<div class="sidebar">
+<!-- HEADER -->
+<div class="header">
     <div class="logo">⚡ VAULT</div>
 
-    <button class="btn" onclick="showView('arcade')">Arcade</button>
-    <button class="btn" onclick="showView('partners')">Partners</button>
-    <button class="btn" onclick="openSettings()">Settings</button>
+    <div class="nav">
+        <button onclick="showView('arcade')">Arcade</button>
+        <button onclick="showView('partners')">Partners</button>
+        <button onclick="openSettings()">Settings</button>
+    </div>
+
+    <input class="search" id="search" placeholder="Search..." oninput="filterGames()">
 </div>
 
 <!-- MAIN -->
 <div class="main">
 
-<div class="topbar">
-    <input class="search" id="search" placeholder="Search..." oninput="filterGames()">
+<div id="arcade" class="grid"></div>
+
+<div id="partners" class="grid" style="display:none">
+    <a class="card" href="https://www.gamepix.com" target="_blank">
+        <h3 style="padding:20px">GamePix</h3>
+    </a>
 </div>
 
-<div id="arcade" class="view active">
-    <div class="grid" id="grid"></div>
-</div>
-
-<div id="partners" class="view">
-    <div class="grid">
-        <a class="partner" href="https://www.gamepix.com" target="_blank">GamePix</a>
-        <a class="partner" href="https://sites.google.com" target="_blank">Google Sites</a>
-    </div>
-</div>
-
-</div>
 </div>
 
 <!-- GAME -->
@@ -240,36 +236,64 @@ body{
 </div>
 
 <!-- SETTINGS -->
-<div class="modal" id="modal" onclick="closeSettings(event)">
-    <div class="panel">
-        <h3>Settings</h3>
-        <button onclick="setTheme('#6c7cff')">Blue</button>
-        <button onclick="setTheme('#ff4d6d')">Red</button>
-        <button onclick="setTheme('#22c55e')">Green</button>
-        <br><br>
-        <button onclick="closeSettings()">Close</button>
-    </div>
+<div class="modal" id="modal">
+<div class="panel">
+
+<h3>Settings</h3>
+
+<div class="setting">
+<h4>Theme</h4>
+<button class="btn" onclick="setTheme('#6c7cff')">Blue</button>
+<button class="btn" onclick="setTheme('#ff4d6d')">Red</button>
+<button class="btn" onclick="setTheme('#22c55e')">Green</button>
+<button class="btn" onclick="setTheme('#a855f7')">Purple</button>
 </div>
+
+<div class="setting">
+<h4>Particles</h4>
+<button class="btn" onclick="setParticles(true)">On</button>
+<button class="btn" onclick="setParticles(false)">Off</button>
+</div>
+
+<div class="setting">
+<h4>Music</h4>
+<button class="btn" onclick="toggleMusic()">Play / Pause</button>
+<input type="range" id="vol" min="0" max="100" value="50">
+</div>
+
+<div class="setting">
+<h4>Tab Cloak</h4>
+<button class="btn" onclick="cloak('google')">Google</button>
+<button class="btn" onclick="cloak('drive')">Drive</button>
+<button class="btn" onclick="cloak('none')">None</button>
+</div>
+
+<br>
+<button class="btn" onclick="closeSettings()">Close</button>
+
+</div>
+</div>
+
+<audio id="music" loop src="./bgmusic.mp3"></audio>
 
 <script>
 const SID="1";
 
-/* 🔥 FIXED GAME LOADER */
+/* FIXED GAMEPIX FETCH */
 async function loadGames(){
     try{
         const res = await fetch(
         `https://feeds.gamepix.com/v2/json?sid=${SID}&pagination=48`
         );
 
-        if(!res.ok) throw new Error("API broke");
-
         const data = await res.json();
 
         if(!data.items){
-            throw new Error("Invalid data");
+            console.error("GamePix returned bad data", data);
+            return;
         }
 
-        const grid=document.getElementById("grid");
+        const grid=document.getElementById("arcade");
 
         data.items.forEach(g=>{
             const c=document.createElement("div");
@@ -286,34 +310,16 @@ async function loadGames(){
             grid.appendChild(c);
         });
 
-    }catch(e){
-        console.warn("GamePix failed, using fallback");
-
-        /* FALLBACK GAMES (NEVER BREAK AGAIN) */
-        const fallback=[
-            {title:"Slope",img:"https://i.imgur.com/8QfQZ6M.png",url:"https://example.com"},
-            {title:"Run 3",img:"https://i.imgur.com/Y3XQp6T.png",url:"https://example.com"}
-        ];
-
-        const grid=document.getElementById("grid");
-
-        fallback.forEach(g=>{
-            const c=document.createElement("div");
-            c.className="card";
-            c.innerHTML=`<img src="${g.img}"><h3>${g.title}</h3>`;
-            grid.appendChild(c);
-        });
-    }
-
-    /* HIDE LOADER */
-    setTimeout(()=>{
         document.getElementById("loader").style.display="none";
-    },500);
+
+    }catch(e){
+        console.error(e);
+    }
 }
 
-/* FILTER */
+/* SEARCH */
 function filterGames(){
-    let q=document.getElementById("search").value.toLowerCase();
+    let q=search.value.toLowerCase();
     document.querySelectorAll(".card").forEach(c=>{
         c.style.display=c.dataset.title?.includes(q)?"block":"none";
     });
@@ -321,37 +327,65 @@ function filterGames(){
 
 /* NAV */
 function showView(v){
-    document.querySelectorAll(".view").forEach(x=>x.classList.remove("active"));
-    document.getElementById(v).classList.add("active");
+    document.getElementById("arcade").style.display=v==="arcade"?"grid":"none";
+    document.getElementById("partners").style.display=v==="partners"?"grid":"none";
 }
 
 /* GAME */
 function closeGame(){
-    document.getElementById("gameview").style.display="none";
-    document.getElementById("frame").src="";
+    gameview.style.display="none";
+    frame.src="";
 }
 
-/* SETTINGS (FIXED BLUR BUG) */
-function openSettings(){
-    const m=document.getElementById("modal");
-    m.style.display="flex";
-}
-
-function closeSettings(e){
-    if(e && e.target.id!=="modal") return;
-
-    const m=document.getElementById("modal");
-
-    m.style.display="none"; // 🔥 instant remove (fix blur stuck bug)
-}
+/* SETTINGS */
+function openSettings(){modal.style.display="flex";}
+function closeSettings(){modal.style.display="none";}
 
 /* THEME */
-function setTheme(color){
-    document.documentElement.style.setProperty("--accent",color);
+function setTheme(c){
+    document.documentElement.style.setProperty("--accent",c);
+}
+
+/* PARTICLES */
+function setParticles(on){
+    const p=document.getElementById("particles");
+    p.innerHTML="";
+    if(!on) return;
+
+    for(let i=0;i<120;i++){
+        let d=document.createElement("div");
+        d.className="particle";
+        d.style.left=Math.random()*100+"%";
+        d.style.animationDuration=(Math.random()*3+2)+"s";
+        p.appendChild(d);
+    }
+}
+
+/* MUSIC */
+const music=document.getElementById("music");
+const vol=document.getElementById("vol");
+
+vol.oninput=()=>music.volume=vol.value/100;
+
+function toggleMusic(){
+    if(music.paused) music.play().catch(()=>{});
+    else music.pause();
+}
+
+/* CLOAK */
+function cloak(type){
+    if(type==="google"){
+        document.title="Google";
+    }else if(type==="drive"){
+        document.title="My Drive";
+    }else{
+        document.title="The Vault";
+    }
 }
 
 /* INIT */
 loadGames();
+setParticles(true);
 </script>
 
 </body>
