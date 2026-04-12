@@ -10229,7 +10229,7 @@ Error generating stack: ` + e.message + `
                 onClose: () => a(null)
             }), (0, x.jsx)(`audio`, {
                 ref: S,
-                src: `./bgmusic.mp3`,
+                src: `VaultGamesDevelopment/thevault.github.io/assets/bgmusic.mp3`,
                 loop: !0
             })]
         })
