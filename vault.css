@@ -1,0 +1,107 @@
+:root {
+  --bg: #0a0a0a;
+  --accent: #8a2be2;
+}
+
+body {
+  margin: 0;
+  font-family: ui-sans-serif, system-ui;
+  background: var(--bg);
+  color: white;
+}
+
+/* layout */
+#app {
+  display: flex;
+  height: 100vh;
+}
+
+/* sidebar */
+.sidebar {
+  width: 240px;
+  background: #0f0f0f;
+  padding: 15px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.logo {
+  font-size: 24px;
+  color: var(--accent);
+  margin-bottom: 10px;
+}
+
+input {
+  padding: 8px;
+  border: none;
+  outline: none;
+  background: #1a1a1a;
+  color: white;
+}
+
+/* buttons */
+button {
+  padding: 8px;
+  border: none;
+  cursor: pointer;
+  background: #1c1c1c;
+  color: white;
+}
+
+button:hover {
+  background: #2a2a2a;
+}
+
+/* main */
+.main {
+  flex: 1;
+  padding: 20px;
+  overflow-y: auto;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 12px;
+}
+
+/* cards */
+.card {
+  background: #151515;
+  padding: 10px;
+  border-radius: 10px;
+  cursor: pointer;
+  position: relative;
+}
+
+.card:hover {
+  outline: 2px solid var(--accent);
+}
+
+.star {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  color: #555;
+  cursor: pointer;
+}
+
+.star.active {
+  color: var(--accent);
+}
+
+/* settings */
+.settings {
+  position: fixed;
+  right: 20px;
+  top: 20px;
+  width: 300px;
+  background: rgba(20,20,20,0.95);
+  padding: 15px;
+  border-radius: 12px;
+}
+
+.hidden {
+  display: none;
+}
