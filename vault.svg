@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg viewBox="0 0 1200 700"
+     xmlns="http://www.w3.org/2000/svg">
+
+  <style><![CDATA[
+    text { font-family: Arial; user-select: none; }
+    .card { cursor: pointer; }
+    .btn { cursor: pointer; fill: #aaa; }
+    .btn:hover { fill: #fff; }
+  ]]></style>
+
+  <!-- BACKGROUND -->
+  <rect width="1200" height="700" fill="#0A0A0A"/>
+
+  <!-- animated particles -->
+  <g opacity="0.12">
+    <circle cx="200" cy="100" r="2" fill="#8C5AFF">
+      <animate attributeName="cy" from="100" to="700" dur="10s" repeatCount="indefinite"/>
+    </circle>
+
+    <circle cx="600" cy="50" r="2" fill="#8C5AFF">
+      <animate attributeName="cy" from="50" to="700" dur="12s" repeatCount="indefinite"/>
+    </circle>
+
+    <circle cx="900" cy="200" r="2" fill="#8C5AFF">
+      <animate attributeName="cy" from="200" to="700" dur="9s" repeatCount="indefinite"/>
+    </circle>
+  </g>
+
+  <!-- SIDEBAR -->
+  <rect x="0" y="0" width="220" height="700" fill="#0F0F0F"/>
+  <text x="20" y="50" font-size="26" fill="#8C5AFF">Vault</text>
+
+  <!-- SEARCH -->
+  <text x="20" y="120" class="btn"
+        onclick="window.parent.handleSearch(prompt('Search games:'))">
+    Search
+  </text>
+
+  <text x="20" y="160" class="btn"
+        onclick="window.parent.handleSearch('')">
+    Clear
+  </text>
+
+  <!-- GRID -->
+  <g id="grid"></g>
+
+  <!-- HEADER -->
+  <rect x="220" y="0" width="980" height="80" fill="#111"/>
+  <text x="260" y="50" fill="#fff" font-size="22">
+    The Vault — Archive Edition
+  </text>
+
+</svg>
