@@ -2,109 +2,8 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>The Vault</title>
-<link rel="icon" href="data:,">
-
-<style>
-:root {
-  --accent: #8a2be2;
-  --bg: #0a0a0a;
-}
-
-body {
-  margin: 0;
-  font-family: Arial;
-  background: var(--bg);
-  color: white;
-  overflow: hidden;
-}
-
-#app {
-  display: flex;
-  height: 100vh;
-}
-
-/* SIDEBAR */
-.sidebar {
-  width: 220px;
-  background: #0f0f0f;
-  padding: 15px;
-}
-
-.sidebar h1 {
-  color: var(--accent);
-}
-
-/* MAIN GRID */
-.main {
-  flex: 1;
-  padding: 20px;
-  overflow-y: auto;
-}
-
-.grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-  gap: 15px;
-}
-
-.card {
-  background: #1a1a1a;
-  padding: 10px;
-  border-radius: 10px;
-  cursor: pointer;
-  position: relative;
-}
-
-.card:hover {
-  outline: 2px solid var(--accent);
-}
-
-/* FAVORITE STAR */
-.star {
-  position: absolute;
-  top: 8px;
-  right: 8px;
-  color: #555;
-  cursor: pointer;
-}
-
-.star.active {
-  color: var(--accent);
-}
-
-/* SETTINGS PANEL */
-.settings {
-  position: absolute;
-  right: 20px;
-  top: 20px;
-  width: 320px;
-  background: rgba(20,20,20,0.9);
-  padding: 15px;
-  border-radius: 12px;
-  display: none;
-}
-
-button {
-  background: #222;
-  color: white;
-  border: none;
-  padding: 6px;
-  margin: 4px 0;
-  cursor: pointer;
-  width: 100%;
-}
-
-button:hover {
-  background: #333;
-}
-
-input {
-  width: 100%;
-  padding: 6px;
-  margin-top: 5px;
-}
-</style>
+<title>Vault</title>
+<link rel="stylesheet" href="vault.css">
 </head>
 
 <body>
@@ -112,45 +11,42 @@ input {
 <div id="app">
 
   <!-- SIDEBAR -->
-  <div class="sidebar">
-    <h1>Vault</h1>
+  <aside class="sidebar">
+    <div class="logo">Vault</div>
 
-    <input id="search" placeholder="Search..." />
+    <input id="search" placeholder="Search games..." />
 
-    <button onclick="toggleSettings()">Settings</button>
+    <button onclick="Vault.toggleSettings()">Settings</button>
 
-    <button onclick="cloak('google')">Google Cloak</button>
-    <button onclick="cloak('drive')">Drive Cloak</button>
-    <button onclick="cloak('classroom')">Classroom Cloak</button>
-    <button onclick="cloak('wikipedia')">Wikipedia Cloak</button>
-    <button onclick="cloak('canvas')">Canvas Cloak</button>
+    <button onclick="Vault.cloak('google')">Google Cloak</button>
+    <button onclick="Vault.cloak('drive')">Drive Cloak</button>
+    <button onclick="Vault.cloak('classroom')">Classroom Cloak</button>
+    <button onclick="Vault.cloak('canvas')">Canvas Cloak</button>
+    <button onclick="Vault.cloak('wiki')">Wikipedia Cloak</button>
 
-    <button onclick="cloak('about')">About:Blank Cloak</button>
-    <button onclick="cloak('none')">Remove Cloak</button>
-  </div>
+    <button onclick="Vault.cloak('about')">About:Blank</button>
+    <button onclick="Vault.cloak('none')">Remove Cloak</button>
+  </aside>
 
   <!-- MAIN -->
-  <div class="main">
+  <main class="main">
     <div id="grid" class="grid"></div>
-  </div>
+  </main>
 
 </div>
 
 <!-- SETTINGS -->
-<div id="settings" class="settings">
-  <h3>Vault Settings</h3>
+<div id="settings" class="settings hidden">
+  <h2>Vault Settings</h2>
 
   <label>Accent Color</label>
-  <input type="color" id="accentPicker" value="#8a2be2">
+  <input type="color" id="accent">
 
-  <label>Background</label>
-  <button onclick="setTheme('midnight')">Midnight</button>
-  <button onclick="setTheme('space')">Space Dust</button>
-  <button onclick="setTheme('matrix')">Matrix</button>
-  <button onclick="setTheme('void')">Void</button>
-
-  <label>Effects</label>
-  <button onclick="toggleParticles()">Toggle Particles</button>
+  <label>Background Theme</label>
+  <button onclick="Vault.theme('midnight')">Midnight</button>
+  <button onclick="Vault.theme('space')">Space</button>
+  <button onclick="Vault.theme('matrix')">Matrix</button>
+  <button onclick="Vault.theme('void')">Void</button>
 </div>
 
 <script src="vault.js"></script>
