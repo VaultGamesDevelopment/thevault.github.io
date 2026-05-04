@@ -1,149 +1,160 @@
-const svgObj = document.getElementById("ui");
+const Vault = (() => {
 
-let CACHE_KEY = "vault_cache_v1";
-let favorites = JSON.parse(localStorage.getItem("vault_favs") || "[]");
-let games = [];
+  let games = [];
+  let favorites = JSON.parse(localStorage.getItem("fav") || "[]");
+  let cacheKey = "vault_cache_v3";
 
-/* =============================
-   CACHE SYSTEM (FAST LOAD)
-============================= */
-async function loadGames() {
-  const cached = localStorage.getItem(CACHE_KEY);
+  const grid = () => document.getElementById("grid");
+  const search = () => document.getElementById("search");
 
-  if (cached) {
-    games = JSON.parse(cached);
+  /* ================= LOAD ================= */
+  async function load() {
+
+    const cached = localStorage.getItem(cacheKey);
+
+    if (cached) {
+      games = JSON.parse(cached);
+      render("");
+      return;
+    }
+
+    const res = await fetch("https://archive.org/download/ugsfiles/");
+    const html = await res.text();
+
+    const doc = new DOMParser().parseFromString(html, "text/html");
+
+    games = [...doc.querySelectorAll("a")]
+      .map(a => a.href)
+      .filter(h => h.endsWith(".html"))
+      .map(h => ({
+        name: h.split("/").pop().replace(".html",""),
+        url: h
+      }));
+
+    localStorage.setItem(cacheKey, JSON.stringify(games));
     render("");
-    return;
   }
 
-  const res = await fetch("https://archive.org/download/ugsfiles/");
-  const html = await res.text();
+  /* ================= RENDER ================= */
+  function render(q="") {
 
-  const doc = new DOMParser().parseFromString(html, "text/html");
+    const g = grid();
+    g.innerHTML = "";
 
-  const list = [...doc.querySelectorAll("a")]
-    .map(a => a.href)
-    .filter(h => h.endsWith(".html"))
-    .map(h => ({
-      name: h.split("/").pop().replace(".html",""),
-      file: h
-    }));
+    games
+      .filter(x => x.name.toLowerCase().includes(q.toLowerCase()))
+      .forEach(game => {
 
-  games = list;
+        const card = document.createElement("div");
+        card.className = "card";
 
-  localStorage.setItem(CACHE_KEY, JSON.stringify(list));
-  render("");
-}
+        const star = document.createElement("div");
+        star.className = "star";
+        star.textContent = "★";
 
-/* =============================
-   FAVORITES
-============================= */
-function toggleFav(name) {
-  if (favorites.includes(name)) {
-    favorites = favorites.filter(f => f !== name);
-  } else {
-    favorites.push(name);
+        if (favorites.includes(game.name)) {
+          star.classList.add("active");
+        }
+
+        star.onclick = (e) => {
+          e.stopPropagation();
+
+          if (favorites.includes(game.name)) {
+            favorites = favorites.filter(f => f !== game.name);
+          } else {
+            favorites.push(game.name);
+          }
+
+          localStorage.setItem("fav", JSON.stringify(favorites));
+          render(search().value);
+        };
+
+        card.innerHTML = `<div>${game.name}</div>`;
+        card.appendChild(star);
+
+        card.onclick = () => {
+          window.open(game.url, "_blank");
+        };
+
+        g.appendChild(card);
+      });
   }
 
-  localStorage.setItem("vault_favs", JSON.stringify(favorites));
-  render(lastQuery);
-}
+  /* ================= CLOAK ================= */
+  function cloak(mode) {
 
-function isFav(name) {
-  return favorites.includes(name);
-}
+    const map = {
+      google: ["Google", "https://www.google.com/favicon.ico"],
+      drive: ["My Drive", "https://ssl.gstatic.com/images/branding/product/1x/drive_2020q4_32dp.png"],
+      classroom: ["Google Classroom", "https://ssl.gstatic.com/classroom/favicon.png"],
+      canvas: ["Canvas", "https://www.instructure.com/favicon.ico"],
+      wiki: ["Wikipedia", "https://www.wikipedia.org/favicon.ico"]
+    };
 
-/* =============================
-   SEARCH (REAL TIME)
-============================= */
-let lastQuery = "";
+    if (mode === "none") {
+      document.title = "Vault";
+      return;
+    }
 
-function search(q) {
-  lastQuery = (q || "").toLowerCase();
-  render(lastQuery);
-}
+    if (mode === "about") {
+      const w = window.open("about:blank", "_blank");
+      w.document.write("<h1>Vault</h1>");
+      return;
+    }
 
-/* expose */
-window.handleSearch = search;
+    const [title, icon] = map[mode] || [];
 
-/* =============================
-   RENDER ENGINE
-============================= */
-function render(query = "") {
-  const svg = svgObj.contentDocument;
-  const grid = svg.getElementById("grid");
+    document.title = title;
 
-  grid.innerHTML = "";
+    let link = document.querySelector("link[rel='icon']");
+    if (!link) {
+      link = document.createElement("link");
+      link.rel = "icon";
+      document.head.appendChild(link);
+    }
 
-  let x = 250, y = 120, col = 0;
+    link.href = icon;
+  }
 
-  games.forEach(g => {
-    if (query && !g.name.toLowerCase().includes(query)) return;
+  /* ================= THEMES ================= */
+  function theme(t) {
+    const root = document.documentElement;
 
-    const el = svg.createElementNS("http://www.w3.org/2000/svg","g");
+    const themes = {
+      midnight: ["#0a0a0a", "#8a2be2"],
+      space: ["#050510", "#00d2ff"],
+      matrix: ["#000", "#00ff99"],
+      void: ["#000", "#ff3366"]
+    };
 
-    el.setAttribute("class","card");
+    const [bg, accent] = themes[t];
+    root.style.setProperty("--bg", bg);
+    root.style.setProperty("--accent", accent);
+  }
 
-    el.innerHTML = `
-      <rect x="${x}" y="${y}" width="180" height="120" rx="12" fill="#1A1A1A"/>
-      <text x="${x+10}" y="${y+110}" fill="#ccc">${g.name}</text>
+  /* ================= SETTINGS ================= */
+  function toggleSettings() {
+    document.getElementById("settings")
+      .classList.toggle("hidden");
+  }
 
-      <circle cx="${x+165}" cy="${y+15}" r="7"
-              fill="${isFav(g.name) ? '#8a2be2' : '#444'}"/>
-    `;
-
-    el.addEventListener("click", () => {
-      window.open(g.file, "_blank");
+  /* ================= SEARCH ================= */
+  function init() {
+    search().addEventListener("input", e => {
+      render(e.target.value);
     });
 
-    setTimeout(() => {
-      const star = el.querySelector("circle");
-      star.addEventListener("click", (e) => {
-        e.stopPropagation();
-        toggleFav(g.name);
-      });
-    }, 0);
-
-    grid.appendChild(el);
-
-    col++;
-    x += 200;
-
-    if (col >= 4) {
-      col = 0;
-      x = 250;
-      y += 140;
-    }
-  });
-}
-
-/* =============================
-   CLOAK SYSTEM
-============================= */
-function cloak(mode) {
-  const map = {
-    google: ["Google", "https://www.google.com/favicon.ico"],
-    classroom: ["Google Classroom", "https://ssl.gstatic.com/classroom/favicon.png"],
-    drive: ["My Drive", "https://ssl.gstatic.com/images/branding/product/1x/drive_2020q4_32dp.png"]
-  };
-
-  if (!map[mode]) return;
-
-  document.title = map[mode][0];
-
-  let link = document.querySelector("link[rel='icon']");
-  if (!link) {
-    link = document.createElement("link");
-    link.rel = "icon";
-    document.head.appendChild(link);
+    load();
   }
 
-  link.href = map[mode][1];
-}
+  return {
+    init,
+    cloak,
+    theme,
+    toggleSettings
+  };
 
-window.handleCloak = cloak;
+})();
 
-/* =============================
-   INIT
-============================= */
-svgObj.addEventListener("load", loadGames);
+/* boot */
+window.addEventListener("DOMContentLoaded", Vault.init);
