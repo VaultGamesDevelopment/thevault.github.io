@@ -10,75 +10,87 @@ body {
   color: white;
 }
 
-/* layout */
-#app {
+/* LAYOUT */
+.layout {
   display: flex;
   height: 100vh;
 }
 
-/* sidebar */
+/* SIDEBAR */
 .sidebar {
-  width: 240px;
+  width: 260px;
   background: #0f0f0f;
-  padding: 15px;
+  padding: 16px;
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 10px;
 }
 
 .logo {
-  font-size: 24px;
+  font-size: 22px;
+  font-weight: bold;
   color: var(--accent);
-  margin-bottom: 10px;
 }
 
 input {
   padding: 8px;
   border: none;
-  outline: none;
   background: #1a1a1a;
   color: white;
+  outline: none;
+  border-radius: 6px;
 }
 
-/* buttons */
+/* GROUPS */
+.group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+/* BUTTONS */
 button {
-  padding: 8px;
-  border: none;
-  cursor: pointer;
   background: #1c1c1c;
   color: white;
+  border: none;
+  padding: 8px;
+  border-radius: 6px;
+  cursor: pointer;
 }
 
 button:hover {
   background: #2a2a2a;
 }
 
-/* main */
+/* MAIN */
 .main {
   flex: 1;
   padding: 20px;
   overflow-y: auto;
 }
 
+/* GRID */
 .grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
   gap: 12px;
 }
 
-/* cards */
+/* CARD */
 .card {
   background: #151515;
   padding: 10px;
   border-radius: 10px;
   cursor: pointer;
   position: relative;
+  transition: 0.15s;
 }
 
 .card:hover {
   outline: 2px solid var(--accent);
 }
 
+/* STAR */
 .star {
   position: absolute;
   top: 8px;
@@ -91,12 +103,12 @@ button:hover {
   color: var(--accent);
 }
 
-/* settings */
+/* SETTINGS */
 .settings {
   position: fixed;
   right: 20px;
   top: 20px;
-  width: 300px;
+  width: 320px;
   background: rgba(20,20,20,0.95);
   padding: 15px;
   border-radius: 12px;

@@ -2,30 +2,38 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Vault</title>
+<title>Vault OS</title>
 <link rel="stylesheet" href="vault.css">
+<link rel="icon" href="data:,">
 </head>
 
 <body>
 
-<div id="app">
+<div class="layout">
 
   <!-- SIDEBAR -->
   <aside class="sidebar">
-    <div class="logo">Vault</div>
+    <div class="logo">Vault OS</div>
 
     <input id="search" placeholder="Search games..." />
 
-    <button onclick="Vault.toggleSettings()">Settings</button>
+    <div class="group">
+      <button data-action="settings">Settings</button>
+    </div>
 
-    <button onclick="Vault.cloak('google')">Google Cloak</button>
-    <button onclick="Vault.cloak('drive')">Drive Cloak</button>
-    <button onclick="Vault.cloak('classroom')">Classroom Cloak</button>
-    <button onclick="Vault.cloak('canvas')">Canvas Cloak</button>
-    <button onclick="Vault.cloak('wiki')">Wikipedia Cloak</button>
+    <div class="group">
+      <button data-action="cloak-google">Google</button>
+      <button data-action="cloak-drive">Drive</button>
+      <button data-action="cloak-classroom">Classroom</button>
+      <button data-action="cloak-wiki">Wikipedia</button>
+      <button data-action="cloak-canvas">Canvas</button>
+    </div>
 
-    <button onclick="Vault.cloak('about')">About:Blank</button>
-    <button onclick="Vault.cloak('none')">Remove Cloak</button>
+    <div class="group">
+      <button data-action="cloak-about">About:Blank</button>
+      <button data-action="cloak-none">Remove Cloak</button>
+    </div>
+
   </aside>
 
   <!-- MAIN -->
@@ -39,14 +47,17 @@
 <div id="settings" class="settings hidden">
   <h2>Vault Settings</h2>
 
-  <label>Accent Color</label>
+  <label>Theme</label>
+  <button data-theme="midnight">Midnight</button>
+  <button data-theme="space">Space</button>
+  <button data-theme="matrix">Matrix</button>
+  <button data-theme="void">Void</button>
+
+  <label>Accent</label>
   <input type="color" id="accent">
 
-  <label>Background Theme</label>
-  <button onclick="Vault.theme('midnight')">Midnight</button>
-  <button onclick="Vault.theme('space')">Space</button>
-  <button onclick="Vault.theme('matrix')">Matrix</button>
-  <button onclick="Vault.theme('void')">Void</button>
+  <label>Performance</label>
+  <button onclick="Vault.clearCache()">Clear Cache</button>
 </div>
 
 <script src="vault.js"></script>
