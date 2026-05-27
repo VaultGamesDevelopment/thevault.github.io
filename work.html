@@ -254,6 +254,7 @@ body{
 }
 
 @media(max-width:700px){
+
     .topbar{
         flex-direction:column;
         align-items:stretch;
@@ -283,15 +284,18 @@ body{
     <div class="topbar">
 
         <div class="logo">
+
             <div class="logo-icon">📚</div>
 
             <div class="logo-text">
                 <h1>Study Portal</h1>
                 <p>Live status dashboard</p>
             </div>
+
         </div>
 
         <div class="actions">
+
             <input
                 type="text"
                 class="search"
@@ -302,6 +306,7 @@ body{
             <button class="refresh-btn" onclick="loadCards()">
                 Refresh Status
             </button>
+
         </div>
 
     </div>
@@ -399,19 +404,34 @@ async function checkStatus(url){
 
     try{
 
-        const api =
-            "https://api.allorigins.win/raw?url=" +
-            encodeURIComponent(url);
+        /*
+            Using image loading avoids CORS errors.
+            If the site responds at all,
+            we'll consider it online.
+        */
 
-        const response = await fetch(api);
+        await new Promise((resolve,reject)=>{
 
-        if(response.ok){
-            return "online";
-        }
+            const img = new Image();
 
-        return "offline";
+            img.onload = () => resolve();
+            img.onerror = () => resolve();
+
+            img.src =
+                url +
+                "/favicon.ico?cache=" +
+                Date.now();
+
+            setTimeout(()=>{
+                reject();
+            },5000);
+
+        });
+
+        return "online";
 
     }catch{
+
         return "offline";
     }
 }
@@ -429,6 +449,7 @@ async function loadCards(){
     for(const link of links){
 
         const card = document.createElement("div");
+
         card.className = "card";
 
         card.innerHTML = `
@@ -461,24 +482,34 @@ async function loadCards(){
 
         grid.appendChild(card);
 
-        const statusEl = card.querySelector(".status");
-        const textEl = statusEl.querySelector("span");
+        const statusEl =
+            card.querySelector(".status");
 
-        const status = await checkStatus(link);
+        const textEl =
+            statusEl.querySelector("span");
+
+        const status =
+            await checkStatus(link);
 
         if(status === "online"){
 
             online++;
 
-            statusEl.className = "status online";
-            textEl.textContent = "Working";
+            statusEl.className =
+                "status online";
+
+            textEl.textContent =
+                "Working";
 
         }else{
 
             offline++;
 
-            statusEl.className = "status offline";
-            textEl.textContent = "Offline / Blocked";
+            statusEl.className =
+                "status offline";
+
+            textEl.textContent =
+                "Offline / Blocked";
         }
 
         document.getElementById("onlineCount")
@@ -499,7 +530,8 @@ function copyLink(link){
 document.getElementById("searchInput")
 .addEventListener("input",e=>{
 
-    const value = e.target.value.toLowerCase();
+    const value =
+        e.target.value.toLowerCase();
 
     document.querySelectorAll(".card")
     .forEach(card=>{
