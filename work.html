@@ -402,38 +402,70 @@ const grid = document.getElementById("grid");
 
 async function checkStatus(url){
 
-    try{
+    return new Promise((resolve)=>{
 
-        /*
-            Using image loading avoids CORS errors.
-            If the site responds at all,
-            we'll consider it online.
-        */
+        let finished = false;
 
-        await new Promise((resolve,reject)=>{
+        function online(){
 
+            if(!finished){
+
+                finished = true;
+
+                resolve("online");
+            }
+        }
+
+        function offline(){
+
+            if(!finished){
+
+                finished = true;
+
+                resolve("offline");
+            }
+        }
+
+        // timeout fallback
+        setTimeout(()=>{
+            offline();
+        },8000);
+
+        // try favicon
+        const favicon = new Image();
+
+        favicon.onload = online;
+
+        favicon.onerror = ()=>{
+
+            // try main page image request
             const img = new Image();
 
-            img.onload = () => resolve();
-            img.onerror = () => resolve();
+            img.onload = online;
+
+            img.onerror = ()=>{
+
+                // final fallback fetch
+                fetch(url,{
+                    mode:"no-cors"
+                })
+                .then(()=>online())
+                .catch(()=>offline());
+
+            };
 
             img.src =
                 url +
-                "/favicon.ico?cache=" +
+                "?cache=" +
                 Date.now();
+        };
 
-            setTimeout(()=>{
-                reject();
-            },5000);
+        favicon.src =
+            url.replace(/\/$/,"") +
+            "/favicon.ico?cache=" +
+            Date.now();
 
-        });
-
-        return "online";
-
-    }catch{
-
-        return "offline";
-    }
+    });
 }
 
 async function loadCards(){
