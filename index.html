@@ -1,14 +1,1021 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/png" href="/vault_favicon.png" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>the-vault</title>
-    <script type="module" crossorigin src="/assets/index-CMNTf-FG.js"></script>
-    <link rel="stylesheet" crossorigin href="/assets/index-BRiCP85Z.css">
-  </head>
-  <body>
-    <div id="root"></div>
-  </body>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>The Vault</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/tsparticles@2/tsparticles.bundle.min.js"></script>
+<script src="https://unpkg.com/lucide@latest"></script>
+
+<style>
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+:root{
+    --bg:#060816;
+    --panel:#111827cc;
+    --border:#334155;
+    --text:#ffffff;
+    --muted:#94a3b8;
+    --accent:#8b5cf6;
+    --accent2:#3b82f6;
+}
+
+body{
+    font-family:'Inter',sans-serif;
+    background:var(--bg);
+    color:white;
+    overflow-x:hidden;
+    min-height:100vh;
+}
+
+/* PARTICLES */
+
+#tsparticles{
+    position:fixed;
+    inset:0;
+    z-index:-5;
+}
+
+/* OVERLAY */
+
+.overlay{
+    position:fixed;
+    inset:0;
+    background:
+    radial-gradient(circle at top left,#3b82f655,transparent 30%),
+    radial-gradient(circle at bottom right,#8b5cf655,transparent 30%);
+    z-index:-4;
+}
+
+/* MATRIX */
+
+#matrix{
+    position:fixed;
+    inset:0;
+    z-index:-3;
+    opacity:0;
+    transition:0.3s;
+    pointer-events:none;
+}
+
+body.matrix #matrix{
+    opacity:0.2;
+}
+
+/* TOPBAR */
+
+.topbar{
+    position:sticky;
+    top:0;
+    z-index:1000;
+    backdrop-filter:blur(18px);
+    background:#020617aa;
+    border-bottom:1px solid #1e293b;
+    padding:18px 30px;
+
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:20px;
+    flex-wrap:wrap;
+}
+
+.logo{
+    display:flex;
+    align-items:center;
+    gap:14px;
+}
+
+.logo-box{
+    width:54px;
+    height:54px;
+    border-radius:18px;
+    background:linear-gradient(135deg,var(--accent),var(--accent2));
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    box-shadow:0 0 30px #8b5cf655;
+}
+
+.logo-box i{
+    width:28px;
+    height:28px;
+}
+
+.logo-text h1{
+    font-size:28px;
+}
+
+.logo-text p{
+    color:var(--muted);
+    margin-top:4px;
+}
+
+.actions{
+    display:flex;
+    gap:12px;
+    flex-wrap:wrap;
+}
+
+.search{
+    width:320px;
+    max-width:100%;
+    background:#0f172acc;
+    border:1px solid #334155;
+    color:white;
+    padding:14px 16px;
+    border-radius:14px;
+    outline:none;
+}
+
+.btn{
+    border:none;
+    cursor:pointer;
+    color:white;
+    border-radius:14px;
+    padding:14px 18px;
+    font-weight:700;
+    transition:0.2s;
+}
+
+.btn:hover{
+    transform:translateY(-2px);
+}
+
+.primary{
+    background:linear-gradient(135deg,var(--accent),var(--accent2));
+}
+
+.secondary{
+    background:#1e293b;
+    border:1px solid #334155;
+}
+
+/* HERO */
+
+.hero{
+    width:min(1400px,95%);
+    margin:auto;
+    padding:50px 0;
+}
+
+.hero-card{
+    background:linear-gradient(135deg,#8b5cf622,#3b82f622);
+    border:1px solid #334155;
+    border-radius:30px;
+    padding:40px;
+    position:relative;
+    overflow:hidden;
+}
+
+.hero-card h2{
+    font-size:48px;
+    line-height:1.1;
+    margin-bottom:16px;
+}
+
+.hero-card p{
+    color:#cbd5e1;
+    max-width:800px;
+    line-height:1.6;
+}
+
+/* STATS */
+
+.stats{
+    margin-top:30px;
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+    gap:20px;
+}
+
+.stat{
+    background:#111827cc;
+    border:1px solid #334155;
+    border-radius:24px;
+    padding:24px;
+    backdrop-filter:blur(18px);
+}
+
+.stat h3{
+    font-size:34px;
+    margin-bottom:6px;
+}
+
+/* GRID */
+
+.games{
+    width:min(1400px,95%);
+    margin:auto;
+    display:grid;
+    grid-template-columns:repeat(auto-fill,minmax(270px,1fr));
+    gap:24px;
+    padding-bottom:60px;
+}
+
+.game{
+    background:#111827cc;
+    border:1px solid #334155;
+    border-radius:26px;
+    overflow:hidden;
+    transition:0.25s;
+    backdrop-filter:blur(18px);
+    position:relative;
+}
+
+.game:hover{
+    transform:translateY(-6px);
+    border-color:#60a5fa;
+    box-shadow:0 0 30px #3b82f633;
+}
+
+.thumb{
+    width:100%;
+    height:180px;
+    object-fit:cover;
+    background:#020617;
+}
+
+.game-content{
+    padding:20px;
+}
+
+.game-title{
+    font-size:22px;
+    font-weight:800;
+    margin-bottom:8px;
+}
+
+.game-category{
+    color:#94a3b8;
+    margin-bottom:18px;
+}
+
+.game-buttons{
+    display:flex;
+    gap:10px;
+}
+
+.play-btn{
+    flex:1;
+    text-decoration:none;
+    text-align:center;
+    background:linear-gradient(135deg,var(--accent),var(--accent2));
+    color:white;
+    padding:12px;
+    border-radius:14px;
+    font-weight:700;
+}
+
+.fav-btn{
+    width:50px;
+    border:none;
+    border-radius:14px;
+    background:#1e293b;
+    color:white;
+    cursor:pointer;
+}
+
+/* SETTINGS */
+
+.settings{
+    position:fixed;
+    inset:0;
+    background:#000000aa;
+    backdrop-filter:blur(10px);
+    display:none;
+    align-items:center;
+    justify-content:center;
+    z-index:9999;
+}
+
+.settings.active{
+    display:flex;
+}
+
+.settings-panel{
+    width:min(600px,95%);
+    background:#0f172a;
+    border:1px solid #334155;
+    border-radius:28px;
+    padding:30px;
+}
+
+.settings-panel h2{
+    margin-bottom:20px;
+}
+
+.setting{
+    margin-bottom:24px;
+}
+
+.setting label{
+    display:block;
+    margin-bottom:10px;
+    font-weight:700;
+}
+
+.setting select{
+    width:100%;
+    padding:14px;
+    border-radius:14px;
+    border:1px solid #334155;
+    background:#111827;
+    color:white;
+}
+
+/* SUGGEST MODAL */
+
+.suggest{
+    position:fixed;
+    inset:0;
+    background:#000000bb;
+    backdrop-filter:blur(10px);
+    display:none;
+    align-items:center;
+    justify-content:center;
+    z-index:99999;
+}
+
+.suggest.active{
+    display:flex;
+}
+
+.suggest-panel{
+    width:min(650px,95%);
+    background:#0f172a;
+    border:1px solid #334155;
+    border-radius:28px;
+    padding:30px;
+}
+
+.suggest-panel h2{
+    margin-bottom:20px;
+}
+
+.input{
+    width:100%;
+    margin-bottom:16px;
+    padding:14px;
+    border-radius:14px;
+    border:1px solid #334155;
+    background:#111827;
+    color:white;
+}
+
+textarea.input{
+    min-height:140px;
+    resize:none;
+}
+
+/* THEMES */
+
+body.red{
+    --accent:#ef4444;
+    --accent2:#dc2626;
+}
+
+body.green{
+    --accent:#22c55e;
+    --accent2:#10b981;
+}
+
+body.gold{
+    --accent:#f59e0b;
+    --accent2:#eab308;
+}
+
+body.pink{
+    --accent:#ec4899;
+    --accent2:#d946ef;
+}
+
+/* MOBILE */
+
+@media(max-width:700px){
+
+    .topbar{
+        flex-direction:column;
+        align-items:stretch;
+    }
+
+    .actions{
+        width:100%;
+    }
+
+    .search{
+        width:100%;
+    }
+
+    .btn{
+        width:100%;
+    }
+
+    .hero-card h2{
+        font-size:36px;
+    }
+
+}
+
+</style>
+</head>
+<body>
+
+<div id="tsparticles"></div>
+<div class="overlay"></div>
+
+<canvas id="matrix"></canvas>
+
+<!-- SETTINGS -->
+
+<div class="settings" id="settings">
+
+    <div class="settings-panel">
+
+        <h2>Settings</h2>
+
+        <div class="setting">
+
+            <label>Theme</label>
+
+            <select id="themeSelect">
+
+                <option value="">Default</option>
+                <option value="red">Red</option>
+                <option value="green">Green</option>
+                <option value="gold">Gold</option>
+                <option value="pink">Pink</option>
+
+            </select>
+
+        </div>
+
+        <div class="setting">
+
+            <label>Background</label>
+
+            <select id="bgSelect">
+
+                <option value="normal">Normal</option>
+                <option value="matrix">Matrix</option>
+
+            </select>
+
+        </div>
+
+        <button class="btn primary" onclick="closeSettings()">
+            Save
+        </button>
+
+    </div>
+
+</div>
+
+<!-- SUGGEST -->
+
+<div class="suggest" id="suggest">
+
+    <div class="suggest-panel">
+
+        <h2>Suggest A Game</h2>
+
+        <input
+        class="input"
+        id="suggestTitle"
+        placeholder="Game Name">
+
+        <input
+        class="input"
+        id="suggestUrl"
+        placeholder="Game URL">
+
+        <textarea
+        class="input"
+        id="suggestNotes"
+        placeholder="Extra notes..."></textarea>
+
+        <button class="btn primary" onclick="submitSuggestion()">
+            Submit
+        </button>
+
+    </div>
+
+</div>
+
+<!-- TOPBAR -->
+
+<div class="topbar">
+
+    <div class="logo">
+
+        <div class="logo-box">
+            <i data-lucide="vault"></i>
+        </div>
+
+        <div class="logo-text">
+            <h1>The Vault</h1>
+            <p>Premium Arcade Platform</p>
+        </div>
+
+    </div>
+
+    <div class="actions">
+
+        <input
+        type="text"
+        class="search"
+        id="search"
+        placeholder="Search games...">
+
+        <button class="btn secondary" onclick="toggleSettings()">
+            Settings
+        </button>
+
+        <button class="btn primary" onclick="randomGame()">
+            Random
+        </button>
+
+    </div>
+
+</div>
+
+<!-- HERO -->
+
+<div class="hero">
+
+    <div class="hero-card">
+
+        <h2>
+            The Ultimate Arcade Collection
+        </h2>
+
+        <p>
+            Hyper-advanced Vault-style game launcher with themes,
+            cloaking, particles, matrix backgrounds, favorites,
+            suggest system, and local ./gmes importing.
+        </p>
+
+    </div>
+
+    <div class="stats">
+
+        <div class="stat">
+            <h3 id="gameCount">0</h3>
+            <p>Total Games</p>
+        </div>
+
+        <div class="stat">
+            <h3 id="favCount">0</h3>
+            <p>Favorites</p>
+        </div>
+
+        <div class="stat">
+            <h3>50+</h3>
+            <p>Features</p>
+        </div>
+
+    </div>
+
+</div>
+
+<!-- GAMES -->
+
+<div class="games" id="games"></div>
+
+<script>
+
+lucide.createIcons();
+
+/* PARTICLES */
+
+tsParticles.load("tsparticles",{
+
+    fpsLimit:60,
+
+    particles:{
+        number:{value:100},
+        color:{value:["#8b5cf6","#3b82f6"]},
+
+        links:{
+            enable:true,
+            distance:140,
+            color:"#334155",
+            opacity:0.4
+        },
+
+        move:{
+            enable:true,
+            speed:1
+        },
+
+        size:{
+            value:{min:1,max:4}
+        },
+
+        opacity:{
+            value:0.5
+        }
+    }
+
+});
+
+/* MATRIX */
+
+const canvas =
+document.getElementById("matrix");
+
+const ctx =
+canvas.getContext("2d");
+
+canvas.width = innerWidth;
+canvas.height = innerHeight;
+
+const chars =
+"アァイィウヴエカキクケコABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+
+const size = 14;
+
+const cols = canvas.width / size;
+
+const drops = [];
+
+for(let i=0;i<cols;i++){
+    drops[i]=1;
+}
+
+function matrix(){
+
+    ctx.fillStyle =
+    "rgba(0,0,0,0.05)";
+
+    ctx.fillRect(
+        0,
+        0,
+        canvas.width,
+        canvas.height
+    );
+
+    ctx.fillStyle="#0f0";
+
+    ctx.font =
+    size + "px monospace";
+
+    for(let i=0;i<drops.length;i++){
+
+        const text =
+        chars[Math.floor(
+            Math.random()*chars.length
+        )];
+
+        ctx.fillText(
+            text,
+            i*size,
+            drops[i]*size
+        );
+
+        if(
+            drops[i]*size >
+            canvas.height &&
+            Math.random()>0.975
+        ){
+            drops[i]=0;
+        }
+
+        drops[i]++;
+
+    }
+
+}
+
+setInterval(matrix,35);
+
+/* GAME DATA */
+
+let games = [];
+
+async function loadGames(){
+
+    const res =
+    await fetch("./games.json");
+
+    games =
+    await res.json();
+
+    renderGames();
+
+}
+
+const container =
+document.getElementById("games");
+
+function renderGames(){
+
+    container.innerHTML="";
+
+    document.getElementById(
+        "gameCount"
+    ).innerText = games.length;
+
+    games.forEach(game=>{
+
+        const card =
+        document.createElement("div");
+
+        card.className =
+        "game";
+
+        if(game.special){
+
+            card.innerHTML = `
+
+            <img
+            class="thumb"
+            src="${game.image}">
+
+            <div class="game-content">
+
+                <div class="game-title">
+                    ${game.title}
+                </div>
+
+                <div class="game-category">
+                    Suggest new games to add
+                </div>
+
+                <div class="game-buttons">
+
+                    <button
+                    class="play-btn"
+                    onclick="openSuggest()">
+                    Open
+                    </button>
+
+                </div>
+
+            </div>
+            `;
+
+        }else{
+
+            card.innerHTML = `
+
+            <img
+            class="thumb"
+            src="${game.image}">
+
+            <div class="game-content">
+
+                <div class="game-title">
+                    ${game.title}
+                </div>
+
+                <div class="game-category">
+                    ${game.category || "Arcade"}
+                </div>
+
+                <div class="game-buttons">
+
+                    <a
+                    class="play-btn"
+                    href="${game.path}">
+                    Play
+                    </a>
+
+                    <button
+                    class="fav-btn"
+                    onclick="favorite('${game.title}')">
+
+                    ★
+
+                    </button>
+
+                </div>
+
+            </div>
+            `;
+
+        }
+
+        container.appendChild(card);
+
+    });
+
+}
+
+/* SEARCH */
+
+document.getElementById("search")
+.addEventListener("input",e=>{
+
+    const value =
+    e.target.value.toLowerCase();
+
+    document.querySelectorAll(".game")
+    .forEach(card=>{
+
+        card.style.display =
+        card.innerText.toLowerCase()
+        .includes(value)
+        ? "block"
+        : "none";
+
+    });
+
+});
+
+/* FAVORITES */
+
+let favorites =
+JSON.parse(
+localStorage.getItem("vaultFav")
+|| "[]"
+);
+
+function favorite(title){
+
+    if(!favorites.includes(title)){
+
+        favorites.push(title);
+
+    }
+
+    localStorage.setItem(
+        "vaultFav",
+        JSON.stringify(favorites)
+    );
+
+    document.getElementById(
+        "favCount"
+    ).innerText =
+    favorites.length;
+
+}
+
+/* RANDOM */
+
+function randomGame(){
+
+    const realGames =
+    games.filter(g=>!g.special);
+
+    const random =
+    realGames[
+        Math.floor(
+            Math.random()*realGames.length
+        )
+    ];
+
+    location.href =
+    random.path;
+
+}
+
+/* SETTINGS */
+
+function toggleSettings(){
+
+    document
+    .getElementById("settings")
+    .classList.add("active");
+
+}
+
+function closeSettings(){
+
+    document
+    .getElementById("settings")
+    .classList.remove("active");
+
+}
+
+document.getElementById(
+"themeSelect"
+).addEventListener("change",e=>{
+
+    document.body.className =
+    e.target.value;
+
+    localStorage.setItem(
+        "vaultTheme",
+        e.target.value
+    );
+
+});
+
+document.getElementById(
+"bgSelect"
+).addEventListener("change",e=>{
+
+    document.body.classList.remove(
+        "matrix"
+    );
+
+    if(e.target.value==="matrix"){
+        document.body.classList.add(
+            "matrix"
+        );
+    }
+
+});
+
+/* SAVED SETTINGS */
+
+const savedTheme =
+localStorage.getItem("vaultTheme");
+
+if(savedTheme){
+
+    document.body.className =
+    savedTheme;
+
+    document.getElementById(
+        "themeSelect"
+    ).value = savedTheme;
+
+}
+
+/* SUGGEST */
+
+function openSuggest(){
+
+    document
+    .getElementById("suggest")
+    .classList.add("active");
+
+}
+
+function submitSuggestion(){
+
+    const data = {
+
+        title:
+        document.getElementById(
+            "suggestTitle"
+        ).value,
+
+        url:
+        document.getElementById(
+            "suggestUrl"
+        ).value,
+
+        notes:
+        document.getElementById(
+            "suggestNotes"
+        ).value
+
+    };
+
+    const suggestions =
+    JSON.parse(
+        localStorage.getItem(
+            "vaultSuggestions"
+        ) || "[]"
+    );
+
+    suggestions.push(data);
+
+    localStorage.setItem(
+        "vaultSuggestions",
+        JSON.stringify(suggestions)
+    );
+
+    alert(
+        "Suggestion saved locally!"
+    );
+
+    document
+    .getElementById("suggest")
+    .classList.remove("active");
+
+}
+
+/* PANIC KEY */
+
+document.addEventListener(
+"keydown",e=>{
+
+    if(e.key==="`"){
+
+        location.href =
+        "https://classroom.google.com";
+
+    }
+
+});
+
+/* LOAD */
+
+loadGames();
+
+</script>
+
+</body>
 </html>
