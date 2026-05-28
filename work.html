@@ -36,28 +36,154 @@ body{
     color:white;
     overflow-x:hidden;
     min-height:100vh;
+    transition:background 0.3s ease;
 }
 
 /* THEMES */
 
-body.theme-purple{
-    --blue:#7c3aed;
-    --purple:#c084fc;
+body.theme-blue{
+    --bg:#0b1120;
+    --panel:#111827bb;
+    --blue:#2563eb;
+    --purple:#7c3aed;
 }
 
 body.theme-green{
+    --bg:#07130d;
+    --panel:#0f1f17cc;
     --blue:#10b981;
-    --purple:#34d399;
+    --purple:#22c55e;
 }
 
 body.theme-red{
+    --bg:#170909;
+    --panel:#2a1010cc;
     --blue:#ef4444;
-    --purple:#f97316;
+    --purple:#dc2626;
 }
 
-body.theme-midnight{
-    --blue:#0f172a;
-    --purple:#334155;
+body.theme-gold{
+    --bg:#171205;
+    --panel:#2c2410cc;
+    --blue:#f59e0b;
+    --purple:#eab308;
+}
+
+body.theme-pink{
+    --bg:#160814;
+    --panel:#2b1028cc;
+    --blue:#ec4899;
+    --purple:#d946ef;
+}
+
+/* MATRIX */
+
+#matrixCanvas{
+    position:fixed;
+    inset:0;
+    width:100%;
+    height:100%;
+    z-index:-5;
+    opacity:0;
+    pointer-events:none;
+    transition:0.3s ease;
+}
+
+body.matrix-enabled #matrixCanvas{
+    opacity:0.25;
+}
+
+/* RAIN */
+
+.rain{
+    position:fixed;
+    inset:0;
+    pointer-events:none;
+    z-index:-4;
+    overflow:hidden;
+    opacity:0;
+    transition:0.3s ease;
+}
+
+body.rain-enabled .rain{
+    opacity:1;
+}
+
+.drop{
+    position:absolute;
+    bottom:100%;
+    width:2px;
+    height:90px;
+    background:linear-gradient(transparent,#93c5fd);
+    animation:rain linear infinite;
+}
+
+@keyframes rain{
+    to{
+        transform:translateY(120vh);
+    }
+}
+
+/* SNOW */
+
+.snow{
+    position:fixed;
+    inset:0;
+    overflow:hidden;
+    pointer-events:none;
+    z-index:-4;
+    opacity:0;
+    transition:0.3s ease;
+}
+
+body.snow-enabled .snow{
+    opacity:1;
+}
+
+.snowflake{
+    position:absolute;
+    top:-10px;
+    color:white;
+    animation:snow linear infinite;
+}
+
+@keyframes snow{
+    to{
+        transform:translateY(110vh);
+    }
+}
+
+/* STARS */
+
+.stars{
+    position:fixed;
+    inset:0;
+    z-index:-4;
+    pointer-events:none;
+    opacity:0;
+    transition:0.3s ease;
+}
+
+body.stars-enabled .stars{
+    opacity:1;
+}
+
+.star{
+    position:absolute;
+    width:2px;
+    height:2px;
+    background:white;
+    border-radius:50%;
+    animation:twinkle 2s infinite alternate;
+}
+
+@keyframes twinkle{
+    from{
+        opacity:0.2;
+    }
+    to{
+        opacity:1;
+    }
 }
 
 /* BOOT SCREEN */
@@ -70,7 +196,6 @@ body.theme-midnight{
     align-items:center;
     justify-content:center;
     z-index:99999;
-    overflow:hidden;
     transition:1s ease;
 }
 
@@ -93,19 +218,17 @@ body.theme-midnight{
     display:flex;
     align-items:center;
     justify-content:center;
-    box-shadow:
-        0 0 50px #2563eb66,
-        0 0 120px #7c3aed33;
+    box-shadow:0 0 60px #2563eb55;
     animation:float 2s infinite ease-in-out;
 }
 
 .boot-logo i{
-    width:42px;
-    height:42px;
+    width:40px;
+    height:40px;
 }
 
 .boot-title{
-    margin-top:28px;
+    margin-top:25px;
     font-size:34px;
     font-weight:700;
 }
@@ -113,7 +236,6 @@ body.theme-midnight{
 .boot-sub{
     margin-top:10px;
     color:var(--muted);
-    font-size:15px;
 }
 
 .boot-bar{
@@ -123,49 +245,31 @@ body.theme-midnight{
     border-radius:999px;
     overflow:hidden;
     margin-top:40px;
-    border:1px solid #334155;
 }
 
 .boot-progress{
     height:100%;
     width:0%;
-    border-radius:999px;
-    background:
-        linear-gradient(
-            90deg,
-            var(--blue),
-            #3b82f6,
-            var(--purple)
-        );
-    box-shadow:0 0 20px #2563eb;
-    transition:0.25s ease;
+    background:linear-gradient(90deg,var(--blue),var(--purple));
+    transition:0.3s ease;
 }
 
 .boot-status{
-    margin-top:14px;
+    margin-top:15px;
     color:#cbd5e1;
     font-size:14px;
-    letter-spacing:0.5px;
 }
 
 @keyframes float{
-    0%{
-        transform:translateY(0px);
-    }
-    50%{
-        transform:translateY(-10px);
-    }
-    100%{
-        transform:translateY(0px);
-    }
+    0%{transform:translateY(0px);}
+    50%{transform:translateY(-10px);}
+    100%{transform:translateY(0px);}
 }
-
-/* BACKGROUND */
 
 #tsparticles{
     position:fixed;
     inset:0;
-    z-index:-2;
+    z-index:-3;
 }
 
 .overlay{
@@ -174,10 +278,8 @@ body.theme-midnight{
     background:
         radial-gradient(circle at top left,#2563eb33,transparent 30%),
         radial-gradient(circle at bottom right,#7c3aed33,transparent 30%);
-    z-index:-1;
+    z-index:-2;
 }
-
-/* MAIN */
 
 .container{
     width:min(1400px,95%);
@@ -204,7 +306,7 @@ body.theme-midnight{
     width:55px;
     height:55px;
     border-radius:18px;
-    background:linear-gradient(135deg,#2563eb,#7c3aed);
+    background:linear-gradient(135deg,var(--blue),var(--purple));
     display:flex;
     align-items:center;
     justify-content:center;
@@ -221,7 +323,7 @@ body.theme-midnight{
 }
 
 .logo-text p{
-    color:#94a3b8;
+    color:var(--muted);
     margin-top:4px;
 }
 
@@ -248,8 +350,8 @@ body.theme-midnight{
 .search{
     width:300px;
     max-width:100%;
-    background:#111827cc;
-    border:1px solid #334155;
+    background:var(--panel);
+    border:1px solid var(--border);
     color:white;
     padding:14px 16px 14px 44px;
     border-radius:14px;
@@ -257,9 +359,10 @@ body.theme-midnight{
     backdrop-filter:blur(10px);
 }
 
-.refresh-btn{
+.refresh-btn,
+.settings-btn{
     border:none;
-    background:linear-gradient(135deg,#2563eb,#7c3aed);
+    background:linear-gradient(135deg,var(--blue),var(--purple));
     color:white;
     padding:14px 20px;
     border-radius:14px;
@@ -271,12 +374,8 @@ body.theme-midnight{
     gap:10px;
 }
 
-.refresh-btn i{
-    width:18px;
-    height:18px;
-}
-
-.refresh-btn:hover{
+.refresh-btn:hover,
+.settings-btn:hover{
     transform:translateY(-2px);
 }
 
@@ -288,25 +387,13 @@ body.theme-midnight{
 }
 
 .stat-card{
-    background:#111827aa;
-    border:1px solid #334155;
+    background:var(--panel);
+    border:1px solid var(--border);
     border-radius:22px;
     padding:24px;
     backdrop-filter:blur(14px);
     position:relative;
     overflow:hidden;
-}
-
-.stat-icon{
-    position:absolute;
-    right:20px;
-    top:20px;
-    opacity:0.15;
-}
-
-.stat-icon i{
-    width:34px;
-    height:34px;
 }
 
 .stat-card h2{
@@ -315,7 +402,7 @@ body.theme-midnight{
 }
 
 .stat-card p{
-    color:#94a3b8;
+    color:var(--muted);
 }
 
 .grid{
@@ -325,8 +412,8 @@ body.theme-midnight{
 }
 
 .card{
-    background:#111827bb;
-    border:1px solid #334155;
+    background:var(--panel);
+    border:1px solid var(--border);
     border-radius:24px;
     padding:22px;
     backdrop-filter:blur(16px);
@@ -341,26 +428,12 @@ body.theme-midnight{
     box-shadow:0 0 30px #2563eb22;
 }
 
-.card::before{
-    content:'';
-    position:absolute;
-    inset:0;
-    background:linear-gradient(135deg,#2563eb11,#7c3aed11);
-    opacity:0;
-    transition:0.25s ease;
-}
-
-.card:hover::before{
-    opacity:1;
-}
-
 .domain{
     font-size:16px;
     line-height:1.5;
     word-break:break-all;
     margin-bottom:18px;
     color:#e2e8f0;
-    position:relative;
 }
 
 .status{
@@ -369,7 +442,6 @@ body.theme-midnight{
     gap:10px;
     margin-bottom:20px;
     font-weight:600;
-    position:relative;
 }
 
 .dot{
@@ -397,7 +469,6 @@ body.theme-midnight{
     display:flex;
     gap:12px;
     flex-wrap:wrap;
-    position:relative;
 }
 
 .btn{
@@ -416,13 +487,8 @@ body.theme-midnight{
     gap:10px;
 }
 
-.btn i{
-    width:18px;
-    height:18px;
-}
-
 .open-btn{
-    background:linear-gradient(135deg,#2563eb,#3b82f6);
+    background:linear-gradient(135deg,var(--blue),var(--purple));
 }
 
 .copy-btn{
@@ -443,110 +509,65 @@ body.theme-midnight{
 
 /* SETTINGS */
 
-.settings-toggle{
+.settings-modal{
     position:fixed;
-    right:24px;
-    bottom:24px;
-    width:62px;
-    height:62px;
-    border:none;
-    border-radius:20px;
-    background:
-        linear-gradient(
-            135deg,
-            var(--blue),
-            var(--purple)
-        );
-    color:white;
-    cursor:pointer;
-    z-index:9999;
-    display:flex;
+    inset:0;
+    background:#00000088;
+    display:none;
     align-items:center;
     justify-content:center;
-    box-shadow:
-        0 0 30px #2563eb55;
-    transition:0.25s ease;
+    z-index:9999;
+    backdrop-filter:blur(8px);
 }
 
-.settings-toggle:hover{
-    transform:translateY(-4px) rotate(90deg);
-}
-
-.settings-toggle i{
-    width:26px;
-    height:26px;
+.settings-modal.active{
+    display:flex;
 }
 
 .settings-panel{
-    position:fixed;
-    top:0;
-    right:-420px;
-    width:400px;
-    max-width:100%;
-    height:100vh;
-    background:#0f172add;
-    backdrop-filter:blur(24px);
-    border-left:1px solid #334155;
-    z-index:100000;
-    transition:0.35s ease;
+    width:min(500px,95%);
+    background:#0f172a;
+    border:1px solid #334155;
+    border-radius:24px;
     padding:28px;
-    overflow-y:auto;
-}
-
-.settings-panel.open{
-    right:0;
 }
 
 .settings-header{
     display:flex;
-    align-items:center;
     justify-content:space-between;
-    margin-bottom:32px;
+    align-items:center;
+    margin-bottom:24px;
 }
 
-.settings-header h2{
-    font-size:28px;
-}
-
-.settings-header p{
-    color:#94a3b8;
-    margin-top:6px;
+.settings-title{
+    font-size:24px;
+    font-weight:700;
 }
 
 .close-settings{
+    background:none;
     border:none;
-    background:#1e293b;
     color:white;
-    width:42px;
-    height:42px;
-    border-radius:12px;
     cursor:pointer;
-    font-size:18px;
 }
 
-.settings-group{
-    margin-bottom:26px;
+.setting-group{
+    margin-bottom:24px;
 }
 
-.settings-group label{
+.setting-group label{
     display:block;
-    margin-bottom:12px;
+    margin-bottom:10px;
     font-weight:600;
-    color:#e2e8f0;
 }
 
-.settings-group select,
-.settings-group input[type="range"]{
+.setting-group select{
     width:100%;
-}
-
-.settings-group select{
     background:#111827;
     border:1px solid #334155;
     color:white;
     padding:14px;
     border-radius:14px;
-    outline:none;
 }
 
 @media(max-width:700px){
@@ -564,16 +585,73 @@ body.theme-midnight{
         width:100%;
     }
 
-    .refresh-btn{
+    .refresh-btn,
+    .settings-btn{
         width:100%;
         justify-content:center;
     }
 }
 </style>
 </head>
-<body>
+<body class="theme-blue">
 
-<!-- BOOT SCREEN -->
+<canvas id="matrixCanvas"></canvas>
+
+<div class="rain" id="rain"></div>
+<div class="snow" id="snow"></div>
+<div class="stars" id="stars"></div>
+
+<!-- SETTINGS -->
+
+<div class="settings-modal" id="settingsModal">
+
+    <div class="settings-panel">
+
+        <div class="settings-header">
+
+            <div class="settings-title">
+                Settings
+            </div>
+
+            <button class="close-settings" onclick="toggleSettings()">
+                <i data-lucide="x"></i>
+            </button>
+
+        </div>
+
+        <div class="setting-group">
+
+            <label>Theme</label>
+
+            <select id="themeSelect" onchange="setTheme(this.value)">
+                <option value="theme-blue">Blue</option>
+                <option value="theme-green">Green</option>
+                <option value="theme-red">Red</option>
+                <option value="theme-gold">Gold</option>
+                <option value="theme-pink">Pink</option>
+            </select>
+
+        </div>
+
+        <div class="setting-group">
+
+            <label>Background Effect</label>
+
+            <select id="bgSelect" onchange="setBackground(this.value)">
+                <option value="normal">Normal</option>
+                <option value="rain">Rain</option>
+                <option value="snow">Snow</option>
+                <option value="stars">Stars</option>
+                <option value="matrix">Matrix</option>
+            </select>
+
+        </div>
+
+    </div>
+
+</div>
+
+<!-- BOOT -->
 
 <div class="boot-screen" id="bootScreen">
 
@@ -638,12 +716,14 @@ body.theme-midnight{
 
             </div>
 
+            <button class="settings-btn" onclick="toggleSettings()">
+                <i data-lucide="settings"></i>
+                Settings
+            </button>
+
             <button class="refresh-btn" onclick="loadCards()">
-
                 <i data-lucide="refresh-cw"></i>
-
                 Refresh Status
-
             </button>
 
         </div>
@@ -653,36 +733,18 @@ body.theme-midnight{
     <div class="stats">
 
         <div class="stat-card">
-
-            <div class="stat-icon">
-                <i data-lucide="database"></i>
-            </div>
-
             <h2 id="totalCount">0</h2>
             <p>Total Links</p>
-
         </div>
 
         <div class="stat-card">
-
-            <div class="stat-icon">
-                <i data-lucide="activity"></i>
-            </div>
-
             <h2 id="onlineCount">0</h2>
             <p>Online</p>
-
         </div>
 
         <div class="stat-card">
-
-            <div class="stat-icon">
-                <i data-lucide="shield-x"></i>
-            </div>
-
             <h2 id="offlineCount">0</h2>
             <p>Offline</p>
-
         </div>
 
     </div>
@@ -695,89 +757,222 @@ body.theme-midnight{
 
 </div>
 
-<!-- SETTINGS BUTTON -->
-
-<button class="settings-toggle" onclick="toggleSettings()">
-
-    <i data-lucide="settings-2"></i>
-
-</button>
-
-<!-- SETTINGS PANEL -->
-
-<div class="settings-panel" id="settingsPanel">
-
-    <div class="settings-header">
-
-        <div>
-            <h2>Settings</h2>
-            <p>Customize dashboard</p>
-        </div>
-
-        <button class="close-settings" onclick="toggleSettings()">
-            ✕
-        </button>
-
-    </div>
-
-    <div class="settings-group">
-
-        <label>Theme</label>
-
-        <select id="themeSelect">
-
-            <option value="default">Default Blue</option>
-            <option value="purple">Purple Neon</option>
-            <option value="green">Emerald</option>
-            <option value="red">Crimson</option>
-            <option value="midnight">Midnight</option>
-
-        </select>
-
-    </div>
-
-    <div class="settings-group">
-
-        <label>Cloak Preset</label>
-
-        <select id="cloakSelect">
-
-            <option value="classroom">Google Classroom</option>
-            <option value="drive">Google Drive</option>
-            <option value="docs">Google Docs</option>
-            <option value="canvas">Canvas LMS</option>
-            <option value="blank">Blank Tab</option>
-
-        </select>
-
-    </div>
-
-    <div class="settings-group">
-
-        <label>Background Animation</label>
-
-        <select id="backgroundSelect">
-
-            <option value="default">Default</option>
-            <option value="snow">Snow</option>
-            <option value="rain">Rain</option>
-            <option value="stars">Stars</option>
-
-        </select>
-
-    </div>
-
-</div>
-
 <script>
 lucide.createIcons();
+
+const matrixCanvas = document.getElementById("matrixCanvas");
+const matrixCtx = matrixCanvas.getContext("2d");
+
+matrixCanvas.width = window.innerWidth;
+matrixCanvas.height = window.innerHeight;
+
+const letters =
+"アァイィウヴエカキクケコサシスセソABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+
+const fontSize = 14;
+const columns = matrixCanvas.width / fontSize;
+const drops = [];
+
+for(let x = 0; x < columns; x++){
+    drops[x] = 1;
+}
+
+function drawMatrix(){
+
+    matrixCtx.fillStyle = "rgba(0,0,0,0.05)";
+    matrixCtx.fillRect(
+        0,
+        0,
+        matrixCanvas.width,
+        matrixCanvas.height
+    );
+
+    matrixCtx.fillStyle = "#0f0";
+    matrixCtx.font = fontSize + "px monospace";
+
+    for(let i = 0; i < drops.length; i++){
+
+        const text =
+            letters.charAt(
+                Math.floor(
+                    Math.random() * letters.length
+                )
+            );
+
+        matrixCtx.fillText(
+            text,
+            i * fontSize,
+            drops[i] * fontSize
+        );
+
+        if(
+            drops[i] * fontSize >
+            matrixCanvas.height &&
+            Math.random() > 0.975
+        ){
+            drops[i] = 0;
+        }
+
+        drops[i]++;
+    }
+}
+
+setInterval(drawMatrix, 35);
+
+function createRain(){
+
+    const rain =
+        document.getElementById("rain");
+
+    for(let i = 0; i < 180; i++){
+
+        const drop =
+            document.createElement("div");
+
+        drop.className = "drop";
+
+        drop.style.left =
+            Math.random() * 100 + "%";
+
+        drop.style.animationDuration =
+            0.5 + Math.random() + "s";
+
+        drop.style.opacity =
+            Math.random();
+
+        rain.appendChild(drop);
+    }
+}
+
+function createSnow(){
+
+    const snow =
+        document.getElementById("snow");
+
+    for(let i = 0; i < 100; i++){
+
+        const flake =
+            document.createElement("div");
+
+        flake.className = "snowflake";
+
+        flake.innerHTML = "•";
+
+        flake.style.left =
+            Math.random() * 100 + "%";
+
+        flake.style.animationDuration =
+            5 + Math.random() * 10 + "s";
+
+        flake.style.opacity =
+            Math.random();
+
+        flake.style.fontSize =
+            Math.random() * 10 + 10 + "px";
+
+        snow.appendChild(flake);
+    }
+}
+
+function createStars(){
+
+    const stars =
+        document.getElementById("stars");
+
+    for(let i = 0; i < 150; i++){
+
+        const star =
+            document.createElement("div");
+
+        star.className = "star";
+
+        star.style.left =
+            Math.random() * 100 + "%";
+
+        star.style.top =
+            Math.random() * 100 + "%";
+
+        star.style.animationDuration =
+            1 + Math.random() * 3 + "s";
+
+        stars.appendChild(star);
+    }
+}
+
+createRain();
+createSnow();
+createStars();
+
+function toggleSettings(){
+
+    document
+    .getElementById("settingsModal")
+    .classList.toggle("active");
+
+    lucide.createIcons();
+}
+
+function setTheme(theme){
+
+    document.body.className =
+        document.body.className
+        .replace(/theme-\w+/g,"");
+
+    document.body.classList.add(theme);
+
+    localStorage.setItem("theme",theme);
+}
+
+function setBackground(type){
+
+    document.body.classList.remove(
+        "rain-enabled",
+        "snow-enabled",
+        "stars-enabled",
+        "matrix-enabled"
+    );
+
+    if(type === "rain"){
+        document.body.classList.add("rain-enabled");
+    }
+
+    if(type === "snow"){
+        document.body.classList.add("snow-enabled");
+    }
+
+    if(type === "stars"){
+        document.body.classList.add("stars-enabled");
+    }
+
+    if(type === "matrix"){
+        document.body.classList.add("matrix-enabled");
+    }
+
+    localStorage.setItem("background",type);
+}
+
+const savedTheme =
+    localStorage.getItem("theme");
+
+if(savedTheme){
+    setTheme(savedTheme);
+    document.getElementById("themeSelect").value =
+        savedTheme;
+}
+
+const savedBg =
+    localStorage.getItem("background");
+
+if(savedBg){
+    setBackground(savedBg);
+    document.getElementById("bgSelect").value =
+        savedBg;
+}
 
 tsParticles.load("tsparticles", {
     fpsLimit:60,
     particles:{
-        number:{
-            value:90
-        },
+        number:{value:90},
         color:{
             value:["#2563eb","#7c3aed","#60a5fa"]
         },
@@ -796,14 +991,6 @@ tsParticles.load("tsparticles", {
         },
         size:{
             value:{min:1,max:4}
-        }
-    },
-    interactivity:{
-        events:{
-            onHover:{
-                enable:true,
-                mode:"grab"
-            }
         }
     }
 });
@@ -971,7 +1158,8 @@ async function loadCards(){
 
     for(const link of links){
 
-        const card = document.createElement("div");
+        const card =
+            document.createElement("div");
 
         card.className = "card";
 
@@ -990,22 +1178,16 @@ async function loadCards(){
                     target="_blank"
                     class="btn open-btn"
                 >
-
                     <i data-lucide="external-link"></i>
-
                     Open
-
                 </a>
 
                 <button
                     class="btn copy-btn"
                     onclick="copyLink('${link}')"
                 >
-
                     <i data-lucide="copy"></i>
-
                     Copy
-
                 </button>
 
             </div>
@@ -1077,193 +1259,6 @@ document.getElementById("searchInput")
             ? "block"
             : "none";
     });
-});
-
-/* SETTINGS */
-
-function toggleSettings(){
-
-    document
-        .getElementById("settingsPanel")
-        .classList.toggle("open");
-}
-
-/* THEMES */
-
-document
-.getElementById("themeSelect")
-.addEventListener("change",e=>{
-
-    document.body.classList.remove(
-        "theme-purple",
-        "theme-green",
-        "theme-red",
-        "theme-midnight"
-    );
-
-    if(e.target.value !== "default"){
-
-        document.body.classList.add(
-            "theme-" + e.target.value
-        );
-    }
-});
-
-/* CLOAKS */
-
-document
-.getElementById("cloakSelect")
-.addEventListener("change",e=>{
-
-    const cloak = e.target.value;
-
-    if(cloak === "classroom"){
-
-        document.title = "Classes";
-
-        document.querySelector("link[rel='icon']")
-        .href =
-        "https://www.gstatic.com/classroom/logo_square_rounded.svg";
-    }
-
-    if(cloak === "drive"){
-
-        document.title = "My Drive";
-
-        document.querySelector("link[rel='icon']")
-        .href =
-        "https://ssl.gstatic.com/images/branding/product/1x/drive_2020q4_32dp.png";
-    }
-
-    if(cloak === "docs"){
-
-        document.title = "Google Docs";
-
-        document.querySelector("link[rel='icon']")
-        .href =
-        "https://ssl.gstatic.com/docs/documents/images/kix-favicon7.ico";
-    }
-
-    if(cloak === "canvas"){
-
-        document.title = "Dashboard";
-
-        document.querySelector("link[rel='icon']")
-        .href =
-        "https://du11hjcvx0uqb.cloudfront.net/dist/images/favicon-e10d657a73.ico";
-    }
-
-    if(cloak === "blank"){
-
-        document.title = "‎";
-
-        document.querySelector("link[rel='icon']")
-        .href = "";
-    }
-});
-
-/* BACKGROUNDS */
-
-document
-.getElementById("backgroundSelect")
-.addEventListener("change",e=>{
-
-    const mode = e.target.value;
-
-    if(mode === "default"){
-
-        tsParticles.load("tsparticles",{
-            fpsLimit:60,
-            particles:{
-                number:{value:90},
-                color:{
-                    value:[
-                        "#2563eb",
-                        "#7c3aed",
-                        "#60a5fa"
-                    ]
-                },
-                links:{
-                    enable:true,
-                    distance:150,
-                    color:"#334155",
-                    opacity:0.4
-                },
-                move:{
-                    enable:true,
-                    speed:1
-                },
-                opacity:{
-                    value:0.5
-                },
-                size:{
-                    value:{min:1,max:4}
-                }
-            }
-        });
-    }
-
-    if(mode === "snow"){
-
-        tsParticles.load("tsparticles",{
-            particles:{
-                number:{value:160},
-                color:{value:"#ffffff"},
-                move:{
-                    enable:true,
-                    speed:1,
-                    direction:"bottom"
-                },
-                size:{
-                    value:{min:1,max:5}
-                },
-                opacity:{
-                    value:0.8
-                }
-            }
-        });
-    }
-
-    if(mode === "rain"){
-
-        tsParticles.load("tsparticles",{
-            particles:{
-                number:{value:220},
-                color:{value:"#60a5fa"},
-                move:{
-                    enable:true,
-                    speed:18,
-                    direction:"bottom"
-                },
-                shape:{
-                    type:"line"
-                },
-                size:{
-                    value:{min:10,max:20}
-                }
-            }
-        });
-    }
-
-    if(mode === "stars"){
-
-        tsParticles.load("tsparticles",{
-            particles:{
-                number:{value:120},
-                color:{value:"#ffffff"},
-                move:{
-                    enable:true,
-                    speed:0.4
-                },
-                size:{
-                    value:{min:1,max:3}
-                },
-                opacity:{
-                    value:{min:0.3,max:1}
-                }
-            }
-        });
-    }
 });
 
 (async()=>{
