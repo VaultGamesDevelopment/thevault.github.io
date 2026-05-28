@@ -1056,6 +1056,29 @@ const links = [
 
 const grid = document.getElementById("grid");
 
+const state = {
+    paused:false,
+    favorites:new Set(JSON.parse(localStorage.getItem("fav")||"[]")),
+    cache: JSON.parse(localStorage.getItem("cache")||"{}"),
+    logs:[]
+};
+
+/* Toast */
+function toast(msg){
+    const t=document.createElement("div");
+    t.innerText=msg;
+    t.style.position="fixed";
+    t.style.bottom="20px";
+    t.style.right="20px";
+    t.style.background="#111827";
+    t.style.color="white";
+    t.style.padding="10px 14px";
+    t.style.borderRadius="10px";
+    t.style.zIndex="99999";
+    document.body.appendChild(t);
+    setTimeout(()=>t.remove(),2000);
+}
+
 async function bootSequence(){
 
     const progress =
@@ -1092,6 +1115,14 @@ async function bootSequence(){
     setTimeout(()=>{
         bootScreen.remove();
     },1000);
+}
+
+async function smartCheck(url){
+    if(state.cache[url]) return state.cache[url];
+    const res=await checkStatus(url);
+    state.cache[url]=res;
+    localStorage.setItem("cache",JSON.stringify(state.cache));
+    return res;
 }
 
 async function checkStatus(url){
@@ -1235,6 +1266,27 @@ async function loadCards(){
     }
 }
 
+function openAll(){
+    links.forEach(l=>window.open(l,"_blank"));
+}
+
+function exportLinks(){
+    navigator.clipboard.writeText(JSON.stringify(links));
+    toast("Exported to clipboard");
+}
+
+function importLinks(){
+    const raw=prompt("Paste JSON");
+    if(!raw)return;
+    try{
+        links.push(...JSON.parse(raw));
+        loadCards();
+        toast("Imported");
+    }catch{
+        toast("Invalid JSON");
+    }
+}
+
 function copyLink(link){
 
     navigator.clipboard.writeText(link);
@@ -1242,23 +1294,27 @@ function copyLink(link){
     alert("Copied link!");
 }
 
+function toggleFav(link){
+    if(state.favorites.has(link)){
+        state.favorites.delete(link);
+    }else{
+        state.favorites.add(link);
+    }
+    localStorage.setItem("fav",JSON.stringify([...state.favorites]));
+    toast("Favorites updated");
+}
+
 document.getElementById("searchInput")
-.addEventListener("input",e=>{
+.addEventListener("input",(e)=>{
 
-    const value =
-        e.target.value.toLowerCase();
+    const v=e.target.value.toLowerCase();
 
-    document.querySelectorAll(".card")
-    .forEach(card=>{
-
-        const text =
-            card.innerText.toLowerCase();
-
-        card.style.display =
-            text.includes(value)
-            ? "block"
-            : "none";
+    document.querySelectorAll(".card").forEach(c=>{
+        c.style.outline=c.innerText.toLowerCase().includes(v)
+        ? "2px solid #60a5fa"
+        : "none";
     });
+
 });
 
 (async()=>{
@@ -1268,6 +1324,21 @@ document.getElementById("searchInput")
     loadCards();
 
 })();
+
+document.addEventListener("keydown",(e)=>{
+    if(e.key==="`"){
+        console.log("Console opened (you can build UI here)");
+    }
+
+    if(e.ctrlKey && e.key==="k"){
+        e.preventDefault();
+        alert("Palette opened (stub)");
+    }
+
+    if(e.key==="r"){
+        loadCards();
+    }
+});
 </script>
 
 </body>
