@@ -1,99 +1,759 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>The Vault | UBG</title>
-    <style>
-        :root { --bg: #09090b; --card: #18181b; --accent: #38bdf8; --text: #f4f4f5; --border: #27272a; }
-        body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', sans-serif; margin: 0; display: flex; height: 100vh; overflow: hidden; }
-        
-        /* Sidebar */
-        #sidebar { width: 260px; background: var(--card); border-right: 1px solid var(--border); padding: 20px; display: flex; flex-direction: column; }
-        .nav-item { padding: 12px; cursor: pointer; border-radius: 6px; margin-bottom: 5px; transition: 0.2s; }
-        .nav-item:hover { background: var(--border); color: var(--accent); }
-        
-        /* Main Content */
-        #main-area { flex-grow: 1; padding: 30px; overflow-y: auto; }
-        #search { width: 100%; padding: 12px; background: var(--card); border: 1px solid var(--border); color: white; border-radius: 8px; margin-bottom: 25px; }
-        
-        /* Grid & Cards */
-        .game-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 20px; }
-        .game-card { background: var(--card); border: 1px solid var(--border); padding: 15px; border-radius: 12px; cursor: pointer; transition: 0.3s; text-align: center; }
-        .game-card:hover { border-color: var(--accent); transform: translateY(-5px); }
-        .game-card img { width: 100%; aspect-ratio: 16/9; object-fit: cover; border-radius: 6px; }
-        
-        /* Iframe */
-        #game-frame { width: 100%; height: 85vh; border: none; border-radius: 12px; display: none; }
-    </style>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>The Vault</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet"/>
+<script src="https://cdn.jsdelivr.net/npm/tsparticles@2/tsparticles.bundle.min.js"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+
+:root{
+  --bg:#050510;
+  --surface:#0d0d1a;
+  --card:#111122;
+  --border:#1e1e38;
+  --border2:#2a2a50;
+  --accent:#6366f1;
+  --accent2:#8b5cf6;
+  --accent3:#06b6d4;
+  --text:#f1f5f9;
+  --muted:#64748b;
+  --muted2:#94a3b8;
+  --font:'Space Grotesk',sans-serif;
+  --mono:'JetBrains Mono',monospace;
+  --radius:14px;
+  --radius2:20px;
+}
+
+body{
+  font-family:var(--font);
+  background:var(--bg);
+  color:var(--text);
+  min-height:100vh;
+  overflow-x:hidden;
+}
+
+/* ── PARTICLES ── */
+#tsparticles{position:fixed;inset:0;z-index:0;pointer-events:none;}
+
+/* ── OVERLAYS ── */
+.overlay-glow{
+  position:fixed;inset:0;z-index:1;pointer-events:none;
+  background:
+    radial-gradient(ellipse 60% 40% at 20% 10%,#6366f114,transparent),
+    radial-gradient(ellipse 50% 60% at 80% 90%,#8b5cf614,transparent),
+    radial-gradient(ellipse 40% 50% at 50% 50%,#06b6d408,transparent);
+}
+
+/* ── WEATHER ── */
+.weather-layer{position:fixed;inset:0;z-index:2;pointer-events:none;overflow:hidden;opacity:0;transition:opacity .5s;}
+.weather-layer.active{opacity:1;}
+
+.drop{position:absolute;bottom:110%;width:1.5px;background:linear-gradient(transparent,#93c5fd88);animation:fall linear infinite;}
+@keyframes fall{to{transform:translateY(120vh);}}
+
+.snowflake{position:absolute;top:-20px;color:#fff;animation:snowfall linear infinite;opacity:0;}
+@keyframes snowfall{to{transform:translateY(110vh) rotate(360deg);opacity:.8;}}
+
+.star-dot{position:absolute;border-radius:50%;background:#fff;animation:twinkle ease-in-out infinite alternate;}
+@keyframes twinkle{from{opacity:.1;}to{opacity:1;}}
+
+/* ── MATRIX ── */
+#matrixCanvas{position:fixed;inset:0;z-index:2;pointer-events:none;opacity:0;transition:opacity .5s;}
+#matrixCanvas.active{opacity:.2;}
+
+/* ── BOOT SCREEN ── */
+.boot{
+  position:fixed;inset:0;z-index:9999;
+  background:#020208;
+  display:flex;align-items:center;justify-content:center;
+  transition:opacity .8s ease,visibility .8s ease;
+}
+.boot.gone{opacity:0;visibility:hidden;}
+
+.boot-inner{text-align:center;width:min(420px,90%);}
+
+.boot-orb{
+  width:80px;height:80px;margin:0 auto 24px;border-radius:24px;
+  background:linear-gradient(135deg,var(--accent),var(--accent2));
+  display:flex;align-items:center;justify-content:center;
+  font-size:36px;
+  box-shadow:0 0 60px #6366f155;
+  animation:float 2.5s ease-in-out infinite;
+}
+@keyframes float{0%,100%{transform:translateY(0);}50%{transform:translateY(-10px);}}
+
+.boot-title{font-size:36px;font-weight:700;letter-spacing:-.5px;margin-bottom:8px;}
+.boot-sub{color:var(--muted2);font-size:14px;margin-bottom:40px;}
+
+.boot-bar{height:3px;background:#1e1e38;border-radius:99px;overflow:hidden;margin-bottom:16px;}
+.boot-fill{height:100%;width:0%;background:linear-gradient(90deg,var(--accent),var(--accent3));transition:width .35s ease;border-radius:99px;}
+.boot-label{font-size:12px;font-family:var(--mono);color:var(--muted);letter-spacing:.5px;}
+
+/* ── LAYOUT ── */
+#app{display:flex;min-height:100vh;position:relative;z-index:10;}
+
+/* ── SIDEBAR ── */
+#sidebar{
+  width:240px;min-height:100vh;
+  background:#08080f;
+  border-right:1px solid var(--border);
+  display:flex;flex-direction:column;
+  padding:24px 16px;
+  position:sticky;top:0;height:100vh;overflow-y:auto;
+  flex-shrink:0;
+}
+
+.sidebar-logo{
+  display:flex;align-items:center;gap:12px;padding:8px 12px;margin-bottom:28px;
+}
+.logo-icon{
+  width:36px;height:36px;border-radius:10px;
+  background:linear-gradient(135deg,var(--accent),var(--accent2));
+  display:flex;align-items:center;justify-content:center;font-size:18px;
+  flex-shrink:0;
+}
+.logo-name{font-size:20px;font-weight:700;letter-spacing:-.3px;}
+.logo-tag{font-size:10px;font-family:var(--mono);color:var(--accent);letter-spacing:1px;text-transform:uppercase;}
+
+.sidebar-section{font-size:10px;font-family:var(--mono);color:var(--muted);letter-spacing:1.5px;text-transform:uppercase;padding:0 12px;margin:20px 0 8px;}
+
+.nav-item{
+  display:flex;align-items:center;gap:10px;
+  padding:10px 12px;border-radius:10px;cursor:pointer;
+  font-size:14px;font-weight:500;color:var(--muted2);
+  transition:.2s;margin-bottom:2px;
+}
+.nav-item:hover,.nav-item.active{background:linear-gradient(90deg,#6366f115,transparent);color:var(--text);border-left:2px solid var(--accent);}
+.nav-item .ni{font-size:16px;width:20px;text-align:center;}
+
+.nav-badge{
+  margin-left:auto;font-size:10px;font-family:var(--mono);
+  background:#6366f120;color:var(--accent);
+  padding:2px 6px;border-radius:5px;
+}
+
+.sidebar-bottom{margin-top:auto;padding-top:20px;border-top:1px solid var(--border);}
+
+/* ── MAIN ── */
+#main{flex:1;padding:32px;overflow-y:auto;max-width:100%;}
+
+/* ── TOPBAR ── */
+.topbar{
+  display:flex;align-items:center;gap:16px;margin-bottom:32px;flex-wrap:wrap;
+}
+.topbar-title{font-size:26px;font-weight:700;letter-spacing:-.5px;flex:1;}
+.topbar-title span{color:var(--accent);}
+
+.search-wrap{position:relative;flex:1;max-width:320px;}
+.search-wrap .ico{position:absolute;left:12px;top:50%;transform:translateY(-50%);opacity:.5;font-size:14px;}
+#searchInput{
+  width:100%;background:var(--card);border:1px solid var(--border);
+  color:var(--text);padding:10px 14px 10px 36px;
+  border-radius:10px;outline:none;font-family:var(--font);font-size:14px;
+  transition:.2s;
+}
+#searchInput:focus{border-color:var(--accent);}
+
+.btn-icon{
+  background:var(--card);border:1px solid var(--border);
+  color:var(--text);padding:10px 14px;border-radius:10px;
+  cursor:pointer;font-size:14px;transition:.2s;
+  display:flex;align-items:center;gap:8px;font-family:var(--font);font-size:13px;font-weight:500;
+}
+.btn-icon:hover{border-color:var(--accent);color:var(--accent);}
+.btn-primary{background:linear-gradient(135deg,var(--accent),var(--accent2));border:none;color:#fff;}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 8px 24px #6366f144;color:#fff;}
+
+/* ── STATS BAR ── */
+.stats-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:14px;margin-bottom:28px;}
+.stat-card{
+  background:var(--card);border:1px solid var(--border);border-radius:var(--radius);
+  padding:18px 20px;position:relative;overflow:hidden;
+}
+.stat-card::before{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(135deg,var(--accent)06,transparent);
+}
+.stat-val{font-size:28px;font-weight:700;font-family:var(--mono);color:var(--accent);}
+.stat-label{font-size:12px;color:var(--muted2);margin-top:4px;}
+
+/* ── CATEGORY TABS ── */
+.cat-row{display:flex;gap:8px;margin-bottom:24px;flex-wrap:wrap;}
+.cat-pill{
+  padding:6px 14px;border-radius:99px;font-size:12px;font-weight:600;
+  border:1px solid var(--border);color:var(--muted2);cursor:pointer;transition:.2s;
+  letter-spacing:.3px;
+}
+.cat-pill:hover,.cat-pill.active{
+  background:linear-gradient(135deg,var(--accent)22,var(--accent2)11);
+  border-color:var(--accent);color:var(--accent);
+}
+
+/* ── GAME GRID ── */
+#gameGrid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(190px,1fr));
+  gap:18px;
+}
+
+.game-card{
+  background:var(--card);border:1px solid var(--border);border-radius:var(--radius2);
+  overflow:hidden;cursor:pointer;transition:.3s;position:relative;
+  group:true;
+}
+.game-card:hover{
+  border-color:var(--accent);transform:translateY(-6px);
+  box-shadow:0 20px 40px #6366f120,0 0 0 1px #6366f133;
+}
+
+.game-thumb{
+  width:100%;aspect-ratio:16/9;object-fit:cover;display:block;
+  background:var(--surface);
+}
+.game-thumb-placeholder{
+  width:100%;aspect-ratio:16/9;
+  background:linear-gradient(135deg,var(--border),var(--surface));
+  display:flex;align-items:center;justify-content:center;
+  font-size:36px;
+}
+
+.game-info{padding:14px 14px 16px;}
+.game-title{font-weight:600;font-size:14px;margin-bottom:4px;}
+.game-cat{
+  font-size:11px;font-family:var(--mono);color:var(--accent);
+  text-transform:uppercase;letter-spacing:.8px;
+}
+
+.game-play-overlay{
+  position:absolute;inset:0;background:#05051088;
+  display:flex;align-items:center;justify-content:center;
+  opacity:0;transition:.2s;
+}
+.game-card:hover .game-play-overlay{opacity:1;}
+.play-btn{
+  width:48px;height:48px;border-radius:50%;
+  background:linear-gradient(135deg,var(--accent),var(--accent2));
+  display:flex;align-items:center;justify-content:center;
+  font-size:18px;
+  box-shadow:0 0 30px #6366f166;
+  transform:scale(.8);transition:.2s;
+}
+.game-card:hover .play-btn{transform:scale(1);}
+
+/* special suggest card */
+.suggest-card{
+  background:var(--card);border:2px dashed var(--border2);border-radius:var(--radius2);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  padding:32px;cursor:pointer;transition:.3s;text-align:center;min-height:180px;
+}
+.suggest-card:hover{border-color:var(--accent);color:var(--accent);}
+.suggest-icon{font-size:28px;margin-bottom:10px;color:var(--muted);}
+.suggest-card:hover .suggest-icon{color:var(--accent);}
+.suggest-label{font-size:13px;font-weight:600;color:var(--muted2);}
+.suggest-card:hover .suggest-label{color:var(--accent);}
+
+/* ── GAME FRAME VIEW ── */
+#frameView{display:none;position:fixed;inset:0;z-index:100;background:var(--bg);flex-direction:column;}
+#frameView.open{display:flex;}
+
+.frame-topbar{
+  height:52px;background:#08080f;border-bottom:1px solid var(--border);
+  display:flex;align-items:center;gap:12px;padding:0 20px;flex-shrink:0;
+}
+.frame-back{
+  background:var(--card);border:1px solid var(--border);color:var(--text);
+  padding:7px 14px;border-radius:8px;cursor:pointer;font-size:13px;font-weight:500;
+  font-family:var(--font);transition:.2s;display:flex;align-items:center;gap:6px;
+}
+.frame-back:hover{border-color:var(--accent);}
+.frame-title{font-size:14px;font-weight:600;color:var(--muted2);}
+#gameIframe{flex:1;border:none;}
+
+/* ── SETTINGS MODAL ── */
+.modal-bg{
+  position:fixed;inset:0;z-index:500;
+  background:#00000088;backdrop-filter:blur(12px);
+  display:none;align-items:center;justify-content:center;
+  opacity:0;transition:opacity .25s;
+}
+.modal-bg.open{display:flex;opacity:1;}
+
+.modal{
+  background:#0d0d1e;border:1px solid var(--border2);border-radius:24px;
+  width:min(500px,95%);max-height:90vh;overflow-y:auto;padding:28px;
+  transform:scale(.95);transition:transform .25s;
+}
+.modal-bg.open .modal{transform:scale(1);}
+
+.modal-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;}
+.modal-title{font-size:20px;font-weight:700;}
+.close-btn{background:var(--card);border:1px solid var(--border);color:var(--muted2);width:32px;height:32px;border-radius:8px;cursor:pointer;font-size:16px;transition:.2s;display:flex;align-items:center;justify-content:center;}
+.close-btn:hover{color:var(--text);border-color:var(--border2);}
+
+.setting-group{margin-bottom:22px;}
+.setting-label{font-size:12px;font-family:var(--mono);color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px;display:block;}
+
+.theme-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;}
+.theme-swatch{
+  aspect-ratio:1;border-radius:10px;cursor:pointer;border:2px solid transparent;transition:.2s;
+  display:flex;align-items:center;justify-content:center;font-size:16px;
+}
+.theme-swatch.active{border-color:#fff;transform:scale(1.1);}
+
+.select-row{display:flex;gap:8px;flex-wrap:wrap;}
+.select-pill{
+  padding:7px 14px;border-radius:8px;font-size:12px;font-weight:600;
+  border:1px solid var(--border);color:var(--muted2);cursor:pointer;transition:.2s;
+}
+.select-pill:hover,.select-pill.active{
+  background:#6366f120;border-color:var(--accent);color:var(--accent);
+}
+
+/* ── SCROLLBAR ── */
+::-webkit-scrollbar{width:5px;}
+::-webkit-scrollbar-track{background:transparent;}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:99px;}
+
+/* ── NO RESULTS ── */
+.no-results{grid-column:1/-1;text-align:center;padding:60px 20px;color:var(--muted);}
+.no-results .nr-ico{font-size:40px;margin-bottom:12px;}
+.no-results p{font-size:15px;}
+</style>
 </head>
 <body>
 
-    <nav id="sidebar">
-        <h2 style="color: var(--accent);">THE VAULT</h2>
-        <div class="nav-item" onclick="showHome()">Home</div>
-        <div class="nav-item" onclick="cloakTab()">Cloak Tab</div>
-        <div class="nav-item" onclick="alert('Settings: Coming Soon!')">Settings</div>
-    </nav>
+<!-- BOOT -->
+<div class="boot" id="boot">
+  <div class="boot-inner">
+    <div class="boot-orb">🎮</div>
+    <div class="boot-title">THE VAULT</div>
+    <div class="boot-sub">Initializing game library...</div>
+    <div class="boot-bar"><div class="boot-fill" id="bootFill"></div></div>
+    <div class="boot-label" id="bootLabel">LOADING MODULES...</div>
+  </div>
+</div>
 
-    <main id="main-area">
-        <input type="text" id="search" placeholder="Search 50+ games...">
-        <div class="game-grid" id="gameGrid"></div>
-        <iframe id="game-frame"></iframe>
-    </main>
+<!-- PARTICLES -->
+<div id="tsparticles"></div>
+<div class="overlay-glow"></div>
 
-    <script>
-        const gamesData = [
-            { "title": "Suggest A Game", "special": true, "image": "https://cdn-icons-png.flaticon.com/512/1828/1828817.png" },
-            { "title": "Minecraft", "path": "./gmes/minecraft/index.html", "image": "./gmes/minecraft/thumb.png", "category": "Sandbox" },
-            { "title": "Slope", "path": "./gmes/slope/index.html", "image": "./gmes/slope/thumb.png", "category": "Arcade" },
-            { "title": "Geometry Dash", "path": "./gmes/geometrydash/index.html", "image": "./gmes/geometrydash/thumb.png", "category": "Arcade" },
-            { "title": "1v1 lol", "path": "./gmes/1v1lol/index.html", "image": "./gmes/1v1lol/thumb.png", "category": "Shooter" }
-        ];
+<!-- WEATHER / MATRIX -->
+<div class="weather-layer" id="weatherLayer"></div>
+<canvas id="matrixCanvas"></canvas>
 
-        function render(data) {
-            const grid = document.getElementById('gameGrid');
-            grid.innerHTML = data.map(g => g.special ? 
-                `<div class="game-card" onclick="window.open('https://forms.gle/qfWMzpUyt78AQo6r8', '_blank')"><h3>${g.title}</h3></div>` :
-                `<div class="game-card" onclick="playGame('${g.path}')">
-                    <img src="${g.image}">
-                    <h3>${g.title}</h3>
-                    <small>${g.category}</small>
-                 </div>`
-            ).join('');
-        }
+<!-- SETTINGS MODAL -->
+<div class="modal-bg" id="settingsModal">
+  <div class="modal">
+    <div class="modal-head">
+      <span class="modal-title">⚙️ Settings</span>
+      <button class="close-btn" onclick="closeSettings()">✕</button>
+    </div>
 
-        function playGame(path) {
-            const frame = document.getElementById('game-frame');
-            document.getElementById('gameGrid').style.display = 'none';
-            document.getElementById('search').style.display = 'none';
-            frame.src = path;
-            frame.style.display = 'block';
-        }
+    <div class="setting-group">
+      <span class="setting-label">Color Theme</span>
+      <div class="theme-grid" id="themeGrid"></div>
+    </div>
 
-        function showHome() {
-            document.getElementById('gameGrid').style.display = 'grid';
-            document.getElementById('search').style.display = 'block';
-            document.getElementById('game-frame').style.display = 'none';
-        }
+    <div class="setting-group">
+      <span class="setting-label">Background Effect</span>
+      <div class="select-row" id="bgRow">
+        <div class="select-pill active" data-bg="none" onclick="setBg(this,'none')">✨ None</div>
+        <div class="select-pill" data-bg="particles" onclick="setBg(this,'particles')">🔵 Particles</div>
+        <div class="select-pill" data-bg="rain" onclick="setBg(this,'rain')">🌧️ Rain</div>
+        <div class="select-pill" data-bg="snow" onclick="setBg(this,'snow')">❄️ Snow</div>
+        <div class="select-pill" data-bg="stars" onclick="setBg(this,'stars')">⭐ Stars</div>
+        <div class="select-pill" data-bg="matrix" onclick="setBg(this,'matrix')">💾 Matrix</div>
+      </div>
+    </div>
 
-        function cloakTab() {
-            document.title = "Google Drive";
-            var link = document.querySelector("link[rel~='icon']");
-            if (!link) {
-                link = document.createElement('link');
-                link.rel = 'icon';
-                document.head.appendChild(link);
-            }
-            link.href = 'https://ssl.gstatic.com/images/branding/product/1x/drive_2020q4_32dp.png';
-        }
+    <div class="setting-group">
+      <span class="setting-label">Card Style</span>
+      <div class="select-row" id="styleRow">
+        <div class="select-pill active" data-style="grid" onclick="setCardStyle(this,'grid')">⊞ Grid</div>
+        <div class="select-pill" data-style="list" onclick="setCardStyle(this,'list')">☰ List</div>
+      </div>
+    </div>
 
-        document.getElementById('search').addEventListener('input', (e) => {
-            const filtered = gamesData.filter(g => g.title.toLowerCase().includes(e.target.value.toLowerCase()));
-            render(filtered);
-        });
+    <div class="setting-group">
+      <span class="setting-label">Grid Size</span>
+      <div class="select-row" id="sizeRow">
+        <div class="select-pill" data-size="small" onclick="setGridSize(this,'small')">Small</div>
+        <div class="select-pill active" data-size="medium" onclick="setGridSize(this,'medium')">Medium</div>
+        <div class="select-pill" data-size="large" onclick="setGridSize(this,'large')">Large</div>
+      </div>
+    </div>
+  </div>
+</div>
 
-        render(gamesData);
-    </script>
+<!-- GAME FRAME -->
+<div id="frameView">
+  <div class="frame-topbar">
+    <button class="frame-back" onclick="closeGame()">◀ Back</button>
+    <span class="frame-title" id="frameTitle">—</span>
+  </div>
+  <iframe id="gameIframe" allowfullscreen></iframe>
+</div>
+
+<!-- APP -->
+<div id="app">
+  <nav id="sidebar">
+    <div class="sidebar-logo">
+      <div class="logo-icon">🎮</div>
+      <div>
+        <div class="logo-name">Vault</div>
+        <div class="logo-tag">Game Hub</div>
+      </div>
+    </div>
+
+    <div class="sidebar-section">Navigation</div>
+    <div class="nav-item active" onclick="filterCat('all',this)"><span class="ni">🏠</span>All Games<span class="nav-badge" id="totalBadge">0</span></div>
+    <div class="nav-item" onclick="filterCat('Arcade',this)"><span class="ni">🕹️</span>Arcade</div>
+    <div class="nav-item" onclick="filterCat('Sandbox',this)"><span class="ni">🏗️</span>Sandbox</div>
+    <div class="nav-item" onclick="filterCat('Shooter',this)"><span class="ni">🎯</span>Shooter</div>
+    <div class="nav-item" onclick="filterCat('Puzzle',this)"><span class="ni">🧩</span>Puzzle</div>
+    <div class="nav-item" onclick="filterCat('Racing',this)"><span class="ni">🏎️</span>Racing</div>
+    <div class="nav-item" onclick="filterCat('Sports',this)"><span class="ni">⚽</span>Sports</div>
+    <div class="nav-item" onclick="filterCat('Strategy',this)"><span class="ni">♟️</span>Strategy</div>
+
+    <div class="sidebar-section">Other</div>
+    <div class="nav-item" onclick="openSettings()"><span class="ni">⚙️</span>Settings</div>
+    <div class="nav-item" onclick="window.open('https://forms.gle/qfWMzpUyt78AQo6r8','_blank')"><span class="ni">➕</span>Suggest Game</div>
+
+    <div class="sidebar-bottom">
+      <div style="font-size:11px;color:var(--muted);font-family:var(--mono);">THE VAULT v2.0</div>
+    </div>
+  </nav>
+
+  <main id="main">
+    <div class="topbar">
+      <div class="topbar-title">Game <span>Library</span></div>
+      <div class="search-wrap">
+        <span class="ico">🔍</span>
+        <input type="text" id="searchInput" placeholder="Search games..."/>
+      </div>
+      <button class="btn-icon btn-primary" onclick="openSettings()">⚙️ Settings</button>
+    </div>
+
+    <div class="stats-row">
+      <div class="stat-card"><div class="stat-val" id="statTotal">0</div><div class="stat-label">Total Games</div></div>
+      <div class="stat-card"><div class="stat-val" id="statCats">0</div><div class="stat-label">Categories</div></div>
+      <div class="stat-card"><div class="stat-val" id="statNew">3</div><div class="stat-label">Recently Added</div></div>
+    </div>
+
+    <div class="cat-row" id="catRow"></div>
+
+    <div id="gameGrid"></div>
+  </main>
+</div>
+
+<script>
+// ── DATA ──
+const games = [
+  {title:"Suggest A Game",special:true,icon:"➕"},
+  {title:"Minecraft",path:"./gmes/minecraft/index.html",thumb:"./gmes/minecraft/thumb.png",icon:"🏗️",cat:"Sandbox",desc:"Build anything"},
+  {title:"Geometry Dash",path:"./gmes/geometrydash/index.html",thumb:"./gmes/geometrydash/thumb.png",icon:"🔷",cat:"Arcade",desc:"Rhythm platformer"},
+  {title:"1v1.lol",path:"./gmes/1v1lol/index.html",thumb:"./gmes/1v1lol/thumb.png",icon:"🎯",cat:"Shooter",desc:"Build & battle"},
+];
+
+// ── STATE ──
+let state = {
+  cat: 'all',
+  query: '',
+  theme: localStorage.getItem('vt_theme') || 'default',
+  bg: localStorage.getItem('vt_bg') || 'particles',
+  cardStyle: localStorage.getItem('vt_style') || 'grid',
+  gridSize: localStorage.getItem('vt_size') || 'medium',
+};
+
+// ── THEMES ──
+const themes = [
+  {id:'default',name:'Indigo',grad:'linear-gradient(135deg,#6366f1,#8b5cf6)',accent:'#6366f1',accent2:'#8b5cf6'},
+  {id:'cyan',name:'Cyan',grad:'linear-gradient(135deg,#06b6d4,#3b82f6)',accent:'#06b6d4',accent2:'#3b82f6'},
+  {id:'green',name:'Green',grad:'linear-gradient(135deg,#10b981,#06b6d4)',accent:'#10b981',accent2:'#06b6d4'},
+  {id:'rose',name:'Rose',grad:'linear-gradient(135deg,#f43f5e,#ec4899)',accent:'#f43f5e',accent2:'#ec4899'},
+  {id:'amber',name:'Amber',grad:'linear-gradient(135deg,#f59e0b,#ef4444)',accent:'#f59e0b',accent2:'#ef4444'},
+];
+
+function applyTheme(id) {
+  const t = themes.find(x=>x.id===id) || themes[0];
+  document.documentElement.style.setProperty('--accent',t.accent);
+  document.documentElement.style.setProperty('--accent2',t.accent2);
+  state.theme = id;
+  localStorage.setItem('vt_theme',id);
+  document.querySelectorAll('.theme-swatch').forEach(s=>{
+    s.classList.toggle('active',s.dataset.theme===id);
+  });
+}
+
+// ── BOOT ──
+async function boot() {
+  const fill = document.getElementById('bootFill');
+  const label = document.getElementById('bootLabel');
+  const steps = [
+    [20,'LOADING ASSETS...'],
+    [45,'INDEXING GAMES...'],
+    [70,'WARMING UP ENGINE...'],
+    [90,'APPLYING SETTINGS...'],
+    [100,'READY!'],
+  ];
+  for(const [pct,txt] of steps) {
+    fill.style.width = pct+'%';
+    label.textContent = txt;
+    await delay(500);
+  }
+  await delay(400);
+  document.getElementById('boot').classList.add('gone');
+  await delay(300);
+  document.getElementById('boot').remove();
+}
+
+function delay(ms){return new Promise(r=>setTimeout(r,ms));}
+
+// ── PARTICLES ──
+tsParticles.load('tsparticles',{
+  fpsLimit:60,
+  particles:{
+    number:{value:80},
+    color:{value:['#6366f1','#8b5cf6','#06b6d4']},
+    links:{enable:true,distance:160,color:'#2a2a50',opacity:.5},
+    move:{enable:true,speed:.8},
+    opacity:{value:.6},
+    size:{value:{min:1,max:3}},
+  }
+});
+
+// ── MATRIX ──
+const mc = document.getElementById('matrixCanvas');
+const mx = mc.getContext('2d');
+mc.width = window.innerWidth; mc.height = window.innerHeight;
+const mcCols = mc.width/14;
+const mcDrops = new Array(Math.floor(mcCols)).fill(1);
+const mcChars = 'アイウエオカキクケコABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+function drawMatrix(){
+  mx.fillStyle='rgba(0,0,0,.05)';mx.fillRect(0,0,mc.width,mc.height);
+  mx.fillStyle='#0f0';mx.font='14px monospace';
+  for(let i=0;i<mcDrops.length;i++){
+    mx.fillText(mcChars[Math.floor(Math.random()*mcChars.length)],i*14,mcDrops[i]*14);
+    if(mcDrops[i]*14>mc.height&&Math.random()>.975)mcDrops[i]=0;
+    mcDrops[i]++;
+  }
+}
+setInterval(drawMatrix,35);
+
+// ── WEATHER BUILDERS ──
+function buildRain(){
+  const l=document.getElementById('weatherLayer'); l.innerHTML='';
+  for(let i=0;i<180;i++){
+    const d=document.createElement('div'); d.className='drop';
+    d.style.left=Math.random()*100+'%';
+    d.style.height=(60+Math.random()*40)+'px';
+    d.style.animationDuration=(.4+Math.random()*.6)+'s';
+    d.style.opacity=Math.random()*.6+.2;
+    l.appendChild(d);
+  }
+}
+function buildSnow(){
+  const l=document.getElementById('weatherLayer'); l.innerHTML='';
+  for(let i=0;i<100;i++){
+    const d=document.createElement('div'); d.className='snowflake';
+    d.innerHTML='●';
+    d.style.left=Math.random()*100+'%';
+    d.style.fontSize=(4+Math.random()*8)+'px';
+    d.style.animationDuration=(6+Math.random()*10)+'s';
+    d.style.animationDelay=Math.random()*-10+'s';
+    l.appendChild(d);
+  }
+}
+function buildStars(){
+  const l=document.getElementById('weatherLayer'); l.innerHTML='';
+  for(let i=0;i<200;i++){
+    const d=document.createElement('div'); d.className='star-dot';
+    d.style.left=Math.random()*100+'%';
+    d.style.top=Math.random()*100+'%';
+    const sz=Math.random()*2.5+.5;
+    d.style.width=d.style.height=sz+'px';
+    d.style.animationDuration=(1+Math.random()*3)+'s';
+    d.style.animationDelay=Math.random()*-4+'s';
+    l.appendChild(d);
+  }
+}
+
+function setBg(el,type){
+  document.querySelectorAll('#bgRow .select-pill').forEach(x=>x.classList.remove('active'));
+  el.classList.add('active');
+  const wl=document.getElementById('weatherLayer');
+  mc.classList.remove('active');
+  wl.classList.remove('active');
+  wl.innerHTML='';
+  if(type==='rain'){buildRain();wl.classList.add('active');}
+  else if(type==='snow'){buildSnow();wl.classList.add('active');}
+  else if(type==='stars'){buildStars();wl.classList.add('active');}
+  else if(type==='matrix'){mc.classList.add('active');}
+  state.bg=type;
+  localStorage.setItem('vt_bg',type);
+}
+
+function setCardStyle(el,s){
+  document.querySelectorAll('#styleRow .select-pill').forEach(x=>x.classList.remove('active'));
+  el.classList.add('active');
+  state.cardStyle=s;
+  localStorage.setItem('vt_style',s);
+  renderGames();
+}
+
+function setGridSize(el,s){
+  document.querySelectorAll('#sizeRow .select-pill').forEach(x=>x.classList.remove('active'));
+  el.classList.add('active');
+  state.gridSize=s;
+  localStorage.setItem('vt_size',s);
+  const sizes={small:'150px',medium:'190px',large:'240px'};
+  document.getElementById('gameGrid').style.gridTemplateColumns=`repeat(auto-fill,minmax(${sizes[s]},1fr))`;
+}
+
+// ── SETTINGS MODAL ──
+function buildThemeSwatches(){
+  const g=document.getElementById('themeGrid');
+  g.innerHTML=themes.map(t=>`
+    <div class="theme-swatch${t.id===state.theme?' active':''}" data-theme="${t.id}" style="background:${t.grad}" onclick="applyTheme('${t.id}')" title="${t.name}">
+      ${t.id===state.theme?'✓':''}
+    </div>`).join('');
+}
+
+function openSettings(){
+  buildThemeSwatches();
+  document.getElementById('settingsModal').classList.add('open');
+}
+function closeSettings(){
+  document.getElementById('settingsModal').classList.remove('open');
+}
+document.getElementById('settingsModal').addEventListener('click',e=>{
+  if(e.target===e.currentTarget)closeSettings();
+});
+
+// ── RENDER ──
+function getFiltered(){
+  const q=state.query.toLowerCase();
+  return games.filter(g=>{
+    if(g.special)return !q;
+    const matchQ=!q||g.title.toLowerCase().includes(q)||(g.cat||'').toLowerCase().includes(q);
+    const matchC=state.cat==='all'||g.cat===state.cat;
+    return matchQ&&matchC;
+  });
+}
+
+function renderGames(){
+  const grid=document.getElementById('gameGrid');
+  const filtered=getFiltered();
+
+  if(state.cardStyle==='list'){
+    grid.style.gridTemplateColumns='1fr';
+  } else {
+    const sizes={small:'150px',medium:'190px',large:'240px'};
+    grid.style.gridTemplateColumns=`repeat(auto-fill,minmax(${sizes[state.gridSize]},1fr))`;
+  }
+
+  if(!filtered.length){
+    grid.innerHTML=`<div class="no-results"><div class="nr-ico">🔍</div><p>No games found for "${state.query}"</p></div>`;
+    return;
+  }
+
+  grid.innerHTML=filtered.map(g=>{
+    if(g.special){
+      return `<div class="suggest-card" onclick="window.open('https://forms.gle/qfWMzpUyt78AQo6r8','_blank')">
+        <div class="suggest-icon">➕</div>
+        <div class="suggest-label">Suggest a Game</div>
+      </div>`;
+    }
+    if(state.cardStyle==='list'){
+      return `<div class="game-card" onclick="playGame('${g.path}','${g.title}')" style="display:flex;align-items:center;gap:16px;padding:14px 18px;">
+        <div style="font-size:28px;width:44px;text-align:center;">${g.icon}</div>
+        <div style="flex:1;">
+          <div class="game-title">${g.title}</div>
+          <div class="game-cat">${g.cat||''}</div>
+        </div>
+        <div style="font-size:12px;color:var(--muted2);">${g.desc||''}</div>
+        <div style="font-size:18px;opacity:.5;">▶</div>
+      </div>`;
+    }
+    const thumb = g.thumb
+      ? `<img class="game-thumb" src="${g.thumb}" alt="${g.title}" onerror="this.parentNode.innerHTML='<div class=game-thumb-placeholder>${g.icon}</div>'">`
+      : `<div class="game-thumb-placeholder">${g.icon}</div>`;
+    return `<div class="game-card" onclick="playGame('${g.path}','${g.title}')">
+      ${thumb}
+      <div class="game-play-overlay"><div class="play-btn">▶</div></div>
+      <div class="game-info">
+        <div class="game-title">${g.title}</div>
+        <div class="game-cat">${g.cat||''}</div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function renderCats(){
+  const cats=['all',...new Set(games.filter(g=>!g.special&&g.cat).map(g=>g.cat))];
+  document.getElementById('catRow').innerHTML=cats.map(c=>`
+    <div class="cat-pill${state.cat===c?' active':''}" onclick="filterCat('${c}',null)">${c==='all'?'🎮 All':c}</div>
+  `).join('');
+  document.getElementById('totalBadge').textContent=games.filter(g=>!g.special).length;
+  document.getElementById('statTotal').textContent=games.filter(g=>!g.special).length;
+  document.getElementById('statCats').textContent=cats.length-1;
+}
+
+function filterCat(cat,navEl){
+  state.cat=cat;
+  document.querySelectorAll('.nav-item').forEach(x=>x.classList.remove('active'));
+  if(navEl)navEl.classList.add('active');
+  document.querySelectorAll('.cat-pill').forEach(x=>{
+    x.classList.toggle('active',x.textContent.includes(cat)||( cat==='all'&&x.textContent.includes('All')));
+  });
+  renderGames();
+}
+
+// ── GAME PLAYER ──
+function playGame(path,title){
+  document.getElementById('gameIframe').src=path;
+  document.getElementById('frameTitle').textContent=title;
+  document.getElementById('frameView').classList.add('open');
+}
+function closeGame(){
+  document.getElementById('frameView').classList.remove('open');
+  document.getElementById('gameIframe').src='';
+}
+
+// ── SEARCH ──
+document.getElementById('searchInput').addEventListener('input',e=>{
+  state.query=e.target.value;
+  renderGames();
+});
+
+// ── INIT ──
+(async()=>{
+  await boot();
+  applyTheme(state.theme);
+  renderCats();
+  renderGames();
+
+  // Apply saved bg
+  const bgPill=document.querySelector(`[data-bg="${state.bg}"]`);
+  if(bgPill)setBg(bgPill,state.bg);
+
+  // Apply saved grid size
+  const sizePill=document.querySelector(`[data-size="${state.gridSize}"]`);
+  if(sizePill){sizePill.classList.add('active');}
+
+  // Apply saved card style
+  const stylePill=document.querySelector(`[data-style="${state.cardStyle}"]`);
+  if(stylePill)stylePill.classList.add('active');
+  if(state.cardStyle==='list'){document.getElementById('gameGrid').style.gridTemplateColumns='1fr';}
+})();
+
+// ESC to close
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape'){closeSettings();closeGame();}
+});
+</script>
 </body>
 </html>
