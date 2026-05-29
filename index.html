@@ -3,22 +3,97 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>The Vault | UBG Portal</title>
-    <link rel="stylesheet" href="style.css">
+    <title>The Vault | UBG</title>
+    <style>
+        :root { --bg: #09090b; --card: #18181b; --accent: #38bdf8; --text: #f4f4f5; --border: #27272a; }
+        body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', sans-serif; margin: 0; display: flex; height: 100vh; overflow: hidden; }
+        
+        /* Sidebar */
+        #sidebar { width: 260px; background: var(--card); border-right: 1px solid var(--border); padding: 20px; display: flex; flex-direction: column; }
+        .nav-item { padding: 12px; cursor: pointer; border-radius: 6px; margin-bottom: 5px; transition: 0.2s; }
+        .nav-item:hover { background: var(--border); color: var(--accent); }
+        
+        /* Main Content */
+        #main-area { flex-grow: 1; padding: 30px; overflow-y: auto; }
+        #search { width: 100%; padding: 12px; background: var(--card); border: 1px solid var(--border); color: white; border-radius: 8px; margin-bottom: 25px; }
+        
+        /* Grid & Cards */
+        .game-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 20px; }
+        .game-card { background: var(--card); border: 1px solid var(--border); padding: 15px; border-radius: 12px; cursor: pointer; transition: 0.3s; text-align: center; }
+        .game-card:hover { border-color: var(--accent); transform: translateY(-5px); }
+        .game-card img { width: 100%; aspect-ratio: 16/9; object-fit: cover; border-radius: 6px; }
+        
+        /* Iframe */
+        #game-frame { width: 100%; height: 85vh; border: none; border-radius: 12px; display: none; }
+    </style>
 </head>
 <body>
-    <div id="app">
-        <nav id="sidebar">
-            <h1>THE VAULT</h1>
-            <ul id="nav-links">
-                <li data-page="home">Games</li>
-                <li data-page="settings">Settings</li>
-                <li data-page="favorites">Favorites</li>
-            </ul>
-        </nav>
-        <main id="content">
-            </main>
-    </div>
-    <script src="app.js"></script>
+
+    <nav id="sidebar">
+        <h2 style="color: var(--accent);">THE VAULT</h2>
+        <div class="nav-item" onclick="showHome()">Home</div>
+        <div class="nav-item" onclick="cloakTab()">Cloak Tab</div>
+        <div class="nav-item" onclick="alert('Settings: Coming Soon!')">Settings</div>
+    </nav>
+
+    <main id="main-area">
+        <input type="text" id="search" placeholder="Search 50+ games...">
+        <div class="game-grid" id="gameGrid"></div>
+        <iframe id="game-frame"></iframe>
+    </main>
+
+    <script>
+        const gamesData = [
+            { "title": "Suggest A Game", "special": true, "image": "https://cdn-icons-png.flaticon.com/512/1828/1828817.png" },
+            { "title": "Minecraft", "path": "./gmes/minecraft/index.html", "image": "./gmes/minecraft/thumb.png", "category": "Sandbox" },
+            { "title": "Slope", "path": "./gmes/slope/index.html", "image": "./gmes/slope/thumb.png", "category": "Arcade" },
+            { "title": "Geometry Dash", "path": "./gmes/geometrydash/index.html", "image": "./gmes/geometrydash/thumb.png", "category": "Arcade" },
+            { "title": "1v1 lol", "path": "./gmes/1v1lol/index.html", "image": "./gmes/1v1lol/thumb.png", "category": "Shooter" }
+        ];
+
+        function render(data) {
+            const grid = document.getElementById('gameGrid');
+            grid.innerHTML = data.map(g => g.special ? 
+                `<div class="game-card" onclick="window.open('https://forms.gle/qfWMzpUyt78AQo6r8', '_blank')"><h3>${g.title}</h3></div>` :
+                `<div class="game-card" onclick="playGame('${g.path}')">
+                    <img src="${g.image}">
+                    <h3>${g.title}</h3>
+                    <small>${g.category}</small>
+                 </div>`
+            ).join('');
+        }
+
+        function playGame(path) {
+            const frame = document.getElementById('game-frame');
+            document.getElementById('gameGrid').style.display = 'none';
+            document.getElementById('search').style.display = 'none';
+            frame.src = path;
+            frame.style.display = 'block';
+        }
+
+        function showHome() {
+            document.getElementById('gameGrid').style.display = 'grid';
+            document.getElementById('search').style.display = 'block';
+            document.getElementById('game-frame').style.display = 'none';
+        }
+
+        function cloakTab() {
+            document.title = "Google Drive";
+            var link = document.querySelector("link[rel~='icon']");
+            if (!link) {
+                link = document.createElement('link');
+                link.rel = 'icon';
+                document.head.appendChild(link);
+            }
+            link.href = 'https://ssl.gstatic.com/images/branding/product/1x/drive_2020q4_32dp.png';
+        }
+
+        document.getElementById('search').addEventListener('input', (e) => {
+            const filtered = gamesData.filter(g => g.title.toLowerCase().includes(e.target.value.toLowerCase()));
+            render(filtered);
+        });
+
+        render(gamesData);
+    </script>
 </body>
 </html>
