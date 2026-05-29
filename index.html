@@ -52,7 +52,6 @@ body{
 
 /* ── WEATHER ── */
 .weather-layer{position:fixed;inset:0;z-index:2;pointer-events:none;overflow:hidden;opacity:0;transition:opacity .5s;}
-.weather-layer.active{opacity:1;}
 
 .drop{position:absolute;bottom:110%;width:1.5px;background:linear-gradient(transparent,#93c5fd88);animation:fall linear infinite;}
 @keyframes fall{to{transform:translateY(120vh);}}
@@ -65,7 +64,6 @@ body{
 
 /* ── MATRIX ── */
 #matrixCanvas{position:fixed;inset:0;z-index:2;pointer-events:none;opacity:0;transition:opacity .5s;}
-#matrixCanvas.active{opacity:.2;}
 
 /* ── BOOT SCREEN ── */
 .boot{
@@ -524,17 +522,25 @@ async function boot() {
 function delay(ms){return new Promise(r=>setTimeout(r,ms));}
 
 // ── PARTICLES ──
-tsParticles.load('tsparticles',{
-  fpsLimit:60,
-  particles:{
-    number:{value:80},
-    color:{value:['#6366f1','#8b5cf6','#06b6d4']},
-    links:{enable:true,distance:160,color:'#2a2a50',opacity:.5},
-    move:{enable:true,speed:.8},
-    opacity:{value:.6},
-    size:{value:{min:1,max:3}},
-  }
-});
+let particlesInstance = null;
+async function startParticles(){
+  if(particlesInstance) return;
+  particlesInstance = await tsParticles.load('tsparticles',{
+    fpsLimit:60,
+    particles:{
+      number:{value:80},
+      color:{value:['#6366f1','#8b5cf6','#06b6d4']},
+      links:{enable:true,distance:160,color:'#2a2a50',opacity:.5},
+      move:{enable:true,speed:.8},
+      opacity:{value:.6},
+      size:{value:{min:1,max:3}},
+    }
+  });
+}
+function stopParticles(){
+  if(particlesInstance){particlesInstance.destroy();particlesInstance=null;}
+  document.getElementById('tsparticles').innerHTML='';
+}
 
 // ── MATRIX ──
 const mc = document.getElementById('matrixCanvas');
@@ -543,7 +549,9 @@ mc.width = window.innerWidth; mc.height = window.innerHeight;
 const mcCols = mc.width/14;
 const mcDrops = new Array(Math.floor(mcCols)).fill(1);
 const mcChars = 'アイウエオカキクケコABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+let matrixActive = false;
 function drawMatrix(){
+  if(!matrixActive) return;
   mx.fillStyle='rgba(0,0,0,.05)';mx.fillRect(0,0,mc.width,mc.height);
   mx.fillStyle='#0f0';mx.font='14px monospace';
   for(let i=0;i<mcDrops.length;i++){
@@ -551,8 +559,17 @@ function drawMatrix(){
     if(mcDrops[i]*14>mc.height&&Math.random()>.975)mcDrops[i]=0;
     mcDrops[i]++;
   }
+  requestAnimationFrame(drawMatrix);
 }
-setInterval(drawMatrix,35);
+function startMatrix(){
+  matrixActive=true; mc.style.opacity='.2';
+  mx.clearRect(0,0,mc.width,mc.height);
+  requestAnimationFrame(drawMatrix);
+}
+function stopMatrix(){
+  matrixActive=false; mc.style.opacity='0';
+  mx.clearRect(0,0,mc.width,mc.height);
+}
 
 // ── WEATHER BUILDERS ──
 function buildRain(){
@@ -595,14 +612,19 @@ function buildStars(){
 function setBg(el,type){
   document.querySelectorAll('#bgRow .select-pill').forEach(x=>x.classList.remove('active'));
   el.classList.add('active');
+  // stop everything first
+  stopParticles();
+  stopMatrix();
   const wl=document.getElementById('weatherLayer');
-  mc.classList.remove('active');
-  wl.classList.remove('active');
+  wl.style.opacity='0';
   wl.innerHTML='';
-  if(type==='rain'){buildRain();wl.classList.add('active');}
-  else if(type==='snow'){buildSnow();wl.classList.add('active');}
-  else if(type==='stars'){buildStars();wl.classList.add('active');}
-  else if(type==='matrix'){mc.classList.add('active');}
+  // start selected
+  if(type==='particles'){ startParticles(); }
+  else if(type==='rain'){ buildRain(); wl.style.opacity='1'; }
+  else if(type==='snow'){ buildSnow(); wl.style.opacity='1'; }
+  else if(type==='stars'){ buildStars(); wl.style.opacity='1'; }
+  else if(type==='matrix'){ startMatrix(); }
+  // 'none' leaves everything off
   state.bg=type;
   localStorage.setItem('vt_bg',type);
 }
@@ -752,9 +774,9 @@ document.getElementById('searchInput').addEventListener('input',e=>{
   renderGames();
   lucide.createIcons();
 
-  // Apply saved bg
-  const bgPill=document.querySelector(`[data-bg="${state.bg}"]`);
-  if(bgPill)setBg(bgPill,state.bg);
+  // Apply saved bg — trigger via pill click to keep state in sync
+  const bgPill=document.querySelector(`[data-bg="${state.bg}"]`) || document.querySelector('[data-bg="none"]');
+  if(bgPill)setBg(bgPill, bgPill.dataset.bg);
 
   // Apply saved grid size
   const sizePill=document.querySelector(`[data-size="${state.gridSize}"]`);
