@@ -224,17 +224,13 @@ body{
   font-size:36px;
 }
 
-.game-info{padding:14px 14px 16px;}
-.game-title{font-weight:600;font-size:14px;margin-bottom:4px;}
-.game-cat{
-  font-size:11px;font-family:var(--mono);color:var(--accent);
-  text-transform:uppercase;letter-spacing:.8px;
-}
+.game-info{padding:12px 14px 14px;}
 
 .game-play-overlay{
-  position:absolute;inset:0;background:#05051088;
+  position:absolute;inset:0;
   display:flex;align-items:center;justify-content:center;
   opacity:0;transition:.2s;
+  background:linear-gradient(to top, #050510cc 0%, transparent 60%);
 }
 .game-card:hover .game-play-overlay{opacity:1;}
 .play-btn{
@@ -246,6 +242,10 @@ body{
   transform:scale(.8);transition:.2s;
 }
 .game-card:hover .play-btn{transform:scale(1);}
+.game-info{
+  padding:12px 14px 14px;
+  background:linear-gradient(to top,#0d0d20,#0d0d20cc);
+}
 
 /* special suggest card */
 .suggest-card{
