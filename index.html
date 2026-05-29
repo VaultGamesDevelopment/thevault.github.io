@@ -3,9 +3,12 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>The Vault</title>
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet"/>
 <script src="https://cdn.jsdelivr.net/npm/tsparticles@2/tsparticles.bundle.min.js"></script>
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+<title>The Vault</title>
+<link rel="icon" type="image/png" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAABiElEQVR4nO2bS04DMRAFm4h1suZ8IDjToHC+rOECsHpoSOzEE9x+r23XCvEZdVV6PIpEzCZj83DPHz2/fn7XHqQWH++HTU7Fv6wsnaMkxq7kQhHlzcrmvlooqniK3DZkN6AnebO8TzJAb/Ig5VV0BvTMRYBeX31w7re79sNeWXvOW4A9AJvfAKOsP4Dv3AD2AGxmAPYAbNwCHJf9yevaNXHdgOOyP6mHaHILKIdoegYohqAcgkoRaE8BlW2gPwbZIegBACuETADQOoRcANAqhGwA4B1CPgDwihAmgJnPNoQKAGqGCBkA1AjxWGsYBi9vX0//vUbIADXEQagANcVBmDPAQ94swAZ4iQPZAN7iQC5AK3EgE6C1OKAHYIkDWgC2OKA8BlXkzRpvgJI4aBJAURy4BlAWB25nQAR5s0DvBbyYAdgDsJkB8MXWT1pEB75zA9gDsPkTYJTbYO15sQG9Rzj3m7dA6pu9bkHKK7sBvUXI+RRJRv5X+lsvZNEZEHUbSuYe/rPDw/MDOr2ahgqdTfQAAAAASUVORK5CYII="/>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet"/>
+
 <style>
 *{margin:0;padding:0;box-sizing:border-box;}
 
@@ -127,7 +130,10 @@ body{
   transition:.2s;margin-bottom:2px;
 }
 .nav-item:hover,.nav-item.active{background:linear-gradient(90deg,#6366f115,transparent);color:var(--text);border-left:2px solid var(--accent);}
-.nav-item .ni{font-size:16px;width:20px;text-align:center;}
+.nav-item i,.modal-title i,.close-btn i,.frame-back i,.select-pill i{width:16px;height:16px;flex-shrink:0;}
+.boot-orb i{width:36px;height:36px;color:#fff;}
+.logo-icon i{width:20px;height:20px;color:#fff;}
+.nav-item i{width:16px;height:16px;}
 
 .nav-badge{
   margin-left:auto;font-size:10px;font-family:var(--mono);
@@ -148,7 +154,7 @@ body{
 .topbar-title span{color:var(--accent);}
 
 .search-wrap{position:relative;flex:1;max-width:320px;}
-.search-wrap .ico{position:absolute;left:12px;top:50%;transform:translateY(-50%);opacity:.5;font-size:14px;}
+.search-wrap .ico{position:absolute;left:12px;top:50%;transform:translateY(-50%);opacity:.5;width:16px;height:16px;pointer-events:none;}
 #searchInput{
   width:100%;background:var(--card);border:1px solid var(--border);
   color:var(--text);padding:10px 14px 10px 36px;
@@ -319,8 +325,12 @@ body{
 
 /* ── NO RESULTS ── */
 .no-results{grid-column:1/-1;text-align:center;padding:60px 20px;color:var(--muted);}
-.no-results .nr-ico{font-size:40px;margin-bottom:12px;}
+.no-results .nr-ico{display:flex;align-items:center;justify-content:center;margin-bottom:12px;}
+.no-results .nr-ico i{width:40px;height:40px;}
 .no-results p{font-size:15px;}
+.suggest-icon{margin-bottom:10px;color:var(--muted);display:flex;align-items:center;justify-content:center;}
+.suggest-icon i{width:32px;height:32px;}
+.suggest-card:hover .suggest-icon{color:var(--accent);}
 </style>
 </head>
 <body>
@@ -328,15 +338,13 @@ body{
 <!-- BOOT -->
 <div class="boot" id="boot">
   <div class="boot-inner">
-    <div class="boot-orb">🎮</div>
+    <div class="boot-orb"><i data-lucide="gamepad-2"></i></div>
     <div class="boot-title">THE VAULT</div>
     <div class="boot-sub">Initializing game library...</div>
     <div class="boot-bar"><div class="boot-fill" id="bootFill"></div></div>
     <div class="boot-label" id="bootLabel">LOADING MODULES...</div>
   </div>
 </div>
-
-<h1>DO NOT USE THIS SITE, I AM REWRITING THE ENTIRE THING, PLEASE WAIT AT LEAST A WEEK FROM TODAY, FRIDAY, MAY 29TH TO USE THE SITE!</h1>
 
 <!-- PARTICLES -->
 <div id="tsparticles"></div>
@@ -350,8 +358,8 @@ body{
 <div class="modal-bg" id="settingsModal">
   <div class="modal">
     <div class="modal-head">
-      <span class="modal-title">⚙️ Settings</span>
-      <button class="close-btn" onclick="closeSettings()">✕</button>
+      <span class="modal-title"><i data-lucide="settings-2"></i> Settings</span>
+      <button class="close-btn" onclick="closeSettings()"><i data-lucide="x"></i></button>
     </div>
 
     <div class="setting-group">
@@ -362,20 +370,20 @@ body{
     <div class="setting-group">
       <span class="setting-label">Background Effect</span>
       <div class="select-row" id="bgRow">
-        <div class="select-pill active" data-bg="none" onclick="setBg(this,'none')">✨ None</div>
-        <div class="select-pill" data-bg="particles" onclick="setBg(this,'particles')">🔵 Particles</div>
-        <div class="select-pill" data-bg="rain" onclick="setBg(this,'rain')">🌧️ Rain</div>
-        <div class="select-pill" data-bg="snow" onclick="setBg(this,'snow')">❄️ Snow</div>
-        <div class="select-pill" data-bg="stars" onclick="setBg(this,'stars')">⭐ Stars</div>
-        <div class="select-pill" data-bg="matrix" onclick="setBg(this,'matrix')">💾 Matrix</div>
+        <div class="select-pill active" data-bg="none" onclick="setBg(this,'none')"><i data-lucide="ban"></i> None</div>
+        <div class="select-pill" data-bg="particles" onclick="setBg(this,'particles')"><i data-lucide="sparkles"></i> Particles</div>
+        <div class="select-pill" data-bg="rain" onclick="setBg(this,'rain')"><i data-lucide="cloud-rain"></i> Rain</div>
+        <div class="select-pill" data-bg="snow" onclick="setBg(this,'snow')"><i data-lucide="snowflake"></i> Snow</div>
+        <div class="select-pill" data-bg="stars" onclick="setBg(this,'stars')"><i data-lucide="star"></i> Stars</div>
+        <div class="select-pill" data-bg="matrix" onclick="setBg(this,'matrix')"><i data-lucide="terminal"></i> Matrix</div>
       </div>
     </div>
 
     <div class="setting-group">
       <span class="setting-label">Card Style</span>
       <div class="select-row" id="styleRow">
-        <div class="select-pill active" data-style="grid" onclick="setCardStyle(this,'grid')">⊞ Grid</div>
-        <div class="select-pill" data-style="list" onclick="setCardStyle(this,'list')">☰ List</div>
+        <div class="select-pill active" data-style="grid" onclick="setCardStyle(this,'grid')"><i data-lucide="layout-grid"></i> Grid</div>
+        <div class="select-pill" data-style="list" onclick="setCardStyle(this,'list')"><i data-lucide="layout-list"></i> List</div>
       </div>
     </div>
 
@@ -393,7 +401,7 @@ body{
 <!-- GAME FRAME -->
 <div id="frameView">
   <div class="frame-topbar">
-    <button class="frame-back" onclick="closeGame()">◀ Back</button>
+    <button class="frame-back" onclick="closeGame()"><i data-lucide="arrow-left"></i> Back</button>
     <span class="frame-title" id="frameTitle">—</span>
   </div>
   <iframe id="gameIframe" allowfullscreen></iframe>
@@ -403,7 +411,7 @@ body{
 <div id="app">
   <nav id="sidebar">
     <div class="sidebar-logo">
-      <div class="logo-icon">🎮</div>
+      <div class="logo-icon"><i data-lucide="gamepad-2"></i></div>
       <div>
         <div class="logo-name">Vault</div>
         <div class="logo-tag">Game Hub</div>
@@ -411,18 +419,18 @@ body{
     </div>
 
     <div class="sidebar-section">Navigation</div>
-    <div class="nav-item active" onclick="filterCat('all',this)"><span class="ni">🏠</span>All Games<span class="nav-badge" id="totalBadge">0</span></div>
-    <div class="nav-item" onclick="filterCat('Arcade',this)"><span class="ni">🕹️</span>Arcade</div>
-    <div class="nav-item" onclick="filterCat('Sandbox',this)"><span class="ni">🏗️</span>Sandbox</div>
-    <div class="nav-item" onclick="filterCat('Shooter',this)"><span class="ni">🎯</span>Shooter</div>
-    <div class="nav-item" onclick="filterCat('Puzzle',this)"><span class="ni">🧩</span>Puzzle</div>
-    <div class="nav-item" onclick="filterCat('Racing',this)"><span class="ni">🏎️</span>Racing</div>
-    <div class="nav-item" onclick="filterCat('Sports',this)"><span class="ni">⚽</span>Sports</div>
-    <div class="nav-item" onclick="filterCat('Strategy',this)"><span class="ni">♟️</span>Strategy</div>
+    <div class="nav-item active" onclick="filterCat('all',this)"><i data-lucide="home"></i>All Games<span class="nav-badge" id="totalBadge">0</span></div>
+    <div class="nav-item" onclick="filterCat('Arcade',this)"><i data-lucide="joystick"></i>Arcade</div>
+    <div class="nav-item" onclick="filterCat('Sandbox',this)"><i data-lucide="blocks"></i>Sandbox</div>
+    <div class="nav-item" onclick="filterCat('Shooter',this)"><i data-lucide="crosshair"></i>Shooter</div>
+    <div class="nav-item" onclick="filterCat('Puzzle',this)"><i data-lucide="puzzle"></i>Puzzle</div>
+    <div class="nav-item" onclick="filterCat('Racing',this)"><i data-lucide="flag"></i>Racing</div>
+    <div class="nav-item" onclick="filterCat('Sports',this)"><i data-lucide="trophy"></i>Sports</div>
+    <div class="nav-item" onclick="filterCat('Strategy',this)"><i data-lucide="brain"></i>Strategy</div>
 
     <div class="sidebar-section">Other</div>
-    <div class="nav-item" onclick="openSettings()"><span class="ni">⚙️</span>Settings</div>
-    <div class="nav-item" onclick="window.open('https://forms.gle/qfWMzpUyt78AQo6r8','_blank')"><span class="ni">➕</span>Suggest Game</div>
+    <div class="nav-item" onclick="openSettings()"><i data-lucide="settings-2"></i>Settings</div>
+    <div class="nav-item" onclick="window.open('https://forms.gle/qfWMzpUyt78AQo6r8','_blank')"><i data-lucide="plus-circle"></i>Suggest Game</div>
 
     <div class="sidebar-bottom">
       <div style="font-size:11px;color:var(--muted);font-family:var(--mono);">THE VAULT v2.0</div>
@@ -433,10 +441,10 @@ body{
     <div class="topbar">
       <div class="topbar-title">Game <span>Library</span></div>
       <div class="search-wrap">
-        <span class="ico">🔍</span>
+        <i data-lucide="search" class="ico"></i>
         <input type="text" id="searchInput" placeholder="Search games..."/>
       </div>
-      <button class="btn-icon btn-primary" onclick="openSettings()">⚙️ Settings</button>
+      <button class="btn-icon btn-primary" onclick="openSettings()"><i data-lucide="settings-2"></i> Settings</button>
     </div>
 
     <div class="stats-row">
@@ -454,10 +462,10 @@ body{
 <script>
 // ── DATA ──
 const games = [
-  {title:"Suggest A Game",special:true,icon:"➕"},
-  {title:"Minecraft",path:"./gmes/minecraft/index.html",thumb:"https://i.imgur.com/nKsYRdJ.png",icon:"🏗️",cat:"Sandbox",desc:"Build anything"},
-  {title:"Geometry Dash",path:"./gmes/geometrydash/index.html",thumb:"https://assets-prd.ignimgs.com/2021/12/14/geometrydash-1639510868467.jpg",icon:"🔷",cat:"Arcade",desc:"Rhythm platformer"},
-  {title:"1v1.lol",path:"./gmes/1v1lol/index.html",thumb:"https://cdn-bgp.bluestacks.com/BGP/us/gametiles_lol.onevone.jpg",icon:"🎯",cat:"Shooter",desc:"Build & battle"},
+  {title:"Suggest A Game",special:true},
+  {title:"Minecraft",path:"./gmes/minecraft/index.html",thumb:"./gmes/minecraft/thumb.png",lucide:"pickaxe",cat:"Sandbox",desc:"Build anything"},
+  {title:"Geometry Dash",path:"./gmes/geometrydash/index.html",thumb:"./gmes/geometrydash/thumb.png",lucide:"zap",cat:"Arcade",desc:"Rhythm platformer"},
+  {title:"1v1.lol",path:"./gmes/1v1lol/index.html",thumb:"./gmes/1v1lol/thumb.png",lucide:"crosshair",cat:"Shooter",desc:"Build & battle"},
 ];
 
 // ── STATE ──
@@ -507,6 +515,7 @@ async function boot() {
     await delay(500);
   }
   await delay(400);
+  lucide.createIcons();
   document.getElementById('boot').classList.add('gone');
   await delay(300);
   document.getElementById('boot').remove();
@@ -620,8 +629,9 @@ function buildThemeSwatches(){
   const g=document.getElementById('themeGrid');
   g.innerHTML=themes.map(t=>`
     <div class="theme-swatch${t.id===state.theme?' active':''}" data-theme="${t.id}" style="background:${t.grad}" onclick="applyTheme('${t.id}')" title="${t.name}">
-      ${t.id===state.theme?'✓':''}
+      ${t.id===state.theme?'<i data-lucide="check"></i>':''}
     </div>`).join('');
+  lucide.createIcons();
 }
 
 function openSettings(){
@@ -658,40 +668,42 @@ function renderGames(){
   }
 
   if(!filtered.length){
-    grid.innerHTML=`<div class="no-results"><div class="nr-ico">🔍</div><p>No games found for "${state.query}"</p></div>`;
+    grid.innerHTML=`<div class="no-results"><div class="nr-ico"><i data-lucide="search-x"></i></div><p>No games found for "${state.query}"</p></div>`;
+    lucide.createIcons();
     return;
   }
 
   grid.innerHTML=filtered.map(g=>{
     if(g.special){
       return `<div class="suggest-card" onclick="window.open('https://forms.gle/qfWMzpUyt78AQo6r8','_blank')">
-        <div class="suggest-icon">➕</div>
+        <div class="suggest-icon"><i data-lucide="plus-circle"></i></div>
         <div class="suggest-label">Suggest a Game</div>
       </div>`;
     }
     if(state.cardStyle==='list'){
       return `<div class="game-card" onclick="playGame('${g.path}','${g.title}')" style="display:flex;align-items:center;gap:16px;padding:14px 18px;">
-        <div style="font-size:28px;width:44px;text-align:center;">${g.icon}</div>
+        <div style="width:36px;display:flex;align-items:center;justify-content:center;color:var(--accent)">${g.lucide?`<i data-lucide="${g.lucide}"></i>`:`<i data-lucide="gamepad-2"></i>`}</div>
         <div style="flex:1;">
           <div class="game-title">${g.title}</div>
           <div class="game-cat">${g.cat||''}</div>
         </div>
         <div style="font-size:12px;color:var(--muted2);">${g.desc||''}</div>
-        <div style="font-size:18px;opacity:.5;">▶</div>
+        <i data-lucide="chevron-right" style="opacity:.4;width:16px;height:16px;"></i>
       </div>`;
     }
     const thumb = g.thumb
-      ? `<img class="game-thumb" src="${g.thumb}" alt="${g.title}" onerror="this.parentNode.innerHTML='<div class=game-thumb-placeholder>${g.icon}</div>'">`
-      : `<div class="game-thumb-placeholder">${g.icon}</div>`;
+      ? `<img class="game-thumb" src="${g.thumb}" alt="${g.title}" onerror="this.parentNode.innerHTML='<div class=game-thumb-placeholder style=\\'display:flex;align-items:center;justify-content:center;aspect-ratio:16/9;background:var(--surface)\\'><i data-lucide=\\'gamepad-2\\'></i></div>'">`
+      : `<div class="game-thumb-placeholder"><i data-lucide="${g.lucide||'gamepad-2'}"></i></div>`;
     return `<div class="game-card" onclick="playGame('${g.path}','${g.title}')">
       ${thumb}
-      <div class="game-play-overlay"><div class="play-btn">▶</div></div>
+      <div class="game-play-overlay"><div class="play-btn"><i data-lucide="play"></i></div></div>
       <div class="game-info">
         <div class="game-title">${g.title}</div>
         <div class="game-cat">${g.cat||''}</div>
       </div>
     </div>`;
   }).join('');
+  lucide.createIcons();
 }
 
 function renderCats(){
@@ -734,9 +746,11 @@ document.getElementById('searchInput').addEventListener('input',e=>{
 // ── INIT ──
 (async()=>{
   await boot();
+  lucide.createIcons();
   applyTheme(state.theme);
   renderCats();
   renderGames();
+  lucide.createIcons();
 
   // Apply saved bg
   const bgPill=document.querySelector(`[data-bg="${state.bg}"]`);
