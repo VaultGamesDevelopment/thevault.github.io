@@ -1,0 +1,14 @@
+:root {
+    --bg-dark: #0f172a;
+    --accent: #38bdf8;
+    --text: #f8fafc;
+}
+
+body { background: var(--bg-dark); color: var(--text); font-family: sans-serif; margin: 0; }
+#app { display: flex; height: 100vh; }
+#sidebar { width: 250px; background: #1e293b; padding: 20px; }
+#content { flex-grow: 1; padding: 40px; overflow-y: auto; }
+
+.game-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 20px; }
+.game-card { background: #334155; padding: 15px; border-radius: 8px; cursor: pointer; transition: 0.3s; }
+.game-card:hover { transform: scale(1.05); border: 1px solid var(--accent); }

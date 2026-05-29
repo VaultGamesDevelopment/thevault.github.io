@@ -1,37 +1,24 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <title>The Vault</title>
-  <link rel="stylesheet" href="style.css">
-
-  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
-
-  <script defer src="firebase.js"></script>
-  <script defer src="app.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Vault | UBG Portal</title>
+    <link rel="stylesheet" href="style.css">
 </head>
-
 <body>
-
-<!-- LOADING SCREEN -->
-<div id="loader">
-  <div class="spinner"></div>
-  <div class="load-text">Loading The Vault...</div>
-</div>
-
-<!-- MAIN APP -->
-<div id="app" style="display:none;">
-
-  <header>
-    <h1>🗄 The Vault</h1>
-    <input id="search" placeholder="Search games...">
-    <a href="admin.html">Admin</a>
-  </header>
-
-  <div id="games"></div>
-
-</div>
-
+    <div id="app">
+        <nav id="sidebar">
+            <h1>THE VAULT</h1>
+            <ul id="nav-links">
+                <li data-page="home">Games</li>
+                <li data-page="settings">Settings</li>
+                <li data-page="favorites">Favorites</li>
+            </ul>
+        </nav>
+        <main id="content">
+            </main>
+    </div>
+    <script src="app.js"></script>
 </body>
 </html>
