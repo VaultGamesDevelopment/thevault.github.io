@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Admin Panel</title>
+
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+
+  <script src="firebase.js"></script>
+</head>
+
+<body style="background:#0a0a0a;color:white;font-family:Arial;padding:20px;">
+
+<h1>Admin Upload</h1>
+
+<input id="title" placeholder="Game Title"><br><br>
+<input id="path" placeholder="./gmes/game.html"><br><br>
+<input id="image" placeholder="Image URL"><br><br>
+
+<button onclick="addGame()">Upload</button>
+
+<script>
+function addGame() {
+  db.collection("games").add({
+    title: title.value,
+    path: path.value,
+    image: image.value
+  });
+
+  alert("Game uploaded!");
+}
+</script>
+
+</body>
+</html>

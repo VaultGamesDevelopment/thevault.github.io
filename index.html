@@ -1,286 +1,37 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-<meta charset="UTF-8">
-<title>The Vault</title>
+  <meta charset="utf-8" />
+  <title>The Vault</title>
+  <link rel="stylesheet" href="style.css">
 
-<style>
-body {
-  margin: 0;
-  font-family: Arial;
-  background: #0a0a0a;
-  color: white;
-  overflow-x: hidden;
-}
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
 
-/* BACKGROUND */
-#bg {
-  position: fixed;
-  inset: 0;
-  z-index: -1;
-  background: #0a0a0a;
-}
-
-/* HEADER */
-header {
-  text-align: center;
-  padding: 20px;
-}
-
-h1 {
-  margin: 0;
-  font-size: 2.8rem;
-  color: #8c5aff;
-  text-shadow: 0 0 10px #8c5aff;
-}
-
-#search {
-  margin-top: 10px;
-  padding: 10px;
-  width: 320px;
-  border-radius: 10px;
-  border: none;
-  outline: none;
-}
-
-/* GRID */
-#grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-  gap: 15px;
-  padding: 20px;
-}
-
-/* CARD */
-.card {
-  background: #111;
-  border-radius: 12px;
-  padding: 10px;
-  cursor: pointer;
-  transition: 0.2s;
-  border: 1px solid #222;
-}
-
-.card:hover {
-  transform: scale(1.05);
-  border-color: #8c5aff;
-  box-shadow: 0 0 15px #8c5aff55;
-}
-
-.card img {
-  width: 100%;
-  border-radius: 10px;
-}
-
-.tag {
-  font-size: 12px;
-  opacity: 0.7;
-  margin-top: 5px;
-}
-
-/* FOOTER */
-footer {
-  text-align: center;
-  padding: 20px;
-}
-
-button {
-  background: #8c5aff;
-  border: none;
-  padding: 10px 15px;
-  color: white;
-  border-radius: 8px;
-  cursor: pointer;
-}
-
-/* MODAL */
-#modal {
-  display: none;
-  position: fixed;
-  inset: 0;
-  background: rgba(0,0,0,0.7);
-  justify-content: center;
-  align-items: center;
-}
-
-.box {
-  background: #111;
-  padding: 20px;
-  border-radius: 10px;
-  width: 300px;
-  text-align: center;
-}
-
-.box input {
-  width: 90%;
-  padding: 10px;
-  margin: 10px 0;
-  border-radius: 8px;
-  border: none;
-}
-</style>
+  <script defer src="firebase.js"></script>
+  <script defer src="app.js"></script>
 </head>
 
 <body>
 
-<!-- PARTICLES -->
-<canvas id="bg"></canvas>
-
-<header>
-  <h1>🗄️ The Vault</h1>
-  <input id="search" placeholder="Search games..." />
-</header>
-
-<main>
-  <div id="grid"></div>
-</main>
-
-<footer>
-  <button onclick="openModal()">Suggest Game</button>
-</footer>
-
-<!-- MODAL -->
-<div id="modal">
-  <div class="box">
-    <h3>Suggest Game</h3>
-    <input id="gameInput" placeholder="Game name..." />
-    <button onclick="submit()">Send</button>
-    <button onclick="closeModal()">Close</button>
-  </div>
+<!-- LOADING SCREEN -->
+<div id="loader">
+  <div class="spinner"></div>
+  <div class="load-text">Loading The Vault...</div>
 </div>
 
-<script>
-/* ---------------- LOAD JSON ---------------- */
-let games = [];
+<!-- MAIN APP -->
+<div id="app" style="display:none;">
 
-fetch("games.json")
-  .then(r => r.json())
-  .then(data => {
-    games = data;
-    render(games);
-  });
+  <header>
+    <h1>🗄 The Vault</h1>
+    <input id="search" placeholder="Search games...">
+    <a href="admin.html">Admin</a>
+  </header>
 
-const grid = document.getElementById("grid");
+  <div id="games"></div>
 
-/* ---------------- RENDER ---------------- */
-function render(list) {
-  grid.innerHTML = "";
-
-  list.forEach(g => {
-    const card = document.createElement("div");
-    card.className = "card";
-
-    card.innerHTML = `
-      <img src="${g.image}" onerror="this.src='https://via.placeholder.com/300x180'" />
-      <h3>${g.title}</h3>
-      ${g.category ? `<div class="tag">${g.category}</div>` : ""}
-    `;
-
-    card.onclick = () => {
-      if (!g.special) {
-        window.location.href = g.path;
-      }
-    };
-
-    grid.appendChild(card);
-  });
-}
-
-/* ---------------- SEARCH ---------------- */
-document.getElementById("search").addEventListener("input", e => {
-  const v = e.target.value.toLowerCase();
-  render(games.filter(g => g.title.toLowerCase().includes(v)));
-});
-
-/* ---------------- MODAL ---------------- */
-const modal = document.getElementById("modal");
-
-function openModal() {
-  modal.style.display = "flex";
-}
-
-function closeModal() {
-  modal.style.display = "none";
-}
-
-function submit() {
-  const val = document.getElementById("gameInput").value;
-  alert("Suggested: " + val);
-  closeModal();
-}
-
-/* ---------------- PARTICLES ---------------- */
-const canvas = document.getElementById("bg");
-const ctx = canvas.getContext("2d");
-
-function resize() {
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight;
-}
-resize();
-window.addEventListener("resize", resize);
-
-const particles = [];
-const COUNT = 75;
-
-for (let i = 0; i < COUNT; i++) {
-  particles.push({
-    x: Math.random() * canvas.width,
-    y: Math.random() * canvas.height,
-    vx: (Math.random() - 0.5) * 0.6,
-    vy: (Math.random() - 0.5) * 0.6,
-    r: Math.random() * 1.8 + 0.5
-  });
-}
-
-function animate() {
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-  // particles
-  for (let i = 0; i < particles.length; i++) {
-    let p = particles[i];
-
-    p.x += p.vx;
-    p.y += p.vy;
-
-    if (p.x < 0 || p.x > canvas.width) p.vx *= -1;
-    if (p.y < 0 || p.y > canvas.height) p.vy *= -1;
-
-    ctx.fillStyle = "#8c5aff";
-    ctx.beginPath();
-    ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-    ctx.fill();
-  }
-
-  // lines
-  for (let i = 0; i < particles.length; i++) {
-    for (let j = i + 1; j < particles.length; j++) {
-      const a = particles[i];
-      const b = particles[j];
-
-      const dx = a.x - b.x;
-      const dy = a.y - b.y;
-      const dist = Math.sqrt(dx * dx + dy * dy);
-
-      if (dist < 120) {
-        ctx.globalAlpha = 1 - dist / 120;
-        ctx.strokeStyle = "#8c5aff";
-        ctx.lineWidth = 0.5;
-
-        ctx.beginPath();
-        ctx.moveTo(a.x, a.y);
-        ctx.lineTo(b.x, b.y);
-        ctx.stroke();
-      }
-    }
-  }
-
-  ctx.globalAlpha = 1;
-  requestAnimationFrame(animate);
-}
-
-animate();
-</script>
+</div>
 
 </body>
 </html>
