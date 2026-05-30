@@ -1959,6 +1959,16 @@
       color: var(--accent);
     }
 
+    .cloak-icon {
+      display: block;
+      width: 24px;
+      height: 24px;
+      margin: 0 auto 8px;
+      border-radius: 6px;
+      object-fit: contain;
+      background: rgba(255,255,255,0.06);
+    }
+
     .cloak-emoji {
       display: block;
       font-size: 24px;
@@ -3508,6 +3518,8 @@
       document.getElementById('customTabFaviconInput').value = localStorage.getItem('vault_custom_favicon') || '';
       document.getElementById('panicRedirectUrl').value = localStorage.getItem('vault_panic_url') || 'https://classroom.google.com';
 
+      renderCloakGrid();
+
       // Sync particle preset row active state
       document.querySelectorAll('#particlePresetRow .option-pill').forEach(p => {
         p.classList.toggle('active', p.textContent.toLowerCase() === state.particleType);
@@ -3963,8 +3975,11 @@
       { id: 'classroom', name: 'Google Classroom', emoji: '📚', title: 'Home', favicon: 'https://ssl.gstatic.com/classroom/favicon.png' },
       { id: 'drive', name: 'Google Drive', emoji: '📁', title: 'My Drive - Google Drive', favicon: 'https://ssl.gstatic.com/docs/doclist/images/drive_2022q3_32dp.png' },
       { id: 'docs', name: 'Google Docs', emoji: '📝', title: 'Untitled document - Google Docs', favicon: 'https://ssl.gstatic.com/docs/documents/images/kix-favicon7.ico' },
-      { id: 'wikipedia', name: 'Wikipedia', emoji: '🌐', title: 'Wikipedia, the free encyclopedia', favicon: 'https://en.wikipedia.org/static/favicon/wikipedia.ico' },
       { id: 'khan', name: 'Khan Academy', emoji: '🎓', title: 'Khan Academy | Free Online Courses', favicon: 'https://cdn.kastatic.org/images/apple-touch-icon-114x114-precomposed.new.png' },
+      { id: 'canvas', name: 'Canvas', emoji: '🏫', title: 'Dashboard - Canvas', favicon: 'https://canvas.instructure.com/favicon.ico' },
+      { id: 'clever', name: 'Clever', emoji: '🧩', title: 'Clever', favicon: 'https://www.clever.com/favicon.ico' },
+      { id: 'quizlet', name: 'Quizlet', emoji: '🧠', title: 'Quizlet', favicon: 'https://quizlet.com/favicon.ico' },
+      { id: 'wikipedia', name: 'Wikipedia', emoji: '🌐', title: 'Wikipedia, the free encyclopedia', favicon: 'https://en.wikipedia.org/static/favicon/wikipedia.ico' },
     ];
 
     const ORIGINAL_TITLE = document.title;
@@ -4030,7 +4045,7 @@
       const current = localStorage.getItem('vault_cloak') || 'none';
       document.getElementById('cloakGrid').innerHTML = CLOAK_PRESETS.map(p => `
     <button class="cloak-option${p.id === current ? ' active' : ''}" onclick="applyCloak('${p.id}')">
-      <span class="cloak-emoji">${p.emoji}</span>
+      ${p.favicon ? `<img class="cloak-icon" src="${p.favicon}" alt="${p.name} favicon" onerror="this.style.display='none'">` : `<span class="cloak-emoji">${p.emoji}</span>`}
       <span class="cloak-name">${p.name}</span>
     </button>
   `).join('');
