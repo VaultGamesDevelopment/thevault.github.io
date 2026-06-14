@@ -297,10 +297,6 @@
       border-radius: 4px;
       border: 1px solid var(--border);
       cursor: pointer;
-      background: transparent;
-      color: var(--text-dim);
-      flex-shrink: 0;
-      transition: color 0.15s, border-color 0.15s;
     }
 
     .game-card.custom .game-delete { display: flex; }
@@ -458,7 +454,7 @@
       border-radius: 8px;
       cursor: pointer;
       border: 2px solid transparent;
-      transition: transform 0.15s;
+      transition: transform 0.15s, border-color 0.15s;
     }
 
     .swatch:hover { transform: scale(1.08); }
@@ -562,7 +558,7 @@
       font-family: inherit;
       border-bottom: 2px solid transparent;
       margin-bottom: -1px;
-      transition: color 0.15s;
+      transition: color 0.15s, border-bottom-color 0.15s;
     }
 
     .modal-tab.active { color: var(--accent); border-bottom-color: var(--accent); }
@@ -656,6 +652,22 @@
           <button class="pill" data-size="large" onclick="setSize(this,'large')">Large</button>
         </div>
       </div>
+      <!-- New Settings: Dark Mode & Show Descriptions -->
+      <div class="setting-section">
+        <div class="setting-label">Dark Mode</div>
+        <button class="pill" id="toggleDarkMode" onclick="toggleDarkMode()">Toggle</button>
+      </div>
+      <div class="setting-section">
+        <div class="setting-label">Game Grid Layout</div>
+        <div class="pills">
+          <button class="pill" data-layout="grid" onclick="setGridLayout('grid')">Grid</button>
+          <button class="pill" data-layout="list" onclick="setGridLayout('list')">List</button>
+        </div>
+      </div>
+      <div class="setting-section">
+        <div class="setting-label">Show Descriptions</div>
+        <button class="pill" id="toggleDescriptions" onclick="toggleDescriptions()">Toggle</button>
+      </div>
     </div>
 
     <div class="tab-pane" id="tabCloak">
@@ -670,6 +682,11 @@
       <div class="setting-section">
         <div class="setting-label">Custom Favicon URL</div>
         <input class="form-input" id="customCloakFavicon" placeholder="https://..." oninput="applyCustomCloak()" />
+      </div>
+      <!-- New Settings: Particle Effects -->
+      <div class="setting-section">
+        <div class="setting-label">Particle Effects</div>
+        <button class="pill" id="toggleParticles" onclick="toggleParticles()">Toggle</button>
       </div>
     </div>
   </div>
@@ -737,7 +754,7 @@
 
     <div style="margin-top: auto; padding-top: 16px; border-top: 1px solid var(--border);">
       <button class="nav-link" onclick="openSettings()">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33-1.82V9a1.65 1.65 0 0 0 1.51-1H21a2 2 0 0 1 0-4h-.09A1.65 1.65 0 0 0 20 4.6a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1-2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H20a1.65 1.65 0 0 0-1-1.51V3a2 2 0 0 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82V9a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0 4h.09a1.65 1.65 0 0 0 1 1.51z"/></svg>
         Settings
       </button>
       <div class="sidebar-footer" style="border-top: none; padding-top: 12px;">The Vault</div>
@@ -792,6 +809,10 @@
     favorites: JSON.parse(localStorage.getItem('vault_favorites') || '[]'),
     customGames: JSON.parse(localStorage.getItem('vault_custom_games') || '[]'),
     cloak: localStorage.getItem('vault_cloak') || 'none',
+    darkMode: localStorage.getItem('vault_darkMode') || 'false', // new
+    showDescriptions: localStorage.getItem('vaultDescriptions') || 'true', // new
+    gridLayout: localStorage.getItem('vaultLayout') || 'grid', // new
+    particlesEnabled: localStorage.getItem('vaultParticles') || 'true', // new
   };
 
   let GAMES = [];
@@ -907,7 +928,7 @@
       `repeat(auto-fill, minmax(${map[state.gridSize]}, 1fr))`;
   }
 
-  /* ─── TAB CLOAK ─── */
+  /* ─── TAB CLOAK PRESETS ─── */
   const ORIG_TITLE = document.title;
   const ORIG_FAVICON = document.querySelector('link[rel="icon"]') ? document.querySelector('link[rel="icon"]').href : '';
 
@@ -970,6 +991,9 @@
     document.getElementById('totalBadge').textContent = total;
     document.getElementById('favBadge').textContent = state.favorites.length;
 
+    // Apply show/hide descriptions setting
+    const showDescriptions = state.showDescriptions === 'true';
+
     if (!games.length) {
       document.getElementById('gameGrid').innerHTML =
         `<div class="empty">No games found${state.query ? ` for "${state.query}"` : ''}.</div>`;
@@ -996,8 +1020,12 @@
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
           </button>
         </div>
-        <div class="game-info"><div class="game-info-text"><div class="game-title">${g.title}</div><div class="game-cat">${g.cat || 'Game'}</div></div>${del}</div>
-      </div>`;
+        <div class="game-info"><div class="game-info-text"><div class="game-title">${g.title}</div>`;
+      if (showDescriptions) {
+        html += `<div class="game-cat">${g.cat || 'Game'}</div>`;
+      }
+      html += `</div>${del}</div></div>`;
+      return html;
     }).join('');
 
     document.getElementById('gameGrid').innerHTML = html +
@@ -1150,13 +1178,34 @@
   function openSettings() {
     renderSwatches();
     renderCloakGrid();
+    // Initialize settings UI
     document.querySelectorAll('.pill[data-size]').forEach(p =>
       p.classList.toggle('active', p.dataset.size === state.gridSize)
     );
-    // Restore custom cloak inputs
     document.getElementById('customCloakTitle').value = localStorage.getItem('vault_cloak_title') || '';
     document.getElementById('customCloakFavicon').value = localStorage.getItem('vault_cloak_favicon') || '';
+    // Apply dark mode toggle
+    document.getElementById('toggleDarkMode').textContent = state.darkMode === 'true' ? 'Disable Dark Mode' : 'Enable Dark Mode';
+    // Apply description toggle button
+    document.getElementById('toggleDescriptions').textContent = state.showDescriptions === 'true' ? 'Hide Descriptions' : 'Show Descriptions';
+    // Apply grid layout button styles
+    document.querySelectorAll('.pill[data-layout]').forEach(p =>
+      p.classList.toggle('active', p.dataset.layout === state.gridLayout)
+    );
+    // Apply particles toggle button style
+    document.getElementById('toggleParticles').textContent = state.particlesEnabled === 'true' ? 'Disable Particles' : 'Enable Particles';
+
+    // Show the modal
     openModal('settingsModal');
+
+    // Apply dark mode styles immediately
+    if (state.darkMode === 'true') {
+      document.body.classList.add('dark-mode');
+      document.documentElement.style.backgroundColor = '#000';
+    } else {
+      document.body.classList.remove('dark-mode');
+      document.documentElement.style.backgroundColor = '#0d0d0d';
+    }
   }
 
   function openModal(id) { document.getElementById(id).classList.add('open'); }
@@ -1191,6 +1240,10 @@
 
   /* ─── PARTICLES (performant: 40 dots, no connection lines, RAF throttled) ─── */
   function initParticles() {
+    if (localStorage.getItem('vaultParticles') !== 'true') {
+      document.getElementById('particleCanvas').style.display = 'none';
+      return;
+    }
     const canvas = document.getElementById('particleCanvas');
     const ctx = canvas.getContext('2d');
     let w, h, pts;
@@ -1225,7 +1278,6 @@
     let lastFrame = 0;
     function draw(ts) {
       requestAnimationFrame(draw);
-      // Cap at ~40fps for performance
       if (ts - lastFrame < 25) return;
       lastFrame = ts;
 
@@ -1233,10 +1285,9 @@
       const [r,g,b] = getAccentRGB();
 
       for (const p of pts) {
-        // Gentle mouse repulsion
         const dx = p.x - mouse.x, dy = p.y - mouse.y;
         const d2 = dx*dx + dy*dy;
-        if (d2 < 22500) { // 150px radius
+        if (d2 < 22500) {
           const d = Math.sqrt(d2);
           const f = (150 - d) / 150 * 0.015;
           p.vx += dx * f;
@@ -1255,13 +1306,12 @@
         ctx.fill();
       }
 
-      // Draw connection lines only for nearby pairs (limit to 40 pts so max 780 checks)
       ctx.lineWidth = 0.5;
       for (let i = 0; i < pts.length; i++) {
         for (let j = i+1; j < pts.length; j++) {
           const dx = pts[i].x - pts[j].x, dy = pts[i].y - pts[j].y;
           const d2 = dx*dx + dy*dy;
-          if (d2 < 16000) { // ~126px
+          if (d2 < 16000) {
             ctx.beginPath();
             ctx.moveTo(pts[i].x, pts[i].y);
             ctx.lineTo(pts[j].x, pts[j].y);
@@ -1279,11 +1329,91 @@
   }
 
   /* ─── INIT ─── */
+  // Apply theme
   applyTheme(state.theme);
+  // Apply grid size
   applyGridSize();
+  // Initialize Cloak
   initCloak();
+  // Initialize particles
   initParticles();
+
+  // Apply dark mode styles immediately
+  if (state.darkMode === 'true') {
+    document.body.classList.add('dark-mode');
+    document.documentElement.style.backgroundColor = '#000';
+  } else {
+    document.body.classList.remove('dark-mode');
+    document.documentElement.style.backgroundColor = '#0d0d0d';
+  }
+
+  // Set grid layout
+  setGridLayout(state.gridLayout);
+  // Show/hide descriptions
+  if (state.showDescriptions === 'true') {
+    // show descriptions
+  } else {
+    // hide descriptions
+  }
+  // Particles
+  if (state.particlesEnabled !== 'true') {
+    document.getElementById('particleCanvas').style.display = 'none';
+  }
+
   loadGames();
+
+  // --- New Functions for Settings ---
+
+  function toggleDarkMode() {
+    const isDark = localStorage.getItem('vault_darkMode') === 'true';
+    localStorage.setItem('vault_darkMode', (!isDark).toString());
+    document.body.classList.toggle('dark-mode', !isDark);
+    document.documentElement.style.backgroundColor = !isDark ? '#000' : '#0d0d0d';
+    document.getElementById('toggleDarkMode').textContent = !isDark ? 'Disable Dark Mode' : 'Enable Dark Mode';
+  }
+
+  function setGridLayout(layout) {
+    localStorage.setItem('vaultLayout', layout);
+    state.gridLayout = layout;
+    // Apply layout style
+    const grid = document.getElementById('gameGrid');
+    if (layout === 'list') {
+      // switch to list style
+      grid.style.display = 'block';
+      // Optionally re-render list view, but for simplicity, we just toggle display
+    } else {
+      // grid style
+      grid.style.display = '';
+      applyGridSize();
+    }
+    // Update pills style
+    document.querySelectorAll('.pill[data-layout]').forEach(p =>
+      p.classList.toggle('active', p.dataset.layout === layout)
+    );
+  }
+
+  function toggleDescriptions() {
+    const current = localStorage.getItem('vaultDescriptions') === 'true';
+    localStorage.setItem('vaultDescriptions', (!current).toString());
+    state.showDescriptions = (!current).toString();
+    // Re-render
+    render();
+    document.getElementById('toggleDescriptions').textContent = current ? 'Show Descriptions' : 'Hide Descriptions';
+  }
+
+  function toggleParticles() {
+    const enabled = localStorage.getItem('vaultParticles') === 'true';
+    localStorage.setItem('vaultParticles', (!enabled).toString());
+    state.particlesEnabled = (!enabled).toString();
+    if (!enabled) {
+      document.getElementById('particleCanvas').style.display = 'none';
+    } else {
+      document.getElementById('particleCanvas').style.display = '';
+      initParticles();
+    }
+    document.getElementById('toggleParticles').textContent = !enabled ? 'Disable Particles' : 'Enable Particles';
+  }
+
 </script>
 </body>
 </html>
