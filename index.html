@@ -1105,7 +1105,14 @@
       .then(html => {
         const doc = iframe.contentDocument || iframe.contentWindow.document;
         doc.open();
-        doc.write(html);
+        // Inject a <base> tag so relative asset paths (audio, images, js)
+        // resolve against the gn-math HTML CDN, not thevault.github.io.
+        // Also suppress errors from gn-math games that reference elements
+        // only present on gn-math's own page (e.g. a loading overlay).
+        const baseTag = `<base href="${GN_HTML_URL}/">`;
+        const errorGuard = `<script>window.onerror=function(){return true;};<\/script>`;
+        let injected = html.replace(/(<head[^>]*>)/i, '$1' + baseTag + errorGuard);
+        if (!injected.includes('<base')) injected = baseTag + errorGuard + html;
         doc.close();
       })
       .catch(err => {
