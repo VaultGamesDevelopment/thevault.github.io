@@ -202,26 +202,6 @@
       grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
       gap: 16px;
     }
-    #gameGrid.list {
-      display: flex;
-      flex-direction: column;
-    }
-    #gameGrid.list .game-card {
-      width: 100%;
-      flex-direction: row;
-      align-items: flex-start;
-      padding: 10px;
-      margin-bottom: 8px;
-    }
-    #gameGrid.list .game-thumb {
-      width: 120px;
-      aspect-ratio: auto;
-      flex-shrink: 0;
-    }
-    #gameGrid.list .game-info {
-      padding-left: 10px;
-      flex: 1;
-    }
 
     .game-card {
       background: var(--surface);
@@ -231,6 +211,7 @@
       cursor: pointer;
       transition: border-color 0.15s, transform 0.2s;
     }
+
     .game-card:hover { border-color: #444; transform: translateY(-3px); }
 
     .game-thumb {
@@ -243,7 +224,6 @@
       position: relative;
       overflow: hidden;
     }
-    #gameGrid.list .game-thumb { width: 120px; aspect-ratio: auto; }
 
     .game-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
 
@@ -260,6 +240,7 @@
       background: rgba(0,0,0,0.5);
       transition: opacity 0.2s;
     }
+
     .game-card:hover .play-overlay { opacity: 1; }
 
     .play-btn {
@@ -272,6 +253,7 @@
       justify-content: center;
       transition: background 0.3s;
     }
+
     .play-btn svg { width: 14px; height: 14px; color: #fff; margin-left: 2px; }
 
     .fav-btn {
@@ -288,6 +270,7 @@
       justify-content: center;
       cursor: pointer;
     }
+
     .fav-btn svg { width: 12px; height: 12px; color: #888; transition: color 0.15s; }
     .fav-btn.active svg { color: #f59e0b; fill: #f59e0b; }
 
@@ -302,9 +285,9 @@
       overflow: hidden;
       text-overflow: ellipsis;
     }
+
     .game-cat { font-size: 11px; color: var(--text-dim); }
 
-    /* Delete button for custom games */
     .game-delete {
       display: none;
       align-items: center;
@@ -317,12 +300,13 @@
       background: transparent;
       color: var(--text-dim);
       flex-shrink: 0;
+      transition: color 0.15s, border-color 0.15s;
     }
+
     .game-card.custom .game-delete { display: flex; }
     .game-delete:hover { color: #f43f5e; border-color: rgba(244,63,94,0.4); }
     .game-delete svg { width: 10px; height: 10px; }
 
-    /* Add card style */
     .add-card {
       background: var(--surface);
       border: 1px dashed var(--border);
@@ -340,6 +324,7 @@
       transition: border-color 0.15s, color 0.15s;
       min-height: 160px;
     }
+
     .add-card:hover { border-color: var(--accent); color: var(--accent); }
     .add-card svg { width: 20px; height: 20px; }
 
@@ -381,10 +366,12 @@
       font-family: inherit;
       transition: color 0.15s, border-color 0.15s;
     }
+
     .frame-back:hover { color: var(--text); border-color: #444; }
     .frame-back svg { width: 14px; height: 14px; }
     .frame-title { font-size: 13px; font-weight: 500; color: var(--text-dim); }
     .frame-controls { margin-left: auto; display: flex; gap: 8px; }
+
     .frame-btn {
       display: flex;
       align-items: center;
@@ -399,6 +386,7 @@
       font-family: inherit;
       transition: color 0.15s, border-color 0.15s;
     }
+
     .frame-btn:hover { color: var(--text); border-color: #444; }
     .frame-btn svg { width: 13px; height: 13px; }
     #gameIframe { flex: 1; border: none; }
@@ -413,7 +401,9 @@
       align-items: center;
       justify-content: center;
     }
+
     .overlay.open { display: flex; }
+
     .modal {
       background: var(--surface);
       border: 1px solid var(--border);
@@ -423,13 +413,16 @@
       overflow-y: auto;
       padding: 24px;
     }
+
     .modal-header {
       display: flex;
       align-items: center;
       justify-content: space-between;
       margin-bottom: 22px;
     }
+
     .modal-header h2 { font-size: 16px; font-weight: 700; }
+
     .modal-close {
       width: 28px;
       height: 28px;
@@ -444,7 +437,9 @@
       font-size: 16px;
       line-height: 1;
     }
+
     .modal-close:hover { color: var(--text); }
+
     .setting-label {
       font-size: 10px;
       color: var(--text-dim);
@@ -452,19 +447,25 @@
       letter-spacing: 0.8px;
       margin-bottom: 10px;
     }
+
     .setting-section { margin-bottom: 22px; }
+
     .swatches { display: flex; gap: 8px; flex-wrap: wrap; }
+
     .swatch {
       width: 36px;
       height: 36px;
       border-radius: 8px;
       cursor: pointer;
       border: 2px solid transparent;
-      transition: transform 0.15s, border-color 0.15s;
+      transition: transform 0.15s;
     }
+
     .swatch:hover { transform: scale(1.08); }
     .swatch.active { border-color: #fff; transform: scale(1.1); }
+
     .pills { display: flex; gap: 6px; flex-wrap: wrap; }
+
     .pill {
       padding: 7px 14px;
       border-radius: var(--radius);
@@ -477,17 +478,44 @@
       font-family: inherit;
       transition: color 0.15s, border-color 0.15s, background 0.15s;
     }
+
     .pill:hover { color: var(--text); border-color: #444; }
     .pill.active { color: var(--accent); border-color: var(--accent); background: color-mix(in srgb, var(--accent) 10%, transparent); }
-    /* Cloak grid styles ... (unchanged) */
+
+    /* Cloak grid */
     .cloak-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
       gap: 8px;
     }
-    /* Form styles ... (unchanged) */
+
+    .cloak-opt {
+      padding: 10px 8px;
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      cursor: pointer;
+      background: transparent;
+      font-family: inherit;
+      color: var(--text-dim);
+      text-align: center;
+      font-size: 11px;
+      font-weight: 600;
+      transition: border-color 0.15s, color 0.15s, background 0.15s;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .cloak-opt:hover { border-color: #444; color: var(--text); }
+    .cloak-opt.active { border-color: var(--accent); color: var(--accent); background: color-mix(in srgb, var(--accent) 8%, transparent); }
+    .cloak-opt img { width: 20px; height: 20px; object-fit: contain; }
+    .cloak-opt span { font-size: 20px; }
+
+    /* Form */
     .form-group { margin-bottom: 14px; }
     .form-label { display: block; font-size: 12px; color: var(--text-dim); margin-bottom: 5px; }
+
     .form-input {
       width: 100%;
       background: #111;
@@ -500,7 +528,9 @@
       outline: none;
       transition: border-color 0.15s;
     }
+
     .form-input:focus { border-color: var(--accent); }
+
     .btn-primary {
       width: 100%;
       padding: 10px;
@@ -515,9 +545,12 @@
       margin-top: 8px;
       transition: opacity 0.15s, background 0.3s;
     }
+
     .btn-primary:hover { opacity: 0.88; }
-    /* Tabs inside modal ... (unchanged) */
+
+    /* Tabs inside modal */
     .modal-tabs { display: flex; border-bottom: 1px solid var(--border); margin-bottom: 20px; }
+
     .modal-tab {
       padding: 8px 16px;
       font-size: 13px;
@@ -529,31 +562,43 @@
       font-family: inherit;
       border-bottom: 2px solid transparent;
       margin-bottom: -1px;
-      transition: color 0.15s, border-bottom-color 0.15s;
+      transition: color 0.15s;
     }
-    .modal-tab.active { color: var(--accent); border-bottom-color: var(--accent); }
-    /* ... (rest remains unchanged) ... */
 
-    /* Additional styling for grid/list toggle */
-    #gameGrid.list {
-      display: flex;
-      flex-direction: column;
+    .modal-tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+    .tab-pane { display: none; }
+    .tab-pane.active { display: block; }
+
+    /* Misc */
+    ::-webkit-scrollbar { width: 5px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 99px; }
+
+    .mobile-toggle {
+      display: none;
+      position: fixed;
+      top: 12px;
+      left: 12px;
+      z-index: 50;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--text);
+      width: 40px;
+      height: 40px;
+      border-radius: var(--radius);
+      cursor: pointer;
+      align-items: center;
+      justify-content: center;
     }
-    #gameGrid.list .game-card {
-      width: 100%;
-      flex-direction: row;
-      align-items: flex-start;
-      padding: 10px;
-      margin-bottom: 8px;
-    }
-    #gameGrid.list .game-thumb {
-      width: 120px;
-      aspect-ratio: auto;
-      flex-shrink: 0;
-    }
-    #gameGrid.list .game-info {
-      padding-left: 10px;
-      flex: 1;
+
+    .mobile-toggle svg { width: 18px; height: 18px; }
+
+    @media (max-width: 720px) {
+      .mobile-toggle { display: flex; }
+      #sidebar { position: fixed; left: -220px; z-index: 45; transition: left 0.25s; }
+      #sidebar.open { left: 0; }
+      #main { padding: 20px 16px; padding-top: 64px; }
+      #gameGrid { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 12px; }
     }
   </style>
 </head>
@@ -561,7 +606,6 @@
 
 <canvas id="particleCanvas"></canvas>
 
-<!-- Mobile toggle button ... (unchanged) -->
 <button class="mobile-toggle" onclick="document.getElementById('sidebar').classList.toggle('open')">
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
     <line x1="4" y1="6" x2="20" y2="6"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="18" x2="20" y2="18"/>
@@ -612,35 +656,26 @@
           <button class="pill" data-size="large" onclick="setSize(this,'large')">Large</button>
         </div>
       </div>
-      <!-- New Settings -->
-      <div class="setting-section">
-        <div class="setting-label">Dark Mode</div>
-        <button class="pill" id="toggleDarkMode" onclick="toggleDarkMode()">Toggle</button>
-      </div>
-      <div class="setting-section">
-        <div class="setting-label">Game Layout</div>
-        <div class="pills">
-          <button class="pill" data-layout="grid" onclick="setGridLayout('grid')">Grid</button>
-          <button class="pill" data-layout="list" onclick="setGridLayout('list')">List</button>
-        </div>
-      </div>
-      <div class="setting-section">
-        <div class="setting-label">Show Descriptions</div>
-        <button class="pill" id="toggleDescriptions" onclick="toggleDescriptions()">Toggle</button>
-      </div>
     </div>
 
     <div class="tab-pane" id="tabCloak">
-      <!-- existing cloak options ... -->
       <div class="setting-section">
-        <div class="setting-label">Particle Effects</div>
-        <button class="pill" id="toggleParticles" onclick="toggleParticles()">Toggle</button>
+        <div class="setting-label">Disguise as...</div>
+        <div class="cloak-grid" id="cloakGrid"></div>
+      </div>
+      <div class="setting-section">
+        <div class="setting-label">Custom Title</div>
+        <input class="form-input" id="customCloakTitle" placeholder="e.g. Google Classroom" oninput="applyCustomCloak()" />
+      </div>
+      <div class="setting-section">
+        <div class="setting-label">Custom Favicon URL</div>
+        <input class="form-input" id="customCloakFavicon" placeholder="https://..." oninput="applyCustomCloak()" />
       </div>
     </div>
   </div>
 </div>
 
-<!-- Add game modal ... (unchanged) -->
+<!-- Add game modal -->
 <div class="overlay" id="addModal">
   <div class="modal">
     <div class="modal-header">
@@ -702,7 +737,7 @@
 
     <div style="margin-top: auto; padding-top: 16px; border-top: 1px solid var(--border);">
       <button class="nav-link" onclick="openSettings()">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33-1.82V9a1.65 1.65 0 0 0-1.51-1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
         Settings
       </button>
       <div class="sidebar-footer" style="border-top: none; padding-top: 12px;">The Vault</div>
@@ -725,7 +760,7 @@
 </div>
 
 <script>
-  /* ─── THEMES (unchanged) ─── */
+  /* ─── THEMES ─── */
   const THEMES = [
     { id: 'indigo', color: '#6366f1' },
     { id: 'violet', color: '#8b5cf6' },
@@ -735,7 +770,7 @@
     { id: 'amber',  color: '#f59e0b' },
   ];
 
-  /* ─── TAB CLOAK PRESETS ─── (unchanged) */
+  /* ─── TAB CLOAK PRESETS ─── */
   const CLOAK_PRESETS = [
     { id: 'none',       label: 'Off (Default)',        emoji: '🎮', title: null,                                   favicon: null },
     { id: 'classroom',  label: 'Google Classroom',     img: 'https://ssl.gstatic.com/classroom/favicon.png',        title: 'Home' },
@@ -748,7 +783,7 @@
     { id: 'schoology',  label: 'Schoology',            img: 'https://asset-cdn.schoology.com/sites/all/themes/schoology_theme/favicon.ico', title: 'Schoology' },
   ];
 
-  /* ─── STATE ─── (extend to include new options) */
+  /* ─── STATE ─── */
   const state = {
     cat: 'all',
     query: '',
@@ -757,26 +792,183 @@
     favorites: JSON.parse(localStorage.getItem('vault_favorites') || '[]'),
     customGames: JSON.parse(localStorage.getItem('vault_custom_games') || '[]'),
     cloak: localStorage.getItem('vault_cloak') || 'none',
-    darkMode: localStorage.getItem('vault_darkMode') || 'false',
-    showDescriptions: localStorage.getItem('vaultDescriptions') || 'true',
-    gridLayout: localStorage.getItem('vaultLayout') || 'grid',
-    particlesEnabled: localStorage.getItem('vaultParticles') || 'true'
   };
 
   let GAMES = [];
 
-  /* ─── loadGames function ... (unchanged) */
-  // (your existing loadGames code here, unchanged)
+  /* ─── LOAD GAMES FROM CDN ─── */
+  /* ─── GN-MATH ZONE CONSTANTS ─── */
+  const GN_COVER_URL = 'https://cdn.jsdelivr.net/gh/freebuisness/covers@main';
+  const GN_HTML_URL  = 'https://cdn.jsdelivr.net/gh/freebuisness/html@main';
+  const GN_ZONES_URLS = [
+    'https://cdn.jsdelivr.net/gh/freebuisness/assets@main/zones.json',
+    'https://cdn.jsdelivr.net/gh/freebuisness/assets@latest/zones.json',
+    'https://cdn.jsdelivr.net/gh/freebuisness/assets@master/zones.json',
+    'https://cdn.jsdelivr.net/gh/freebuisness/assets/zones.json',
+  ];
 
-  /* ─── render function with layout toggle support ─── */
+  let rawZones = [];
+
+  function resolveZoneURL(url) {
+    return url.replace('{COVER_URL}', GN_COVER_URL).replace('{HTML_URL}', GN_HTML_URL);
+  }
+
+  function guessCategory(zone) {
+    const tags = (zone.special || []).map(t => t.toLowerCase());
+    if (tags.includes('fps') || tags.includes('shooter')) return 'Shooter';
+    if (tags.includes('horror')) return 'Horror';
+    if (tags.includes('puzzle')) return 'Puzzle';
+    if (tags.includes('sports')) return 'Sports';
+    if (tags.includes('idle') || tags.includes('clicker')) return 'Idle';
+    if (tags.includes('platformer')) return 'Platformer';
+    if (tags.includes('rhythm')) return 'Rhythm';
+    if (tags.includes('racing') || tags.includes('driving')) return 'Racing';
+    if (tags.includes('rpg') || tags.includes('adventure')) return 'RPG';
+    if (tags.includes('strategy')) return 'Strategy';
+    return 'Arcade';
+  }
+
+  async function loadGames() {
+    document.getElementById('gameGrid').innerHTML = '<div class="empty">Loading games...</div>';
+
+    let zonesURL = GN_ZONES_URLS[Math.floor(Math.random() * GN_ZONES_URLS.length)];
+    try {
+      const shaRes = await fetch('https://api.github.com/repos/freebuisness/assets/commits?t=' + Date.now());
+      if (shaRes.ok) {
+        const shaJson = await shaRes.json();
+        const sha = shaJson[0]?.sha;
+        if (sha) zonesURL = `https://cdn.jsdelivr.net/gh/freebuisness/assets@${sha}/zones.json`;
+      }
+    } catch (_) {}
+
+    try {
+      const res = await fetch(zonesURL + '?t=' + Date.now());
+      if (!res.ok) throw new Error('HTTP ' + res.status);
+      rawZones = await res.json();
+
+      GAMES = rawZones.map(z => ({
+        title: z.name,
+        path: z.url,
+        thumb: z.cover ? resolveZoneURL(z.cover) : null,
+        cat: guessCategory(z),
+        desc: z.description || '',
+        _zoneId: z.id,
+        _isExternalLink: z.url.startsWith('http'),
+      }));
+    } catch (e) {
+      console.warn('Failed to load gn-math zones:', e);
+      document.getElementById('gameGrid').innerHTML = '<div class="empty">Failed to load games. Check your connection.</div>';
+      return;
+    }
+
+    renderCats();
+    render();
+  }
+
+  function allGames() { return [...GAMES, ...state.customGames]; }
+
+  function filtered() {
+    const q = state.query.toLowerCase();
+    return allGames().filter(g => {
+      const matchQ = !q || g.title.toLowerCase().includes(q) || (g.cat||'').toLowerCase().includes(q) || (g.desc||'').toLowerCase().includes(q);
+      if (state.cat === 'favorites') return matchQ && state.favorites.includes(g.path);
+      const matchC = state.cat === 'all' || g.cat === state.cat;
+      return matchQ && matchC;
+    });
+  }
+
+  /* ─── THEME ─── */
+  function applyTheme(id) {
+    const t = THEMES.find(x => x.id === id) || THEMES[0];
+    state.theme = id;
+    localStorage.setItem('vault_theme', id);
+    document.documentElement.style.setProperty('--accent', t.color);
+    renderSwatches();
+  }
+
+  function renderSwatches() {
+    document.getElementById('swatches').innerHTML = THEMES.map(t =>
+      `<div class="swatch ${t.id === state.theme ? 'active' : ''}" style="background:${t.color}" onclick="applyTheme('${t.id}')"></div>`
+    ).join('');
+  }
+
+  /* ─── GRID SIZE ─── */
+  function setSize(el, size) {
+    document.querySelectorAll('.pill[data-size]').forEach(x => x.classList.remove('active'));
+    el.classList.add('active');
+    state.gridSize = size;
+    localStorage.setItem('vault_grid', size);
+    applyGridSize();
+  }
+
+  function applyGridSize() {
+    const map = { compact: '150px', default: '200px', large: '260px' };
+    document.getElementById('gameGrid').style.gridTemplateColumns =
+      `repeat(auto-fill, minmax(${map[state.gridSize]}, 1fr))`;
+  }
+
+  /* ─── TAB CLOAK ─── */
+  const ORIG_TITLE = document.title;
+  const ORIG_FAVICON = document.querySelector('link[rel="icon"]') ? document.querySelector('link[rel="icon"]').href : '';
+
+  function setFavicon(url) {
+    let link = document.querySelector('link[rel="icon"]');
+    if (!link) { link = document.createElement('link'); link.rel = 'icon'; document.head.appendChild(link); }
+    link.href = url;
+  }
+
+  function applyCloak(id) {
+    state.cloak = id;
+    localStorage.setItem('vault_cloak', id);
+    const preset = CLOAK_PRESETS.find(p => p.id === id);
+    if (!preset || id === 'none') {
+      document.title = ORIG_TITLE;
+      setFavicon(ORIG_FAVICON);
+    } else {
+      document.title = preset.title || ORIG_TITLE;
+      setFavicon(preset.img || ORIG_FAVICON);
+    }
+    renderCloakGrid();
+  }
+
+  function applyCustomCloak() {
+    const title = document.getElementById('customCloakTitle').value.trim();
+    const favicon = document.getElementById('customCloakFavicon').value.trim();
+    if (title) document.title = title;
+    if (favicon) setFavicon(favicon);
+    state.cloak = 'custom';
+    localStorage.setItem('vault_cloak', 'custom');
+    localStorage.setItem('vault_cloak_title', title);
+    localStorage.setItem('vault_cloak_favicon', favicon);
+    document.querySelectorAll('.cloak-opt').forEach(x => x.classList.remove('active'));
+  }
+
+  function renderCloakGrid() {
+    document.getElementById('cloakGrid').innerHTML = CLOAK_PRESETS.map(p => {
+      const icon = p.img
+        ? `<img src="${p.img}" alt="" onerror="this.style.display='none'">`
+        : `<span>${p.emoji || '🎮'}</span>`;
+      return `<button class="cloak-opt ${state.cloak === p.id ? 'active' : ''}" onclick="applyCloak('${p.id}')">${icon}${p.label}</button>`;
+    }).join('');
+  }
+
+  function initCloak() {
+    if (state.cloak === 'custom') {
+      const t = localStorage.getItem('vault_cloak_title');
+      const f = localStorage.getItem('vault_cloak_favicon');
+      if (t) document.title = t;
+      if (f) setFavicon(f);
+    } else if (state.cloak !== 'none') {
+      applyCloak(state.cloak);
+    }
+  }
+
+  /* ─── RENDER GAMES ─── */
   function render() {
     const games = filtered();
     const total = allGames().length;
     document.getElementById('totalBadge').textContent = total;
     document.getElementById('favBadge').textContent = state.favorites.length;
-
-    // Handle description toggle
-    const showDescriptions = (state.showDescriptions === 'true');
 
     if (!games.length) {
       document.getElementById('gameGrid').innerHTML =
@@ -796,152 +988,198 @@
       const del = g.isCustom
         ? `<button class="game-delete" onclick="event.stopPropagation();deleteGame('${sp}')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg></button>`
         : '';
-
-      let cardHTML = `<div class="game-card${g.isCustom ? ' custom' : ''}" onclick="playGame('${sp}','${st}')" title="${g.desc || g.title}">`;
-
-      if (state.gridLayout === 'list') {
-        // List layout
-        cardHTML += `
-          <div style="display:flex; align-items:flex-start;">
-            <div class="game-thumb" style="width:120px; aspect-ratio:auto;">${thumb}</div>
-            <div style="flex:1; padding-left:10px;">
-              <div class="game-title">${g.title}</div>`;
-        if (showDescriptions) {
-          cardHTML += `<div class="game-cat">${g.cat || 'Game'}</div>`;
-        }
-        cardHTML += `</div></div>`;
-      } else {
-        // Grid layout
-        cardHTML += `
-          <div class="game-thumb">
-            ${thumb}
-            <div class="play-overlay"><div class="play-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg></div></div>
-            <button class="fav-btn${fav ? ' active' : ''}" onclick="event.stopPropagation();toggleFav('${sp}','${st}')">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-            </button>
-          </div>
-          <div class="game-info"><div class="game-info-text"><div class="game-title">${g.title}</div>`;
-        if (showDescriptions) {
-          cardHTML += `<div class="game-cat">${g.cat || 'Game'}</div>`;
-        }
-        cardHTML += `</div>${del}</div></div>`;
-      }
-
-      return cardHTML + `</div>`;
+      return `<div class="game-card${g.isCustom ? ' custom' : ''}" onclick="playGame('${sp}','${st}')" title="${g.desc || g.title}">
+        <div class="game-thumb">
+          ${thumb}
+          <div class="play-overlay"><div class="play-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg></div></div>
+          <button class="fav-btn${fav ? ' active' : ''}" onclick="event.stopPropagation();toggleFav('${sp}','${st}')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          </button>
+        </div>
+        <div class="game-info"><div class="game-info-text"><div class="game-title">${g.title}</div><div class="game-cat">${g.cat || 'Game'}</div></div>${del}</div>
+      </div>`;
     }).join('');
 
     document.getElementById('gameGrid').innerHTML = html +
       `<div class="add-card" onclick="openModal('addModal')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>Add game</div>`;
   }
-  // Call applyLayout on load
-  applyLayout();
 
-  /* ─── Functions for toggle and layout control ─── */
+  function renderCats() {
+    const all = allGames();
+    const rawCats = [...new Set(all.filter(g => g.cat).map(g => g.cat))].sort();
+    const cats = ['all', 'favorites', ...rawCats];
 
-  function applyLayout() {
-    const grid = document.getElementById('gameGrid');
-    if (state.gridLayout === 'list') {
-      grid.classList.add('list');
-    } else {
-      grid.classList.remove('list');
-    }
+    document.getElementById('catRow').innerHTML = cats.map(c => {
+      const label = c === 'all' ? 'All' : c === 'favorites' ? '⭐ Favorites' : c;
+      const count = c === 'all' ? all.length : c === 'favorites' ? state.favorites.length : all.filter(g => g.cat === c).length;
+      return `<button class="cat-pill${state.cat === c ? ' active' : ''}" onclick="filterCat('${c}')">${label} <span style="opacity:.5;font-size:10px">${count}</span></button>`;
+    }).join('');
+
+    document.getElementById('navCats').innerHTML = rawCats.map(c =>
+      `<button class="nav-link" onclick="filterNav('${c}',this)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/></svg>${c}
+      </button>`
+    ).join('');
   }
 
-  function setGridLayout(layout) {
-    localStorage.setItem('vaultLayout', layout);
-    state.gridLayout = layout;
-    applyLayout();
-    document.querySelectorAll('.pill[data-layout]').forEach(p =>
-      p.classList.toggle('active', p.dataset.layout === layout)
-    );
+  /* ─── FILTERING ─── */
+  function filterCat(cat) {
+    state.cat = cat;
+    renderCats();
     render();
   }
 
-  function toggleDescriptions() {
-    const current = localStorage.getItem('vaultDescriptions') === 'true';
-    localStorage.setItem('vaultDescriptions', (!current).toString());
-    state.showDescriptions = (!current).toString();
+  function filterNav(cat, el) {
+    document.querySelectorAll('#sidebar .nav-link').forEach(x => x.classList.remove('active'));
+    el.classList.add('active');
+    state.cat = cat;
+    renderCats();
     render();
-    document.getElementById('toggleDescriptions').textContent = current ? 'Show Descriptions' : 'Hide Descriptions';
   }
 
-  function toggleDarkMode() {
-    const isDark = localStorage.getItem('vault_darkMode') === 'true';
-    localStorage.setItem('vault_darkMode', (!isDark).toString());
-    state.darkMode = (!isDark).toString();
-    document.body.classList.toggle('dark-mode', !isDark);
-    document.documentElement.style.backgroundColor = !isDark ? '#000' : '#0d0d0d';
-    document.getElementById('toggleDarkMode').textContent = !isDark ? 'Disable Dark Mode' : 'Enable Dark Mode';
+  /* ─── FAVORITES ─── */
+  function toggleFav(path, title) {
+    const idx = state.favorites.indexOf(path);
+    if (idx > -1) state.favorites.splice(idx, 1);
+    else state.favorites.push(path);
+    localStorage.setItem('vault_favorites', JSON.stringify(state.favorites));
+    renderCats();
+    render();
   }
 
-  function toggleParticles() {
-    const enabled = localStorage.getItem('vaultParticles') === 'true';
-    localStorage.setItem('vaultParticles', (!enabled).toString());
-    state.particlesEnabled = (!enabled).toString();
-    if (enabled) {
-      document.getElementById('particleCanvas').style.display = 'none';
-    } else {
-      document.getElementById('particleCanvas').style.display = '';
-      initParticles();
+  /* ─── CUSTOM GAMES ─── */
+  function saveCustomGame() {
+    const title = document.getElementById('cgTitle').value.trim();
+    const url = document.getElementById('cgUrl').value.trim();
+    const cat = document.getElementById('cgCat').value;
+    if (!title || !url) return alert('Please fill in the title and URL.');
+    state.customGames.push({ title, path: url, cat, isCustom: true });
+    localStorage.setItem('vault_custom_games', JSON.stringify(state.customGames));
+    document.getElementById('cgTitle').value = '';
+    document.getElementById('cgUrl').value = '';
+    closeModal('addModal');
+    renderCats();
+    render();
+  }
+
+  function deleteGame(path) {
+    state.customGames = state.customGames.filter(g => g.path !== path);
+    localStorage.setItem('vault_custom_games', JSON.stringify(state.customGames));
+    renderCats();
+    render();
+  }
+
+  /* ─── PLAY ─── */
+  function playGame(path, title) {
+    // Find the matching zone to know if it's an external link or HTML-injected
+    const zone = rawZones.find(z => z.url === path);
+
+    if (!zone) {
+      // Custom user-added game — just set src directly
+      document.getElementById('gameIframe').src = path;
+      document.getElementById('frameTitle').textContent = title;
+      document.getElementById('frameView').classList.add('open');
+      return;
     }
-    document.getElementById('toggleParticles').textContent = !enabled ? 'Disable Particles' : 'Enable Particles';
+
+    if (path.startsWith('http')) {
+      // External link zones open in new tab (mirrors gn-math behaviour)
+      window.open(path, '_blank');
+      return;
+    }
+
+    // gn-math style: fetch the HTML and write it into the iframe
+    const resolvedURL = resolveZoneURL(path) + '?t=' + Date.now();
+    document.getElementById('frameTitle').textContent = title;
+    document.getElementById('frameView').classList.add('open');
+
+    const iframe = document.getElementById('gameIframe');
+    // Reset iframe so we can write fresh content
+    iframe.src = 'about:blank';
+
+    fetch(resolvedURL)
+      .then(r => {
+        if (!r.ok) throw new Error('HTTP ' + r.status);
+        return r.text();
+      })
+      .then(html => {
+        const doc = iframe.contentDocument || iframe.contentWindow.document;
+        doc.open();
+        // Inject a <base> tag so relative asset paths (audio, images, js)
+        // resolve against the gn-math HTML CDN, not thevault.github.io.
+        // Also suppress errors from gn-math games that reference elements
+        // only present on gn-math's own page (e.g. a loading overlay).
+        const baseTag = `<base href="${GN_HTML_URL}/">`;
+        const errorGuard = `<script>window.onerror=function(){return true;};<\/script>`;
+        let injected = html.replace(/(<head[^>]*>)/i, '$1' + baseTag + errorGuard);
+        if (!injected.includes('<base')) injected = baseTag + errorGuard + html;
+        doc.close();
+      })
+      .catch(err => {
+        alert('Failed to load game: ' + err.message);
+        closeGame();
+      });
   }
 
-  /* --- Initialize toggle buttons on open --- */
+  function closeGame() {
+    document.getElementById('frameView').classList.remove('open');
+    const iframe = document.getElementById('gameIframe');
+    iframe.src = 'about:blank';
+    // Clear content
+    try {
+      const doc = iframe.contentDocument || iframe.contentWindow.document;
+      doc.open(); doc.write(''); doc.close();
+    } catch(_) {}
+  }
+
+  function toggleFullscreen() {
+    const el = document.getElementById('gameIframe');
+    if (el.requestFullscreen) el.requestFullscreen();
+    else if (el.webkitRequestFullscreen) el.webkitRequestFullscreen();
+  }
+
+  function playRandom() {
+    // Exclude external-link zones for random — they'd just open a new tab
+    const games = allGames().filter(g => !g._isExternalLink);
+    if (!games.length) return;
+    const g = games[Math.floor(Math.random() * games.length)];
+    playGame(g.path, g.title);
+  }
+
+  /* ─── MODALS / SETTINGS ─── */
   function openSettings() {
     renderSwatches();
     renderCloakGrid();
-    // Set button states
     document.querySelectorAll('.pill[data-size]').forEach(p =>
       p.classList.toggle('active', p.dataset.size === state.gridSize)
     );
+    // Restore custom cloak inputs
     document.getElementById('customCloakTitle').value = localStorage.getItem('vault_cloak_title') || '';
     document.getElementById('customCloakFavicon').value = localStorage.getItem('vault_cloak_favicon') || '';
-
-    // Update toggle button texts
-    document.getElementById('toggleDarkMode').textContent = state.darkMode === 'true' ? 'Disable Dark Mode' : 'Enable Dark Mode';
-    document.getElementById('toggleDescriptions').textContent = state.showDescriptions === 'true' ? 'Hide Descriptions' : 'Show Descriptions';
-    document.querySelectorAll('.pill[data-layout]').forEach(p =>
-      p.classList.toggle('active', p.dataset.layout === state.gridLayout)
-    );
-    document.getElementById('toggleParticles').textContent = state.particlesEnabled === 'true' ? 'Disable Particles' : 'Enable Particles';
-
-    // Apply dark mode style
-    if (state.darkMode === 'true') {
-      document.body.classList.add('dark-mode');
-      document.documentElement.style.backgroundColor = '#000';
-    } else {
-      document.body.classList.remove('dark-mode');
-      document.documentElement.style.backgroundColor = '#0d0d0d';
-    }
-
-    applyLayout();
-    render();
-    renderSwatches();
-    renderCloakGrid();
     openModal('settingsModal');
   }
 
-  /* ─── Basic modal controls ─── */
   function openModal(id) { document.getElementById(id).classList.add('open'); }
   function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+
+  document.querySelectorAll('.overlay').forEach(el =>
+    el.addEventListener('click', e => { if (e.target === el) el.classList.remove('open'); })
+  );
+
   function switchTab(btn, paneId) {
     btn.closest('.modal').querySelectorAll('.modal-tab').forEach(t => t.classList.remove('active'));
     btn.closest('.modal').querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
     btn.classList.add('active');
     document.getElementById(paneId).classList.add('active');
   }
-  document.querySelectorAll('.overlay').forEach(el =>
-    el.addEventListener('click', e => { if (e.target === el) el.classList.remove('open'); })
-  );
 
-  /* ─── Search input event ─── */
+  /* ─── SEARCH ─── */
   document.getElementById('searchInput').addEventListener('input', e => {
     state.query = e.target.value.trim();
     render();
   });
 
-  /* ─── Keyboard events ─── */
+  /* ─── KEYBOARD ─── */
   document.addEventListener('keydown', e => {
     const tag = document.activeElement.tagName;
     if (e.key === 'Escape') { closeModal('settingsModal'); closeModal('addModal'); closeGame(); }
@@ -951,12 +1189,8 @@
     }
   });
 
-  /* ─── initParticles ─── (unchanged) */
+  /* ─── PARTICLES (performant: 40 dots, no connection lines, RAF throttled) ─── */
   function initParticles() {
-    if (localStorage.getItem('vaultParticles') !== 'true') {
-      document.getElementById('particleCanvas').style.display = 'none';
-      return;
-    }
     const canvas = document.getElementById('particleCanvas');
     const ctx = canvas.getContext('2d');
     let w, h, pts;
@@ -991,6 +1225,7 @@
     let lastFrame = 0;
     function draw(ts) {
       requestAnimationFrame(draw);
+      // Cap at ~40fps for performance
       if (ts - lastFrame < 25) return;
       lastFrame = ts;
 
@@ -998,9 +1233,10 @@
       const [r,g,b] = getAccentRGB();
 
       for (const p of pts) {
+        // Gentle mouse repulsion
         const dx = p.x - mouse.x, dy = p.y - mouse.y;
         const d2 = dx*dx + dy*dy;
-        if (d2 < 22500) {
+        if (d2 < 22500) { // 150px radius
           const d = Math.sqrt(d2);
           const f = (150 - d) / 150 * 0.015;
           p.vx += dx * f;
@@ -1019,12 +1255,13 @@
         ctx.fill();
       }
 
+      // Draw connection lines only for nearby pairs (limit to 40 pts so max 780 checks)
       ctx.lineWidth = 0.5;
       for (let i = 0; i < pts.length; i++) {
         for (let j = i+1; j < pts.length; j++) {
           const dx = pts[i].x - pts[j].x, dy = pts[i].y - pts[j].y;
           const d2 = dx*dx + dy*dy;
-          if (d2 < 16000) {
+          if (d2 < 16000) { // ~126px
             ctx.beginPath();
             ctx.moveTo(pts[i].x, pts[i].y);
             ctx.lineTo(pts[j].x, pts[j].y);
@@ -1041,107 +1278,12 @@
     requestAnimationFrame(draw);
   }
 
-  /* ─── Initialization ─── */
-  // Apply theme
-  applyTheme(); // (your existing function, define next)
-  // Apply grid size
+  /* ─── INIT ─── */
+  applyTheme(state.theme);
   applyGridSize();
-  // Initialize cloak
   initCloak();
-  // Initialize particles
   initParticles();
-
-  // Apply dark mode style
-  if (localStorage.getItem('vault_darkMode') === 'true') {
-    document.body.classList.add('dark-mode');
-    document.documentElement.style.backgroundColor = '#000';
-  } else {
-    document.body.classList.remove('dark-mode');
-    document.documentElement.style.backgroundColor = '#0d0d0d';
-  }
-
-  // Apply layout mode
-  applyLayout();
-
-  // Show/hide descriptions
-  if (localStorage.getItem('vaultDescriptions') === 'true') {
-    // descriptions visible
-  } else {
-    // hide descriptions (handled in render)
-  }
-
-  // Particle effects
-  if (localStorage.getItem('vaultParticles') !== 'true') {
-    document.getElementById('particleCanvas').style.display = 'none';
-  }
-
-  // Load games after page load
   loadGames();
-
-  /* --- Functions for toggles and layout --- */
-
-  function applyTheme() {
-    // (your existing applyTheme code)
-    const t = THEMES.find(x => x.id === (localStorage.getItem('vault_theme') || 'indigo')) || THEMES[0];
-    document.documentElement.style.setProperty('--accent', t.color);
-  }
-
-  function applyGridSize() {
-    const map = { compact: '150px', default: '200px', large: '260px' };
-    document.getElementById('gameGrid').style.gridTemplateColumns = `repeat(auto-fill, minmax(${map[state.gridSize]}, 1fr))`;
-  }
-
-  // ---- The following functions are the key for your fix ----
-
-  function applyLayout() {
-    const grid = document.getElementById('gameGrid');
-    if (state.gridLayout === 'list') {
-      grid.classList.add('list');
-    } else {
-      grid.classList.remove('list');
-    }
-  }
-
-  function setGridLayout(layout) {
-    localStorage.setItem('vaultLayout', layout);
-    state.gridLayout = layout;
-    applyLayout();
-    document.querySelectorAll('.pill[data-layout]').forEach(p =>
-      p.classList.toggle('active', p.dataset.layout === layout)
-    );
-    render();
-  }
-
-  function toggleDescriptions() {
-    const current = localStorage.getItem('vaultDescriptions') === 'true';
-    localStorage.setItem('vaultDescriptions', (!current).toString());
-    state.showDescriptions = (!current).toString();
-    render();
-    document.getElementById('toggleDescriptions').textContent = current ? 'Show Descriptions' : 'Hide Descriptions';
-  }
-
-  function toggleDarkMode() {
-    const isDark = localStorage.getItem('vault_darkMode') === 'true';
-    localStorage.setItem('vault_darkMode', (!isDark).toString());
-    state.darkMode = (!isDark).toString();
-    document.body.classList.toggle('dark-mode', !isDark);
-    document.documentElement.style.backgroundColor = !isDark ? '#000' : '#0d0d0d';
-    document.getElementById('toggleDarkMode').textContent = !isDark ? 'Disable Dark Mode' : 'Enable Dark Mode';
-  }
-
-  function toggleParticles() {
-    const enabled = localStorage.getItem('vaultParticles') === 'true';
-    localStorage.setItem('vaultParticles', (!enabled).toString());
-    state.particlesEnabled = (!enabled).toString();
-    if (enabled) {
-      document.getElementById('particleCanvas').style.display = 'none';
-    } else {
-      document.getElementById('particleCanvas').style.display = '';
-      initParticles();
-    }
-    document.getElementById('toggleParticles').textContent = !enabled ? 'Disable Particles' : 'Enable Particles';
-  }
-
 </script>
 </body>
 </html>
