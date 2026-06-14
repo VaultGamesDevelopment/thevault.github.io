@@ -797,27 +797,70 @@
   let GAMES = [];
 
   /* ─── LOAD GAMES FROM CDN ─── */
+  /* ─── GN-MATH ZONE CONSTANTS ─── */
+  const GN_COVER_URL = 'https://cdn.jsdelivr.net/gh/freebuisness/covers@main';
+  const GN_HTML_URL  = 'https://cdn.jsdelivr.net/gh/freebuisness/html@main';
+  const GN_ZONES_URLS = [
+    'https://cdn.jsdelivr.net/gh/freebuisness/assets@main/zones.json',
+    'https://cdn.jsdelivr.net/gh/freebuisness/assets@latest/zones.json',
+    'https://cdn.jsdelivr.net/gh/freebuisness/assets@master/zones.json',
+    'https://cdn.jsdelivr.net/gh/freebuisness/assets/zones.json',
+  ];
+
+  let rawZones = [];
+
+  function resolveZoneURL(url) {
+    return url.replace('{COVER_URL}', GN_COVER_URL).replace('{HTML_URL}', GN_HTML_URL);
+  }
+
+  function guessCategory(zone) {
+    const tags = (zone.special || []).map(t => t.toLowerCase());
+    if (tags.includes('fps') || tags.includes('shooter')) return 'Shooter';
+    if (tags.includes('horror')) return 'Horror';
+    if (tags.includes('puzzle')) return 'Puzzle';
+    if (tags.includes('sports')) return 'Sports';
+    if (tags.includes('idle') || tags.includes('clicker')) return 'Idle';
+    if (tags.includes('platformer')) return 'Platformer';
+    if (tags.includes('rhythm')) return 'Rhythm';
+    if (tags.includes('racing') || tags.includes('driving')) return 'Racing';
+    if (tags.includes('rpg') || tags.includes('adventure')) return 'RPG';
+    if (tags.includes('strategy')) return 'Strategy';
+    return 'Arcade';
+  }
+
   async function loadGames() {
+    document.getElementById('gameGrid').innerHTML = '<div class="empty">Loading games...</div>';
+
+    let zonesURL = GN_ZONES_URLS[Math.floor(Math.random() * GN_ZONES_URLS.length)];
     try {
-      // The CDN URL exports a `games` variable; we fetch the raw JS and eval it safely
-      const res = await fetch('https://cdn.jsdelivr.net/gh/NoahsAmazingTutoringHelp/Noahs-Calculus-Tutor@master/games.js');
-      const text = await res.text();
-      // Extract array from `const games = [...]` or `let games = [...]`
-      const match = text.match(/(?:const|let|var)\s+games\s*=\s*(\[[\s\S]*?\]);/);
-      if (match) {
-        GAMES = JSON.parse(match[1].replace(/,\s*\]/g, ']'));
-        // Normalize field names: url -> path, image -> thumb
-        GAMES = GAMES.map(g => ({
-          title: g.title,
-          path: g.url,
-          thumb: g.image || null,
-          cat: g.cat || 'Arcade',
-          desc: g.desc || '',
-        }));
+      const shaRes = await fetch('https://api.github.com/repos/freebuisness/assets/commits?t=' + Date.now());
+      if (shaRes.ok) {
+        const shaJson = await shaRes.json();
+        const sha = shaJson[0]?.sha;
+        if (sha) zonesURL = `https://cdn.jsdelivr.net/gh/freebuisness/assets@${sha}/zones.json`;
       }
+    } catch (_) {}
+
+    try {
+      const res = await fetch(zonesURL + '?t=' + Date.now());
+      if (!res.ok) throw new Error('HTTP ' + res.status);
+      rawZones = await res.json();
+
+      GAMES = rawZones.map(z => ({
+        title: z.name,
+        path: z.url,
+        thumb: z.cover ? resolveZoneURL(z.cover) : null,
+        cat: guessCategory(z),
+        desc: z.description || '',
+        _zoneId: z.id,
+        _isExternalLink: z.url.startsWith('http'),
+      }));
     } catch (e) {
-      console.warn('Failed to load games from CDN, falling back to inline list');
+      console.warn('Failed to load gn-math zones:', e);
+      document.getElementById('gameGrid').innerHTML = '<div class="empty">Failed to load games. Check your connection.</div>';
+      return;
     }
+
     renderCats();
     render();
   }
@@ -1028,14 +1071,58 @@
 
   /* ─── PLAY ─── */
   function playGame(path, title) {
-    document.getElementById('gameIframe').src = path;
+    // Find the matching zone to know if it's an external link or HTML-injected
+    const zone = rawZones.find(z => z.url === path);
+
+    if (!zone) {
+      // Custom user-added game — just set src directly
+      document.getElementById('gameIframe').src = path;
+      document.getElementById('frameTitle').textContent = title;
+      document.getElementById('frameView').classList.add('open');
+      return;
+    }
+
+    if (path.startsWith('http')) {
+      // External link zones open in new tab (mirrors gn-math behaviour)
+      window.open(path, '_blank');
+      return;
+    }
+
+    // gn-math style: fetch the HTML and write it into the iframe
+    const resolvedURL = resolveZoneURL(path) + '?t=' + Date.now();
     document.getElementById('frameTitle').textContent = title;
     document.getElementById('frameView').classList.add('open');
+
+    const iframe = document.getElementById('gameIframe');
+    // Reset iframe so we can write fresh content
+    iframe.src = 'about:blank';
+
+    fetch(resolvedURL)
+      .then(r => {
+        if (!r.ok) throw new Error('HTTP ' + r.status);
+        return r.text();
+      })
+      .then(html => {
+        const doc = iframe.contentDocument || iframe.contentWindow.document;
+        doc.open();
+        doc.write(html);
+        doc.close();
+      })
+      .catch(err => {
+        alert('Failed to load game: ' + err.message);
+        closeGame();
+      });
   }
 
   function closeGame() {
     document.getElementById('frameView').classList.remove('open');
-    document.getElementById('gameIframe').src = '';
+    const iframe = document.getElementById('gameIframe');
+    iframe.src = 'about:blank';
+    // Clear content
+    try {
+      const doc = iframe.contentDocument || iframe.contentWindow.document;
+      doc.open(); doc.write(''); doc.close();
+    } catch(_) {}
   }
 
   function toggleFullscreen() {
@@ -1045,7 +1132,8 @@
   }
 
   function playRandom() {
-    const games = allGames();
+    // Exclude external-link zones for random — they'd just open a new tab
+    const games = allGames().filter(g => !g._isExternalLink);
     if (!games.length) return;
     const g = games[Math.floor(Math.random() * games.length)];
     playGame(g.path, g.title);
