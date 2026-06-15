@@ -16,6 +16,7 @@
       --text: #e8e8e8;
       --text-dim: #777;
       --radius: 8px;
+      --blur-strength: 8px;
     }
 
     body {
@@ -47,6 +48,7 @@
       width: 220px;
       flex-shrink: 0;
       background: var(--surface);
+      backdrop-filter: blur(var(--blur-strength));
       border-right: 1px solid var(--border);
       display: flex;
       flex-direction: column;
@@ -656,6 +658,32 @@
           <button class="pill" data-size="large" onclick="setSize(this,'large')">Large</button>
         </div>
       </div>
+
+      <div class="setting-section">
+        <div class="setting-label">Sidebar Width</div>
+        <input class="form-input" type="range" min="180" max="320" value="220" id="sidebarWidth" oninput="setSidebarWidth(this.value)">
+      </div>
+
+      <div class="setting-section">
+        <div class="setting-label">UI Blur</div>
+        <input class="form-input" type="range" min="0" max="20" value="8" id="blurStrength" oninput="setBlur(this.value)">
+      </div>
+
+      <div class="setting-section">
+        <div class="setting-label">Accent Glow</div>
+        <div class="pills">
+          <button class="pill" onclick="setGlow(true)">On</button>
+          <button class="pill" onclick="setGlow(false)">Off</button>
+        </div>
+      </div>
+
+      <div class="setting-section">
+        <div class="setting-label">Auto Fullscreen</div>
+        <div class="pills">
+          <button class="pill" onclick="setAutoFullscreen(true)">On</button>
+          <button class="pill" onclick="setAutoFullscreen(false)">Off</button>
+        </div>
+      </div>
     </div>
 
     <div class="tab-pane" id="tabCloak">
@@ -1079,6 +1107,9 @@
       document.getElementById('gameIframe').src = path;
       document.getElementById('frameTitle').textContent = title;
       document.getElementById('frameView').classList.add('open');
+      if(localStorage.getItem('vault_auto_fullscreen')==='true'){
+        setTimeout(()=>toggleFullscreen(),1000);
+      }
       return;
     }
 
@@ -1278,8 +1309,39 @@
     requestAnimationFrame(draw);
   }
 
+  
+  function setSidebarWidth(width){
+    document.getElementById('sidebar').style.width = width + 'px';
+    localStorage.setItem('vault_sidebar_width', width);
+  }
+
+  function setBlur(value){
+    document.documentElement.style.setProperty('--blur-strength', value + 'px');
+    localStorage.setItem('vault_blur_strength', value);
+  }
+
+  function setGlow(enabled){
+    document.body.classList.toggle('glow-enabled', enabled);
+    localStorage.setItem('vault_glow', enabled);
+  }
+
+  function setAutoFullscreen(enabled){
+    localStorage.setItem('vault_auto_fullscreen', enabled);
+  }
+
+
   /* ─── INIT ─── */
+  
+  const savedSidebarWidth = localStorage.getItem('vault_sidebar_width');
+  if(savedSidebarWidth) setSidebarWidth(savedSidebarWidth);
+
+  const savedBlur = localStorage.getItem('vault_blur_strength');
+  if(savedBlur) setBlur(savedBlur);
+
+  if(localStorage.getItem('vault_glow')==='true') setGlow(true);
+
   applyTheme(state.theme);
+
   applyGridSize();
   initCloak();
   initParticles();
