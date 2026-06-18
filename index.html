@@ -92,6 +92,7 @@
 
     .sidebar-section {
       padding: 8px 8px 4px;
+      flex-shrink: 0;
     }
 
     .nav-label {
@@ -135,6 +136,7 @@
 
     .sidebar-footer {
       margin-top: auto;
+      flex-shrink: 0;
       border-top: 1px solid var(--border);
       padding: 8px;
     }
@@ -268,21 +270,20 @@
     #gameGrid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-      gap: 1px;
-      background: var(--border);
-      border: 1px solid var(--border);
-      border-radius: 6px;
-      overflow: hidden;
+      gap: 12px;
     }
 
     .game-card {
       background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      overflow: hidden;
       cursor: pointer;
-      transition: background 0.1s;
+      transition: border-color 0.15s, background 0.1s;
       position: relative;
     }
 
-    .game-card:hover { background: var(--surface-2); }
+    .game-card:hover { background: var(--surface-2); border-color: var(--border-hover); }
 
     .game-thumb {
       width: 100%;
@@ -389,6 +390,8 @@
 
     .add-card {
       background: var(--surface);
+      border: 1px dashed rgba(255,255,255,0.1);
+      border-radius: 8px;
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -399,11 +402,11 @@
       color: var(--text-dimmer);
       font-size: 12px;
       font-weight: 400;
-      transition: background 0.1s, color 0.1s;
+      transition: background 0.1s, color 0.1s, border-color 0.15s;
       min-height: 140px;
     }
 
-    .add-card:hover { background: var(--surface-2); color: var(--text-dim); }
+    .add-card:hover { background: var(--surface-2); color: var(--text-dim); border-color: rgba(255,255,255,0.2); }
     .add-card svg { width: 16px; height: 16px; }
 
     .empty {
@@ -994,8 +997,9 @@
 
   function applyGridSize() {
     const map = { compact: '150px', default: '200px', large: '260px' };
-    document.getElementById('gameGrid').style.gridTemplateColumns =
-      `repeat(auto-fill, minmax(${map[state.gridSize]}, 1fr))`;
+    const grid = document.getElementById('gameGrid');
+    grid.style.gridTemplateColumns = `repeat(auto-fill, minmax(${map[state.gridSize]}, 1fr))`;
+    grid.style.gap = '12px';
   }
 
   const ORIG_TITLE = document.title;
