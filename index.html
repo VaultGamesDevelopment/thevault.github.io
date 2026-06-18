@@ -6,20 +6,20 @@
   <title>The Vault</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <style>
-    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+   *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
     :root {
-      --bg: #0d0d0d;
-      --surface: #161616;
-      --border: #2a2a2a;
+      --bg: #09090b;
+      --surface: #18181b;
+      --border: #27272a;
       --accent: #6366f1;
-      --text: #e8e8e8;
-      --text-dim: #777;
-      --radius: 8px;
+      --text: #fafafa;
+      --text-dim: #a1a1aa;
+      --radius: 12px;
     }
 
     body {
-      font-family: 'Inter', sans-serif;
+      font-family: 'Inter', system-ui, sans-serif;
       background: var(--bg);
       color: var(--text);
       min-height: 100vh;
@@ -27,579 +27,77 @@
       overflow-x: hidden;
     }
 
-    #particleCanvas {
-      position: fixed;
-      inset: 0;
-      z-index: 0;
-      pointer-events: none;
-      opacity: 0.55;
-    }
-
-    #app {
-      display: flex;
-      min-height: 100vh;
-      position: relative;
-      z-index: 1;
-    }
+    #particleCanvas { position: fixed; inset: 0; z-index: 0; pointer-events: none; opacity: 0.4; }
+    #app { display: flex; min-height: 100vh; position: relative; z-index: 1; }
 
     /* ── SIDEBAR ── */
     #sidebar {
-      width: 220px;
+      width: 260px;
       flex-shrink: 0;
-      background: var(--surface);
+      background: rgba(24, 24, 27, 0.7);
+      backdrop-filter: blur(12px);
       border-right: 1px solid var(--border);
       display: flex;
       flex-direction: column;
-      padding: 20px 12px;
+      padding: 24px 16px;
+      height: 100vh;
       position: sticky;
       top: 0;
-      height: 100vh;
-      overflow-y: auto;
     }
 
-    .brand {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      padding: 4px 8px 20px;
-      border-bottom: 1px solid var(--border);
-      margin-bottom: 16px;
-    }
+    .brand { display: flex; align-items: center; gap: 12px; padding: 4px 8px 24px; border-bottom: 1px solid var(--border); margin-bottom: 20px; }
+    .brand-dot { width: 32px; height: 32px; border-radius: 8px; background: var(--accent); display: flex; align-items: center; justify-content: center; }
+    .brand-name { font-size: 16px; font-weight: 700; }
 
-    .brand-dot {
-      width: 28px;
-      height: 28px;
-      border-radius: 6px;
-      background: var(--accent);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-shrink: 0;
-      transition: background 0.3s;
-    }
-
-    .brand-dot svg { width: 14px; height: 14px; color: #fff; }
-    .brand-name { font-size: 15px; font-weight: 700; letter-spacing: -0.3px; }
-
-    .nav-label {
-      font-size: 10px;
-      color: var(--text-dim);
-      letter-spacing: 1px;
-      text-transform: uppercase;
-      padding: 0 8px;
-      margin: 14px 0 6px;
-    }
-
-    .nav-link {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      padding: 8px 10px;
-      border-radius: var(--radius);
-      cursor: pointer;
-      font-size: 13px;
-      font-weight: 500;
-      color: var(--text-dim);
-      transition: color 0.15s, background 0.15s;
-      margin-bottom: 1px;
-      border: none;
-      background: transparent;
-      width: 100%;
-      text-align: left;
-    }
-
-    .nav-link:hover { color: var(--text); background: rgba(255,255,255,0.04); }
-    .nav-link.active { color: var(--text); background: color-mix(in srgb, var(--accent) 12%, transparent); }
-    .nav-link svg { width: 14px; height: 14px; flex-shrink: 0; }
-
-    .nav-badge {
-      margin-left: auto;
-      font-size: 10px;
-      background: rgba(255,255,255,0.07);
-      color: var(--text-dim);
-      padding: 1px 6px;
-      border-radius: 4px;
-    }
-
-    .sidebar-footer {
-      margin-top: auto;
-      padding-top: 16px;
-      border-top: 1px solid var(--border);
-      font-size: 10px;
-      color: var(--text-dim);
-      padding-left: 8px;
-    }
+    .nav-label { font-size: 11px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 1px; padding: 0 8px; margin: 16px 0 8px; }
+    .nav-link { display: flex; align-items: center; gap: 12px; padding: 10px 12px; border-radius: var(--radius); cursor: pointer; font-size: 14px; color: var(--text-dim); transition: all 0.2s; border: none; background: transparent; width: 100%; }
+    .nav-link:hover { color: var(--text); background: rgba(255,255,255,0.05); }
+    .nav-link.active { color: var(--text); background: var(--border); }
 
     /* ── MAIN ── */
-    #main { flex: 1; padding: 28px 32px; min-width: 0; }
-
-    .topbar {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      margin-bottom: 24px;
-      flex-wrap: wrap;
-    }
-
-    .topbar-title { font-size: 22px; font-weight: 700; letter-spacing: -0.5px; flex: 1; }
-    .topbar-title span { color: var(--accent); transition: color 0.3s; }
-
-    .search-wrap { position: relative; flex: 1; max-width: 300px; }
-
-    .search-wrap svg {
-      position: absolute;
-      left: 11px;
-      top: 50%;
-      transform: translateY(-50%);
-      width: 14px;
-      height: 14px;
-      color: var(--text-dim);
-      pointer-events: none;
-    }
-
+    #main { flex: 1; padding: 40px 48px; }
+    .topbar { display: flex; align-items: center; gap: 16px; margin-bottom: 32px; }
+    .topbar-title { font-size: 28px; font-weight: 700; flex: 1; }
+    
     .search-input {
-      width: 100%;
       background: var(--surface);
       border: 1px solid var(--border);
+      padding: 12px 16px 12px 40px;
+      border-radius: 10px;
+      width: 300px;
       color: var(--text);
-      padding: 9px 14px 9px 34px;
-      border-radius: var(--radius);
       outline: none;
-      font-family: inherit;
-      font-size: 13px;
-      transition: border-color 0.15s;
+      transition: all 0.2s;
     }
-
-    .search-input::placeholder { color: var(--text-dim); }
-    .search-input:focus { border-color: var(--accent); }
-
-    /* ── CATEGORIES ── */
-    .cats { display: flex; gap: 6px; margin-bottom: 20px; flex-wrap: wrap; }
-
-    .cat-pill {
-      padding: 6px 14px;
-      border-radius: 99px;
-      font-size: 12px;
-      font-weight: 500;
-      border: 1px solid var(--border);
-      color: var(--text-dim);
-      cursor: pointer;
-      background: transparent;
-      font-family: inherit;
-      transition: color 0.15s, border-color 0.15s, background 0.15s;
-    }
-
-    .cat-pill:hover { border-color: #444; color: var(--text); }
-    .cat-pill.active {
-      border-color: var(--accent);
-      color: var(--accent);
-      background: color-mix(in srgb, var(--accent) 8%, transparent);
-    }
+    .search-input:focus { border-color: var(--accent); box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.2); }
 
     /* ── GAME GRID ── */
-    #gameGrid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-      gap: 16px;
-    }
-
+    #gameGrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 24px; }
     .game-card {
       background: var(--surface);
       border: 1px solid var(--border);
-      border-radius: 10px;
+      border-radius: var(--radius);
       overflow: hidden;
+      transition: all 0.25s ease;
       cursor: pointer;
-      transition: border-color 0.15s, transform 0.2s;
     }
-
-    .game-card:hover { border-color: #444; transform: translateY(-3px); }
-
-    .game-thumb {
-      width: 100%;
-      aspect-ratio: 16/10;
-      background: #111;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .game-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
-
-    .game-thumb-placeholder { display: flex; align-items: center; justify-content: center; width: 100%; height: 100%; }
-    .game-thumb-placeholder svg { width: 28px; height: 28px; color: #333; }
-
-    .play-overlay {
-      position: absolute;
-      inset: 0;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      opacity: 0;
-      background: rgba(0,0,0,0.5);
-      transition: opacity 0.2s;
-    }
-
+    .game-card:hover { border-color: var(--accent); transform: translateY(-4px); box-shadow: 0 10px 25px -5px rgba(0,0,0,0.5); }
+    .game-thumb { aspect-ratio: 16/9; background: #000; position: relative; overflow: hidden; }
+    .game-thumb img { width: 100%; height: 100%; object-fit: cover; }
+    .play-overlay { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.4); opacity: 0; transition: opacity 0.3s; }
     .game-card:hover .play-overlay { opacity: 1; }
-
-    .play-btn {
-      width: 38px;
-      height: 38px;
-      border-radius: 50%;
-      background: var(--accent);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: background 0.3s;
-    }
-
-    .play-btn svg { width: 14px; height: 14px; color: #fff; margin-left: 2px; }
-
-    .fav-btn {
-      position: absolute;
-      top: 8px;
-      right: 8px;
-      width: 28px;
-      height: 28px;
-      border-radius: 50%;
-      background: rgba(0,0,0,0.6);
-      border: none;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-    }
-
-    .fav-btn svg { width: 12px; height: 12px; color: #888; transition: color 0.15s; }
-    .fav-btn.active svg { color: #f59e0b; fill: #f59e0b; }
-
-    .game-info { padding: 12px 14px; display: flex; align-items: center; gap: 6px; }
-    .game-info-text { flex: 1; min-width: 0; }
-
-    .game-title {
-      font-size: 13px;
-      font-weight: 600;
-      margin-bottom: 3px;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-
-    .game-cat { font-size: 11px; color: var(--text-dim); }
-
-    .game-delete {
-      display: none;
-      align-items: center;
-      justify-content: center;
-      width: 20px;
-      height: 20px;
-      border-radius: 4px;
-      border: 1px solid var(--border);
-      cursor: pointer;
-      background: transparent;
-      color: var(--text-dim);
-      flex-shrink: 0;
-      transition: color 0.15s, border-color 0.15s;
-    }
-
-    .game-card.custom .game-delete { display: flex; }
-    .game-delete:hover { color: #f43f5e; border-color: rgba(244,63,94,0.4); }
-    .game-delete svg { width: 10px; height: 10px; }
-
-    .add-card {
-      background: var(--surface);
-      border: 1px dashed var(--border);
-      border-radius: 10px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      padding: 32px 16px;
-      cursor: pointer;
-      color: var(--text-dim);
-      font-size: 13px;
-      font-weight: 500;
-      transition: border-color 0.15s, color 0.15s;
-      min-height: 160px;
-    }
-
-    .add-card:hover { border-color: var(--accent); color: var(--accent); }
-    .add-card svg { width: 20px; height: 20px; }
-
-    .empty {
-      grid-column: 1/-1;
-      padding: 60px 0;
-      text-align: center;
-      color: var(--text-dim);
-      font-size: 14px;
-    }
-
-    /* ── GAME PLAYER ── */
-    #frameView { display: none; position: fixed; inset: 0; z-index: 100; background: #000; flex-direction: column; }
-    #frameView.open { display: flex; }
-
-    .frame-bar {
-      height: 48px;
-      background: var(--surface);
-      border-bottom: 1px solid var(--border);
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      padding: 0 16px;
-      flex-shrink: 0;
-    }
-
-    .frame-back {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      padding: 6px 12px;
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      cursor: pointer;
-      font-size: 12px;
-      font-weight: 500;
-      color: var(--text-dim);
-      background: transparent;
-      font-family: inherit;
-      transition: color 0.15s, border-color 0.15s;
-    }
-
-    .frame-back:hover { color: var(--text); border-color: #444; }
-    .frame-back svg { width: 14px; height: 14px; }
-    .frame-title { font-size: 13px; font-weight: 500; color: var(--text-dim); }
-    .frame-controls { margin-left: auto; display: flex; gap: 8px; }
-
-    .frame-btn {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      padding: 6px 12px;
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      cursor: pointer;
-      font-size: 12px;
-      color: var(--text-dim);
-      background: transparent;
-      font-family: inherit;
-      transition: color 0.15s, border-color 0.15s;
-    }
-
-    .frame-btn:hover { color: var(--text); border-color: #444; }
-    .frame-btn svg { width: 13px; height: 13px; }
-    #gameIframe { flex: 1; border: none; }
+    .game-info { padding: 16px; }
+    .game-title { font-size: 14px; font-weight: 600; margin-bottom: 4px; }
+    .game-cat { font-size: 12px; color: var(--text-dim); }
 
     /* ── MODALS ── */
-    .overlay {
-      position: fixed;
-      inset: 0;
-      z-index: 200;
-      background: rgba(0,0,0,0.7);
-      display: none;
-      align-items: center;
-      justify-content: center;
-    }
-
+    .overlay { position: fixed; inset: 0; z-index: 200; background: rgba(0,0,0,0.8); backdrop-filter: blur(4px); display: none; align-items: center; justify-content: center; }
     .overlay.open { display: flex; }
-
-    .modal {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      width: min(500px, 94vw);
-      max-height: 85vh;
-      overflow-y: auto;
-      padding: 24px;
-    }
-
-    .modal-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 22px;
-    }
-
-    .modal-header h2 { font-size: 16px; font-weight: 700; }
-
-    .modal-close {
-      width: 28px;
-      height: 28px;
-      border-radius: 6px;
-      border: 1px solid var(--border);
-      background: transparent;
-      color: var(--text-dim);
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 16px;
-      line-height: 1;
-    }
-
-    .modal-close:hover { color: var(--text); }
-
-    .setting-label {
-      font-size: 10px;
-      color: var(--text-dim);
-      text-transform: uppercase;
-      letter-spacing: 0.8px;
-      margin-bottom: 10px;
-    }
-
-    .setting-section { margin-bottom: 22px; }
-
-    .swatches { display: flex; gap: 8px; flex-wrap: wrap; }
-
-    .swatch {
-      width: 36px;
-      height: 36px;
-      border-radius: 8px;
-      cursor: pointer;
-      border: 2px solid transparent;
-      transition: transform 0.15s;
-    }
-
-    .swatch:hover { transform: scale(1.08); }
-    .swatch.active { border-color: #fff; transform: scale(1.1); }
-
-    .pills { display: flex; gap: 6px; flex-wrap: wrap; }
-
-    .pill {
-      padding: 7px 14px;
-      border-radius: var(--radius);
-      font-size: 12px;
-      font-weight: 500;
-      border: 1px solid var(--border);
-      color: var(--text-dim);
-      cursor: pointer;
-      background: transparent;
-      font-family: inherit;
-      transition: color 0.15s, border-color 0.15s, background 0.15s;
-    }
-
-    .pill:hover { color: var(--text); border-color: #444; }
-    .pill.active { color: var(--accent); border-color: var(--accent); background: color-mix(in srgb, var(--accent) 10%, transparent); }
-
-    /* Cloak grid */
-    .cloak-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
-      gap: 8px;
-    }
-
-    .cloak-opt {
-      padding: 10px 8px;
-      border-radius: var(--radius);
-      border: 1px solid var(--border);
-      cursor: pointer;
-      background: transparent;
-      font-family: inherit;
-      color: var(--text-dim);
-      text-align: center;
-      font-size: 11px;
-      font-weight: 600;
-      transition: border-color 0.15s, color 0.15s, background 0.15s;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 6px;
-    }
-
-    .cloak-opt:hover { border-color: #444; color: var(--text); }
-    .cloak-opt.active { border-color: var(--accent); color: var(--accent); background: color-mix(in srgb, var(--accent) 8%, transparent); }
-    .cloak-opt img { width: 20px; height: 20px; object-fit: contain; }
-    .cloak-opt span { font-size: 20px; }
-
-    /* Form */
-    .form-group { margin-bottom: 14px; }
-    .form-label { display: block; font-size: 12px; color: var(--text-dim); margin-bottom: 5px; }
-
-    .form-input {
-      width: 100%;
-      background: #111;
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 9px 12px;
-      color: var(--text);
-      font-family: inherit;
-      font-size: 13px;
-      outline: none;
-      transition: border-color 0.15s;
-    }
-
-    .form-input:focus { border-color: var(--accent); }
-
-    .btn-primary {
-      width: 100%;
-      padding: 10px;
-      background: var(--accent);
-      border: none;
-      border-radius: var(--radius);
-      color: #fff;
-      font-size: 13px;
-      font-weight: 600;
-      cursor: pointer;
-      font-family: inherit;
-      margin-top: 8px;
-      transition: opacity 0.15s, background 0.3s;
-    }
-
-    .btn-primary:hover { opacity: 0.88; }
-
-    /* Tabs inside modal */
-    .modal-tabs { display: flex; border-bottom: 1px solid var(--border); margin-bottom: 20px; }
-
-    .modal-tab {
-      padding: 8px 16px;
-      font-size: 13px;
-      font-weight: 600;
-      color: var(--text-dim);
-      cursor: pointer;
-      background: transparent;
-      border: none;
-      font-family: inherit;
-      border-bottom: 2px solid transparent;
-      margin-bottom: -1px;
-      transition: color 0.15s;
-    }
-
-    .modal-tab.active { color: var(--accent); border-bottom-color: var(--accent); }
-    .tab-pane { display: none; }
-    .tab-pane.active { display: block; }
-
-    /* Misc */
-    ::-webkit-scrollbar { width: 5px; }
-    ::-webkit-scrollbar-track { background: transparent; }
-    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 99px; }
-
-    .mobile-toggle {
-      display: none;
-      position: fixed;
-      top: 12px;
-      left: 12px;
-      z-index: 50;
-      background: var(--surface);
-      border: 1px solid var(--border);
-      color: var(--text);
-      width: 40px;
-      height: 40px;
-      border-radius: var(--radius);
-      cursor: pointer;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .mobile-toggle svg { width: 18px; height: 18px; }
-
-    @media (max-width: 720px) {
-      .mobile-toggle { display: flex; }
-      #sidebar { position: fixed; left: -220px; z-index: 45; transition: left 0.25s; }
-      #sidebar.open { left: 0; }
-      #main { padding: 20px 16px; padding-top: 64px; }
-      #gameGrid { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 12px; }
-    }
+    .modal { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); width: 500px; padding: 24px; }
+    
+    ::-webkit-scrollbar { width: 8px; }
+    ::-webkit-scrollbar-track { background: var(--bg); }
+    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
   </style>
 </head>
 <body>
