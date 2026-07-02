@@ -1,26 +1,1451 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Vault</title>
+<link rel="icon" href="favicon.png" type="image/png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/lucide@latest/dist/umd/lucide.js"></script>
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+:root {
+    --bg: #0a0b10;
+    --bg-2: #0e0f16;
+    --panel: #14161f;
+    --panel-hover: #1a1d29;
+    --line: #23273580;
+    --line-strong: #343a4d;
+    --text: #e9eaf1;
+    --text-dim: #9298ab;
+    --text-faint: #565c73;
+    --violet: #8b7dff;
+    --cyan: #45e0c4;
+    --pink: #ff5fa0;
+    --amber: #ffb454;
+    --grad: linear-gradient(135deg, var(--violet), var(--cyan));
+    --radius-lg: 16px;
+    --radius-md: 12px;
+    --radius-sm: 8px;
+    --font-display: 'Space Grotesk', 'Inter', sans-serif;
+    --font-body: 'Inter', sans-serif;
+    --font-mono: 'JetBrains Mono', monospace;
+}
+html, body {
+    height: 100%;
+}
+body {
+    font-family: var(--font-body);
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    position: relative;
+    overflow-x: hidden;
+}
+body.dark-mode {
+    background: #060709;
+}
+body::before,
+body::after {
+    content: "";
+    position: fixed;
+    width: 60vw;
+    height: 60vw;
+    max-width: 720px;
+    max-height: 720px;
+    border-radius: 50%;
+    filter: blur(120px);
+    opacity: 0.15;
+    z-index: -1;
+    pointer-events: none;
+    animation: driftBlob 26s ease-in-out infinite alternate;
+}
+body::before { background: var(--violet); top: -20%; left: -12%; }
+body::after { background: var(--cyan); bottom: -22%; right: -10%; animation-delay: -12s; animation-duration: 32s; }
+@keyframes driftBlob {
+    0%   { transform: translate(0, 0) scale(1); }
+    100% { transform: translate(6%, 4%) scale(1.12); }
+}
+@media (prefers-reduced-motion: reduce) {
+    body::before, body::after { animation: none; }
+}
+::selection { background: var(--violet); color: #0a0b10; }
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--line-strong); border-radius: 999px; }
+::-webkit-scrollbar-thumb:hover { background: var(--violet); }
+
+.page {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 20px 28px 60px;
+}
+
+header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 16px;
+    padding: 14px 22px;
+    margin-bottom: 30px;
+    background: rgba(20, 22, 31, 0.6);
+    backdrop-filter: blur(18px) saturate(140%);
+    -webkit-backdrop-filter: blur(18px) saturate(140%);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-lg);
+    position: sticky;
+    top: 16px;
+    z-index: 200;
+    box-shadow: 0 12px 40px rgba(0,0,0,0.35);
+}
+.brand { display: flex; align-items: center; gap: 12px; }
+.brand::before {
+    content: "";
+    width: 34px;
+    height: 34px;
+    border-radius: 10px;
+    background: var(--grad);
+    box-shadow: 0 0 18px rgba(139, 125, 255, 0.5);
+    flex-shrink: 0;
+}
+.brand h1 {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 1.4rem;
+    letter-spacing: 1px;
+    background: var(--grad);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    line-height: 1.1;
+}
+.brand .subtitle {
+    font-family: var(--font-mono);
+    font-size: 0.65rem;
+    color: var(--text-faint);
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    margin-top: 2px;
+}
+
+.search-container {
+    position: relative;
+    flex: 1;
+    min-width: 220px;
+    max-width: 420px;
+}
+.search-container input {
+    width: 100%;
+    padding: 9px 16px;
+    border-radius: 999px;
+    border: 1px solid var(--line-strong);
+    background: var(--panel);
+    color: var(--text);
+    font-family: var(--font-body);
+    font-size: 0.85rem;
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
+}
+.search-container input::placeholder { color: var(--text-faint); }
+.search-container input:focus {
+    border-color: var(--violet);
+    box-shadow: 0 0 0 3px rgba(139, 125, 255, 0.18);
+    background: var(--panel-hover);
+}
+.search-results {
+    display: none;
+    position: absolute;
+    top: calc(100% + 8px);
+    left: 0;
+    right: 0;
+    max-height: 420px;
+    overflow-y: auto;
+    background: var(--panel);
+    border: 1px solid var(--line-strong);
+    border-radius: var(--radius-md);
+    box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+    z-index: 250;
+}
+.search-results.active { display: block; }
+.search-results-header {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--text-faint);
+    padding: 12px 16px 6px;
+}
+.search-result-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 8px 16px;
+    cursor: pointer;
+    transition: background 0.15s ease;
+}
+.search-result-item:hover { background: var(--panel-hover); }
+.search-result-image {
+    width: 52px;
+    height: 38px;
+    object-fit: cover;
+    border-radius: var(--radius-sm);
+    background: var(--bg-2);
+    flex-shrink: 0;
+}
+.search-result-info { flex: 1; min-width: 0; }
+.search-result-name {
+    font-size: 0.88rem;
+    font-weight: 600;
+    color: var(--text);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.search-result-category {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.72rem;
+    color: var(--text-faint);
+    margin-top: 2px;
+}
+.search-no-results {
+    text-align: center;
+    padding: 30px 16px;
+    color: var(--text-faint);
+}
+
+.nav-buttons { display: flex; gap: 8px; flex-wrap: wrap; }
+.nav-buttons button,
+.settings-button {
+    padding: 9px 18px;
+    border-radius: 999px;
+    border: 1px solid var(--line-strong);
+    background: var(--panel);
+    color: var(--text-dim);
+    font-family: var(--font-body);
+    font-weight: 500;
+    font-size: 0.82rem;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: all 0.2s ease;
+}
+.nav-buttons button:hover,
+.settings-button:hover {
+    background: var(--panel-hover);
+    border-color: var(--violet);
+    color: var(--text);
+    transform: translateY(-1px);
+}
+
+.view { display: none; }
+.view.active { display: block; }
+
+.hero-random {
+    position: relative;
+    height: 260px;
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    cursor: pointer;
+    margin-bottom: 40px;
+    border: 1px solid var(--line);
+    background: var(--panel);
+}
+.hero-random img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 6s ease, opacity 0.4s ease;
+}
+.hero-random:hover img { transform: scale(1.05); }
+.hero-random::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(100deg, rgba(6,7,10,0.9) 15%, rgba(6,7,10,0.35) 55%, rgba(6,7,10,0.1) 100%);
+}
+.hero-overlay {
+    position: absolute;
+    left: 32px;
+    bottom: 28px;
+    z-index: 2;
+}
+.hero-eyebrow {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--cyan);
+    margin-bottom: 8px;
+}
+.hero-cta {
+    font-family: var(--font-display);
+    font-size: 1.6rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--text);
+}
+.hero-cta i { color: var(--violet); }
+
+.category-section { margin-bottom: 36px; }
+.category-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 14px;
+    padding: 0 2px;
+}
+.category-title {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 1.05rem;
+    color: var(--text);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.category-title::before {
+    content: "";
+    width: 4px;
+    height: 18px;
+    border-radius: 4px;
+    background: var(--grad);
+    display: inline-block;
+}
+.category-title i { color: var(--violet); }
+.category-view-all {
+    background: none;
+    border: none;
+    color: var(--text-faint);
+    font-family: var(--font-body);
+    font-size: 0.78rem;
+    font-weight: 500;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    transition: color 0.2s ease;
+}
+.category-view-all:hover { color: var(--cyan); }
+
+.carousel {
+    display: flex;
+    gap: 16px;
+    overflow-x: auto;
+    padding: 4px 2px 12px;
+    scroll-snap-type: x proximity;
+}
+.carousel::-webkit-scrollbar { height: 8px; }
+
+.game-card {
+    position: relative;
+    flex: 0 0 220px;
+    aspect-ratio: 16/10;
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    cursor: pointer;
+    border: 1px solid var(--line);
+    background: var(--panel);
+    scroll-snap-align: start;
+    transition: transform 0.25s cubic-bezier(.2,.8,.2,1), box-shadow 0.25s ease;
+    isolation: isolate;
+}
+.game-card::before {
+    content: "";
+    position: absolute;
+    inset: -2px;
+    border-radius: inherit;
+    padding: 2px;
+    background: conic-gradient(from 0deg, var(--violet), var(--cyan), var(--pink), var(--violet));
+    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    opacity: 0;
+    transition: opacity 0.25s ease;
+    animation: spinHalo 5s linear infinite;
+    z-index: -1;
+    pointer-events: none;
+}
+@keyframes spinHalo { to { transform: rotate(360deg); } }
+.game-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 16px 32px rgba(0,0,0,0.4);
+}
+.game-card:hover::before { opacity: 1; }
+.game-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    background: var(--panel-hover);
+}
+.game-overlay {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    padding: 30px 12px 10px;
+    background: linear-gradient(to top, rgba(6,7,10,0.95) 20%, rgba(6,7,10,0) 100%);
+}
+.game-title {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--text);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.game-title .open-icon { color: var(--cyan); flex-shrink: 0; opacity: 0; transform: scale(0.7); transition: all 0.2s ease; }
+.game-card:hover .game-title .open-icon { opacity: 1; transform: scale(1); }
+.game-description {
+    font-size: 0.72rem;
+    color: var(--text-dim);
+    margin-top: 4px;
+    max-height: 0;
+    opacity: 0;
+    overflow: hidden;
+    transition: max-height 0.25s ease, opacity 0.25s ease, margin-top 0.25s ease;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+}
+.game-card:hover .game-description {
+    max-height: 40px;
+    opacity: 1;
+    margin-top: 6px;
+}
+.game-creator {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-family: var(--font-mono);
+    font-size: 0.66rem;
+    color: var(--text-faint);
+    margin-top: 6px;
+}
+
+.grid-header {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 20px;
+}
+.back-link {
+    background: var(--panel);
+    border: 1px solid var(--line-strong);
+    color: var(--text-dim);
+    border-radius: 999px;
+    padding: 8px 16px;
+    font-size: 0.8rem;
+    font-weight: 500;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: all 0.2s ease;
+}
+.back-link:hover { border-color: var(--violet); color: var(--text); }
+.grid-header h2 {
+    font-family: var(--font-display);
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--text);
+}
+.zone-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+    gap: 18px;
+}
+.zone-grid .game-card { flex: unset; aspect-ratio: 16/10; }
+
+#gamePlayerView.active {
+    display: block;
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    background: var(--bg);
+}
+.player-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 10px;
+    padding: 12px 20px;
+    background: rgba(20, 22, 31, 0.85);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border-bottom: 1px solid var(--line);
+}
+.player-info h2 {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 1.05rem;
+    color: var(--text);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.player-info h2 i { color: var(--violet); }
+.player-meta {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+    margin-top: 4px;
+}
+.meta-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    color: var(--text-faint);
+}
+.player-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+.player-actions button {
+    padding: 7px 16px;
+    border-radius: 999px;
+    border: 1px solid var(--line-strong);
+    cursor: pointer;
+    font-family: var(--font-body);
+    font-weight: 500;
+    font-size: 0.8rem;
+    background: var(--panel);
+    color: var(--text-dim);
+    transition: all 0.2s ease;
+}
+.player-actions button:hover { background: var(--panel-hover); border-color: var(--violet); color: var(--text); }
+.player-actions button.close-btn { border-color: rgba(255, 95, 160, 0.4); color: var(--pink); }
+.player-actions button.close-btn:hover { background: rgba(255, 95, 160, 0.12); border-color: var(--pink); color: var(--pink); }
+
+.game-frame-container {
+    position: relative;
+    width: 100%;
+    height: calc(100% - 76px);
+}
+.game-frame { width: 100%; height: 100%; border: none; display: block; }
+.loading {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+    color: var(--text-faint);
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+}
+.spinner {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border: 3px solid var(--line-strong);
+    border-top-color: var(--violet);
+    animation: spin 0.8s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.popup-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 2000;
+    background: rgba(6, 7, 10, 0.75);
+    backdrop-filter: blur(4px);
+    justify-content: center;
+    align-items: center;
+}
+.popup-content {
+    background: var(--panel);
+    border-radius: var(--radius-lg);
+    padding: 26px;
+    min-width: 320px;
+    max-width: 500px;
+    max-height: 80vh;
+    overflow-y: auto;
+    border: 1px solid var(--line-strong);
+    position: relative;
+    box-shadow: 0 24px 60px rgba(0,0,0,0.5);
+    animation: popIn 0.22s cubic-bezier(.2,.8,.2,1);
+}
+@keyframes popIn {
+    from { opacity: 0; transform: scale(0.96) translateY(6px); }
+    to   { opacity: 1; transform: scale(1) translateY(0); }
+}
+.popup-content h2 {
+    font-family: var(--font-display);
+    margin-bottom: 15px;
+    font-size: 1.15rem;
+    background: var(--grad);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+}
+.popup-close {
+    position: absolute;
+    top: 14px;
+    right: 16px;
+    background: none;
+    border: none;
+    color: var(--text-dim);
+    font-size: 1.4rem;
+    cursor: pointer;
+    line-height: 1;
+    transition: color 0.2s ease;
+}
+.popup-close:hover { color: var(--pink); }
+.popup-body { line-height: 1.65; color: var(--text-dim); font-size: 0.92rem; }
+.popup-body b { color: var(--text); }
+.popup-body input[type="text"] {
+    width: 100%;
+    padding: 9px 14px;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--line-strong);
+    background: var(--bg-2);
+    color: var(--text);
+    outline: none;
+    font-family: var(--font-body);
+}
+.popup-body input[type="text"]:focus { border-color: var(--violet); }
+.popup-body a { color: var(--cyan); }
+.dmca-content ol { padding-left: 20px; }
+.dmca-content code {
+    background: var(--bg-2);
+    padding: 2px 6px;
+    border-radius: var(--radius-sm);
+    font-family: var(--font-mono);
+    color: var(--amber);
+}
+.settings-button { display: block; width: 100%; text-align: left; }
+
+@media (max-width: 700px) {
+    .page { padding: 14px 14px 40px; }
+    header { flex-direction: column; align-items: stretch; position: static; padding: 16px; }
+    .search-container { max-width: none; }
+    .hero-random { height: 190px; }
+    .hero-overlay { left: 18px; bottom: 18px; }
+    .hero-cta { font-size: 1.2rem; }
+    .game-card { flex-basis: 160px; }
+}
+</style>
+</head>
+<body>
+<div class="page">
+<header>
+    <div class="brand">
+        <div>
+            <h1>The Vault</h1>
+            <p class="subtitle">Unlocked Games</p>
+        </div>
+    </div>
+    <div class="search-container">
+        <input type="text" id="searchInput" placeholder="Search the vault..." oninput="handleSearch(this.value)">
+        <div class="search-results" id="searchResults"></div>
+    </div>
+    <div class="nav-buttons">
+        <button id="backHomeBtn" style="display:none" onclick="showGamesView()"><i data-lucide="arrow-left" width="15" height="15"></i>Back</button>
+        <button onclick="showAllGamesGrid()"><i data-lucide="layout-grid" width="15" height="15"></i>All Games</button>
+        <button id="settings"><i data-lucide="settings-2" width="15" height="15"></i>Settings</button>
+        <button onclick="showContact()"><i data-lucide="mail" width="15" height="15"></i>Contact</button>
+        <button onclick="loadPrivacy()"><i data-lucide="shield" width="15" height="15"></i>Privacy</button>
+        <button onclick="loadDMCA()"><i data-lucide="gavel" width="15" height="15"></i>DMCA</button>
+    </div>
+</header>
+
+<div id="gamesView" class="view active">
+    <div class="hero-random" id="randomGameHero" onclick="openRandomGame()">
+        <img id="randomGamePreview" alt="Random game preview">
+        <div class="hero-overlay">
+            <p class="hero-eyebrow">Feeling lucky?</p>
+            <p class="hero-cta"><i data-lucide="shuffle" width="24" height="24"></i>Play a random game</p>
+        </div>
+    </div>
+    <div id="categories"></div>
+</div>
+
+<div id="gridView" class="view">
+    <div class="grid-header">
+        <button class="back-link" onclick="showGamesView()"><i data-lucide="arrow-left" width="15" height="15"></i>Back</button>
+        <h2>Games</h2>
+    </div>
+    <div class="zone-grid" id="allGamesGrid"></div>
+</div>
+
+<div id="gamePlayerView" class="view">
+    <div class="player-header">
+        <div class="player-info">
+            <h2 id="gameTitle"></h2>
+            <div class="player-meta" id="gameMeta"></div>
+        </div>
+        <div class="player-actions">
+            <button onclick="openInNewTab()"><i data-lucide="external-link" width="14" height="14"></i></button>
+            <button onclick="toggleFullscreen()"><i data-lucide="maximize" width="14" height="14"></i></button>
+            <button class="close-btn" onclick="closeGame()"><i data-lucide="x" width="14" height="14"></i>Close</button>
+        </div>
+    </div>
+    <div class="game-frame-container" id="gameFrameContainer">
+        <div class="loading" id="loading"><div class="spinner"></div><p>Loading game...</p></div>
+    </div>
+</div>
+</div>
+
+<div class="popup-overlay" id="popupOverlay">
+<div class="popup-content">
+    <button class="popup-close" onclick="closePopup()">&times;</button>
+    <h2 id="popupTitle">Popup</h2>
+    <div class="popup-body" id="popupBody"></div>
+</div>
+</div>
+
+<input type="file" id="loadDataInput" accept=".data" style="display:none" onchange="loadData(event)">
+
 <script>
-    launch();
+function darkMode() {
+    document.body.classList.toggle("dark-mode");
+}
 
-    function launch() {
-      try {
-        fetch("https://cdn.jsdelivr.net/gh/vaultgamesdevelopment/vaultsite@latest/singlefile.html")
-          .then(response => response.text())
-          .then(html => {
-                document.documentElement.innerHTML = html;
+function cloakIcon(url) {
+    const link = document.querySelector("link[rel~='icon']");
+    link.rel = "icon";
+    if ((url+"").trim().length === 0) {
+        link.href = "favicon.png";
+    } else {
+        link.href = url;
+    }
+    document.head.appendChild(link);
+}
+function cloakName(string) {
+    if ((string+"").trim().length === 0) {
+        document.title = "The Vault";
+        return;
+    }
+    document.title = string;
+}
 
-                document.documentElement.querySelectorAll('script').forEach(oldScript => {
-                    const newScript = document.createElement('script');
-                    if (oldScript.src) {
-                        newScript.src = oldScript.src;
-                    } else {
-                        newScript.textContent = oldScript.textContent;
-                    }
-                    document.body.appendChild(newScript);
-                });
-          });
-      } catch (error) {
-        console.error('error:', error);
+function tabCloak() {
+    closePopup();
+    document.getElementById('popupTitle').textContent = "Tab Cloak";
+    const popupBody = document.getElementById('popupBody');
+    popupBody.innerHTML = `
+        <label for="tab-cloak-textbox" style="font-weight: bold;">Set Tab Title:</label><br>
+        <input type="text" id="tab-cloak-textbox" placeholder="Enter new tab name..." oninput="cloakName(this.value)">
+        <br><br><br><br>
+        <label for="tab-cloak-textbox" style="font-weight: bold;">Set Tab Icon:</label><br>
+        <input type="text" id="tab-cloak-textbox" placeholder="Enter new tab icon..." oninput='cloakIcon(this.value)'>
+        <br><br><br>
+    `;
+    popupBody.contentEditable = false;
+    document.getElementById('popupOverlay').style.display = "flex";
+}
+
+const settings = document.getElementById('settings');
+settings.addEventListener('click', () => {
+    document.getElementById('popupTitle').textContent = "Settings";
+    const popupBody = document.getElementById('popupBody');
+    popupBody.innerHTML = `
+    <button class="settings-button" onclick="darkMode()">Toggle Dark Mode</button>
+    <br><br>
+    <button class="settings-button" onclick="tabCloak()">Tab Cloak</button>
+    <br>
+    `;
+    popupBody.contentEditable = false;
+    document.getElementById('popupOverlay').style.display = "flex";
+});
+
+function showContact() {
+    document.getElementById('popupTitle').textContent = "Contact";
+    const popupBody = document.getElementById('popupBody');
+    popupBody.innerHTML = `
+    <p>Discord: https://discord.gg/NAFw4ykZ7n</p>
+    <p>Email: vault.games@gmail.com</p>`;
+    popupBody.contentEditable = false;
+    document.getElementById('popupOverlay').style.display = "flex";
+}
+
+function loadPrivacy() {
+    document.getElementById('popupTitle').textContent = "Privacy Policy";
+    const popupBody = document.getElementById('popupBody');
+    popupBody.innerHTML = `
+        <div style="max-height: 60vh; overflow-y: auto;">
+            <h2>PRIVACY POLICY</h2>
+            <p>Last updated Feburary 20, 2026</p>
+            <p>This Privacy Notice for The Vault ("we," "us," or "our"), describes how and why we might access, collect, store, use, and/or share ("process") your personal information when you use our services ("Services"), including when you:</p>
+            <ul>
+                <li>Visit our website at <a href="https://thevault.dev">https://thevault.dev</a>, or any website of ours that links to this Privacy Notice</li>
+                <li>Engage with us in other related ways, including any sales, marketing, or events</li>
+            </ul>
+            <p>Questions or concerns? Reading this Privacy Notice will help you understand your privacy rights and choices. We are responsible for making decisions about how your personal information is processed. If you do not agree with our policies and practices, please do not use our Services. If you still have any questions or concerns, please contact us at <a href="https://discord.gg/NAFw4ykZ7n">https://discord.gg/NAFw4ykZ7n</a>.</p>
+
+            <h3>SUMMARY OF KEY POINTS</h3>
+            <p>This summary provides key points from our Privacy Notice, but you can find out more details about any of these topics by clicking the link following each key point or by using our table of contents below to find the section you are looking for.</p>
+
+            <p><strong>What personal information do we process?</strong> When you visit, use, or navigate our Services, we may process personal information depending on how you interact with us and the Services, the choices you make, and the products and features you use. Learn more about personal information you disclose to us.</p>
+
+            <p><strong>Do we process any sensitive personal information?</strong> Some of the information may be considered "special" or "sensitive" in certain jurisdictions, for example your racial or ethnic origins, sexual orientation, and religious beliefs. We do not process sensitive personal information.</p>
+
+            <p><strong>Do we collect any information from third parties?</strong> We do not collect any information from third parties.</p>
+
+            <p><strong>How do we process your information?</strong> We process your information to provide, improve, and administer our Services, communicate with you, for security and fraud prevention, and to comply with law. We may also process your information for other purposes with your consent. We process your information only when we have a valid legal reason to do so. Learn more about how we process your information.</p>
+
+            <p><strong>In what situations and with which parties do we share personal information?</strong> We may share information in specific situations and with specific third parties. Learn more about when and with whom we share your personal information.</p>
+
+            <p><strong>How do we keep your information safe?</strong> We have adequate organizational and technical processes and procedures in place to protect your personal information. However, no electronic transmission over the internet or information storage technology can be guaranteed to be 100% secure, so we cannot promise or guarantee that hackers, cybercriminals, or other unauthorized third parties will not be able to defeat our security and improperly collect, access, steal, or modify your information. Learn more about how we keep your information safe.</p>
+
+            <p><strong>What are your rights?</strong> Depending on where you are located geographically, the applicable privacy law may mean you have certain rights regarding your personal information. Learn more about your privacy rights.</p>
+
+            <p><strong>How do you exercise your rights?</strong> The easiest way to exercise your rights is by submitting a data subject access request, or by contacting us. We will consider and act upon any request in accordance with applicable data protection laws.</p>
+        </div>
+    `;
+    popupBody.contentEditable = false;
+    document.getElementById('popupOverlay').style.display = "flex";
+}
+
+function loadDMCA() {
+    document.getElementById('popupTitle').textContent = "DMCA";
+    const popupBody = document.getElementById('popupBody');
+    popupBody.innerHTML = `
+        <div class="dmca-content">
+            <p>
+                If you own or developed a game that is on <strong>The Vault</strong>
+                and would like it removed, please do one of the following:
+            </p>
+            <ol>
+                <li>
+                    <a href="https://discord.gg/D4c9VFYWyU" target="_blank" rel="noopener noreferrer">
+                        Join the Discord
+                    </a> and DM <strong>breadbb</strong> or ping me in a public channel
+                    <strong>[INSTANT RESPONSE]</strong>
+                </li>
+                <li>
+                    Email me at
+                    <a href="mailto:vault.games@gmail.com">vault.games@gmail.com</a>
+                    with the subject starting with <code>!DMCA</code>.
+                    <strong>[DELAYED RESPONSE]</strong>
+                </li>
+            </ol>
+            <p>
+                If you are going to do an email, please show proof you own the game before I have to ask.
+            </p>
+        </div>
+    `;
+    popupBody.contentEditable = false;
+    document.getElementById('popupOverlay').style.display = "flex";
+}
+
+function closePopup() {
+    document.getElementById('popupOverlay').style.display = "none";
+}
+
+function sanitizeData(obj, maxStringLen = 1000, maxArrayLen = 10000) {
+    if (typeof obj === 'string') {
+      return obj.length > maxStringLen ? obj.slice(0, maxStringLen) + '...[truncated]' : obj;
+    }
+    if (obj instanceof Uint8Array) {
+      if (obj.length > maxArrayLen) {
+        return `[Uint8Array too large (${obj.length} bytes), truncated]`;
+      }
+      return obj;
+    }
+    if (Array.isArray(obj)) {
+      return obj.map(item => sanitizeData(item, maxStringLen, maxArrayLen));
+    }
+    if (obj && typeof obj === 'object') {
+      const newObj = {};
+      for (const key in obj) {
+        if (obj.hasOwnProperty(key)) {
+          newObj[key] = sanitizeData(obj[key], maxStringLen, maxArrayLen);
+        }
+      }
+      return newObj;
+    }
+    return obj;
+}
+
+async function saveData() {
+    alert("This might take a while, dont touch anything other than this OK button");
+    const result = {};
+    result.cookies = document.cookie;
+    result.localStorage = {...localStorage};
+    result.sessionStorage = {...sessionStorage};
+    result.indexedDB = {};
+    const dbs = await indexedDB.databases();
+    for (const dbInfo of dbs) {
+      if (!dbInfo.name) continue;
+      result.indexedDB[dbInfo.name] = {};
+      await new Promise((resolve, reject) => {
+        const openRequest = indexedDB.open(dbInfo.name, dbInfo.version);
+        openRequest.onerror = () => reject(openRequest.error);
+        openRequest.onsuccess = () => {
+          const db = openRequest.result;
+          const storeNames = Array.from(db.objectStoreNames);
+          if (storeNames.length === 0) {
+            resolve();
+            return;
+          }
+          const transaction = db.transaction(storeNames, "readonly");
+          const storePromises = [];
+          for (const storeName of storeNames) {
+            result.indexedDB[dbInfo.name][storeName] = [];
+            const store = transaction.objectStore(storeName);
+            const getAllRequest = store.getAll();
+            const p = new Promise((res, rej) => {
+              getAllRequest.onsuccess = () => {
+                result.indexedDB[dbInfo.name][storeName] = sanitizeData(getAllRequest.result, 1000, 100);
+                res();
+              };
+              getAllRequest.onerror = () => rej(getAllRequest.error);
+            });
+            storePromises.push(p);
+          }
+          Promise.all(storePromises).then(() => resolve());
+        };
+      });
+    }
+
+    result.caches = {};
+    const cacheNames = await caches.keys();
+    for (const cacheName of cacheNames) {
+      const cache = await caches.open(cacheName);
+      const requests = await cache.keys();
+      result.caches[cacheName] = [];
+      for (const req of requests) {
+        const response = await cache.match(req);
+        if (!response) continue;
+        const cloned = response.clone();
+        const contentType = cloned.headers.get('content-type') || '';
+        let body;
+        try {
+          if (contentType.includes('application/json')) {
+            body = await cloned.json();
+          } else if (contentType.includes('text') || contentType.includes('javascript')) {
+            body = await cloned.text();
+          } else {
+            const buffer = await cloned.arrayBuffer();
+            body = btoa(String.fromCharCode(...new Uint8Array(buffer)));
+          }
+        } catch (e) {
+          body = '[Unable to read body]';
+        }
+        result.caches[cacheName].push({
+          url: req.url,
+          body,
+          contentType
+        });
       }
     }
 
-  </script>
+    alert("Done, wait for the download to come");
+    const link = document.createElement("a");
+    link.href = URL.createObjectURL(new Blob([JSON.stringify(result)], {
+        type: "application/octet-stream"
+    }));
+    link.download = `${Date.now()}.data`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+}
+
+async function loadData(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = async function (e) {
+        const data = JSON.parse(e.target.result);
+        if (data.cookies) {
+            data.cookies.split(';').forEach(cookie => {
+              document.cookie = cookie.trim();
+            });
+        }
+        if (data.localStorage) {
+            for (const key in data.localStorage) {
+              localStorage.setItem(key, data.localStorage[key]);
+            }
+        }
+        if (data.sessionStorage) {
+            for (const key in data.sessionStorage) {
+              sessionStorage.setItem(key, data.sessionStorage[key]);
+            }
+        }
+        if (data.indexedDB) {
+            for (const dbName in data.indexedDB) {
+              const stores = data.indexedDB[dbName];
+              await new Promise((resolve, reject) => {
+                const request = indexedDB.open(dbName, 1);
+                request.onupgradeneeded = e => {
+                  const db = e.target.result;
+                  for (const storeName in stores) {
+                    if (!db.objectStoreNames.contains(storeName)) {
+                      db.createObjectStore(storeName, { keyPath: 'id', autoIncrement: true });
+                    }
+                  }
+                };
+                request.onsuccess = e => {
+                  const db = e.target.result;
+                  const transaction = db.transaction(Object.keys(stores), 'readwrite');
+                  transaction.onerror = () => reject(transaction.error);
+                  let pendingStores = Object.keys(stores).length;
+                  for (const storeName in stores) {
+                    const objectStore = transaction.objectStore(storeName);
+                    objectStore.clear().onsuccess = () => {
+                      for (const item of stores[storeName]) {
+                        objectStore.put(item);
+                      }
+                      pendingStores--;
+                      if (pendingStores === 0) resolve();
+                    };
+                  }
+                };
+                request.onerror = () => reject(request.error);
+              });
+            }
+        }
+        if (data.caches) {
+            for (const cacheName in data.caches) {
+              const cache = await caches.open(cacheName);
+              await cache.keys().then(keys => Promise.all(keys.map(k => cache.delete(k))));
+              for (const entry of data.caches[cacheName]) {
+                let responseBody;
+                if (entry.contentType.includes('application/json')) {
+                  responseBody = JSON.stringify(entry.body);
+                } else if (entry.contentType.includes('text') || entry.contentType.includes('javascript')) {
+                  responseBody = entry.body;
+                } else {
+                  const binaryStr = atob(entry.body);
+                  const len = binaryStr.length;
+                  const bytes = new Uint8Array(len);
+                  for (let i = 0; i < len; i++) {
+                    bytes[i] = binaryStr.charCodeAt(i);
+                  }
+                  responseBody = bytes.buffer;
+                }
+                const headers = new Headers({ 'content-type': entry.contentType });
+                const response = new Response(responseBody, { headers });
+                await cache.put(entry.url, response);
+              }
+            }
+        }
+        alert("Data loaded");
+    };
+    alert("This might take a while, dont touch anything other than this OK button");
+    reader.readAsText(file);
+}
+
+HTMLCanvasElement.prototype.toDataURL = function (...args) {
+    return "";
+};
+
+let allGames = [];
+let currentGame = null;
+let currentRandomGame = null;
+let randomGameInterval = null;
+const categories = ['Action', 'Adventure', 'Arcade', 'Racing', 'Sports', 'Puzzle', 'Strategy', 'Simulation', 'Platform', 'Music', 'Horror', 'Multiplayer', 'Other'];
+
+const categoryIcons = {
+    'Action': 'zap',
+    'Adventure': 'map',
+    'Arcade': 'joystick',
+    'Racing': 'car',
+    'Sports': 'trophy',
+    'Puzzle': 'puzzle',
+    'Strategy': 'brain',
+    'Simulation': 'settings',
+    'Platform': 'layers',
+    'Music': 'music',
+    'Horror': 'skull',
+    'Multiplayer': 'users',
+    'Other': 'gamepad-2'
+};
+
+fetch('https://cdn.jsdelivr.net/gh/rosinxsosa/rosin@HEAD/games.json')
+    .then(response => response.json())
+    .then(games => {
+        console.log('Loaded games from CDN:', games.length);
+        allGames = games;
+        initializeCarousel();
+        startRandomGameRotation();
+
+        const search = new URLSearchParams(window.location.search);
+        const id = search.get('id');
+        if (id) {
+            const game = allGames.find(game => game.id + '' == id + '');
+            if (game) {
+                openGame(game.id);
+            }
+        }
+    })
+    .catch(error => {
+        console.error('Error loading games from CDN:', error);
+        document.getElementById('categories').innerHTML = `
+            <div style="text-align: center; padding: 40px; color: rgba(255,255,255,0.7);">
+                <i data-lucide="alert-circle" width="48" height="48"></i>
+                <h3 style="margin: 20px 0;">Unable to load games</h3>
+                <p>Please check your internet connection and try refreshing the page.</p>
+            </div>
+        `;
+        lucide.createIcons();
+    });
+
+function initializeCarousel() {
+    const categoriesContainer = document.getElementById('categories');
+    categoriesContainer.innerHTML = '';
+
+    categories.forEach(category => {
+        const categoryGames = allGames.filter(game => game.category === category);
+        if (categoryGames.length === 0) return;
+
+        const section = document.createElement('div');
+        section.className = 'category-section';
+        section.innerHTML = `
+            <div class="category-header">
+                <h2 class="category-title">
+                    <i data-lucide="${categoryIcons[category]}" width="20" height="20"></i>
+                    <span>${category}</span>
+                </h2>
+                <button class="category-view-all" onclick="showCategoryGrid('${category}')">
+                    <span>View All</span>
+                    <i data-lucide="arrow-right" width="14" height="14"></i>
+                </button>
+            </div>
+            <div class="carousel">
+                ${categoryGames.map(game => createGameCard(game)).join('')}
+            </div>
+        `;
+        categoriesContainer.appendChild(section);
+    });
+
+    lucide.createIcons();
+}
+
+function createGameCard(game) {
+    return `
+        <div class="game-card" onclick="openGame(${game.id})">
+            <img src="${game.image}" alt="${game.name}" class="game-image">
+            <div class="game-overlay">
+                <div class="game-title">
+                    <span>${game.name}</span>
+                    <i data-lucide="play-circle" width="18" height="18" class="open-icon"></i>
+                </div>
+                <div class="game-description">${game.description}</div>
+                <div class="game-creator">
+                    <i data-lucide="user" width="11" height="11"></i>
+                    <span>${game.creator}</span>
+                </div>
+            </div>
+        </div>
+    `;
+}
+
+function showAllGamesGrid() {
+    document.getElementById('gamesView').classList.remove('active');
+    document.getElementById('gridView').classList.add('active');
+
+    const gridContainer = document.getElementById('allGamesGrid');
+    gridContainer.innerHTML = allGames.map(game => createGameCard(game)).join('');
+    lucide.createIcons();
+}
+
+function showCategoryGrid(category) {
+    document.getElementById('gamesView').classList.remove('active');
+    document.getElementById('gridView').classList.add('active');
+
+    const categoryGames = allGames.filter(game => game.category === category);
+    const gridContainer = document.getElementById('allGamesGrid');
+    gridContainer.innerHTML = categoryGames.map(game => createGameCard(game)).join('');
+    lucide.createIcons();
+}
+
+function showGamesView() {
+    document.getElementById('gridView').classList.remove('active');
+    document.getElementById('gamePlayerView').classList.remove('active');
+    document.getElementById('gamesView').classList.add('active');
+    document.getElementById('backHomeBtn').style.display = 'none';
+    document.getElementById('searchInput').value = '';
+
+    const container = document.getElementById('gameFrameContainer');
+    const gameFrame = document.getElementById('gameFrame');
+    if (gameFrame && container.contains(gameFrame)) {
+        container.removeChild(gameFrame);
+    }
+    if (container) container.innerHTML = '<div class="loading" id="loading"><div class="spinner"></div><p>Loading game...</p></div>';
+
+    const url = new URL(window.location);
+    url.searchParams.delete('id');
+    history.pushState(null, '', url.toString());
+
+    initializeCarousel();
+}
+
+window.addEventListener('message', function(event) {
+    const gameFrame = document.getElementById('gameFrame');
+    if (gameFrame && event.source === gameFrame.contentWindow) {
+        if (event.data === 'back-to-games') {
+            showGamesView();
+        }
+    }
+});
+
+function openGame(gameId) {
+    currentGame = allGames.find(game => game.id == gameId);
+
+    if (currentGame) {
+        document.getElementById('gamesView').classList.remove('active');
+        document.getElementById('gridView').classList.remove('active');
+        document.getElementById('gamePlayerView').classList.add('active');
+        document.getElementById('backHomeBtn').style.display = 'inline-flex';
+
+        const url = new URL(window.location);
+        url.searchParams.set('id', gameId);
+        history.pushState(null, '', url.toString());
+
+        displayGame(currentGame);
+    }
+}
+
+function displayGame(game) {
+    document.title = `${game.name} - Rosin`;
+
+    document.getElementById('gameTitle').innerHTML = `
+        <i data-lucide="${getCategoryIcon(game.category)}" width="22" height="22"></i>
+        <span>${game.name}</span>
+    `;
+
+    document.getElementById('gameMeta').innerHTML = `
+        <div class="meta-item">
+            <i data-lucide="tag" width="13" height="13"></i>
+            <span>${game.category}</span>
+        </div>
+        <div class="meta-item">
+            <i data-lucide="user" width="13" height="13"></i>
+            <span>${game.creator}</span>
+        </div>
+        <div class="meta-item">
+            <i data-lucide="info" width="13" height="13"></i>
+            <span>${game.description}</span>
+        </div>
+    `;
+
+    launchGame(game.id);
+    lucide.createIcons();
+}
+
+async function launchGame(gameId) {
+    const container = document.getElementById('gameFrameContainer');
+    const loading = document.getElementById('loading');
+
+    try {
+        const url = `https://cdn.jsdelivr.net/gh/rosinxsosa/rosin@main/games/${gameId}.html?t=${Date.now()}`;
+        const response = await fetch(url);
+        if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+        let html = await response.text();
+
+        let gameFrame = document.getElementById('gameFrame');
+        if (gameFrame === null) {
+            gameFrame = document.createElement('iframe');
+            gameFrame.id = 'gameFrame';
+            gameFrame.className = 'game-frame';
+            container.appendChild(gameFrame);
+        }
+
+        loading.style.display = 'none';
+
+        gameFrame.contentDocument.open();
+        gameFrame.contentDocument.write(html);
+        gameFrame.contentDocument.close();
+
+    } catch (error) {
+        console.error('Error loading game:', error);
+        loading.style.display = 'none';
+
+        let gameFrame = document.getElementById('gameFrame');
+        if (gameFrame === null) {
+            gameFrame = document.createElement('iframe');
+            gameFrame.id = 'gameFrame';
+            gameFrame.className = 'game-frame';
+            container.appendChild(gameFrame);
+        }
+
+        gameFrame.contentDocument.open();
+        gameFrame.contentDocument.write(`
+            <html>
+                <head><title>Error</title></head>
+                <body style="display:flex;align-items:center;justify-content:center;height:100vh;font-family:Arial,sans-serif;background:#1a1a1a;color:#fff;">
+                    <div style="text-align:center;">
+                        <h2>Failed to load game</h2>
+                        <p>${error}</p>
+                    </div>
+                </body>
+            </html>
+        `);
+        gameFrame.contentDocument.close();
+    }
+}
+
+function getCategoryIcon(category) {
+    return categoryIcons[category] || 'gamepad-2';
+}
+
+function closeGame() {
+    const gameFrame = document.getElementById('gameFrame');
+    const container = document.getElementById('gameFrameContainer');
+
+    if (gameFrame && container.contains(gameFrame)) {
+        container.removeChild(gameFrame);
+    }
+
+    container.innerHTML = '<div class="loading" id="loading"><div class="spinner"></div><p>Loading game...</p></div>';
+
+    showGamesView();
+}
+
+function toggleFullscreen() {
+    const gameFrame = document.getElementById('gameFrame');
+
+    if (!document.fullscreenElement) {
+        if (gameFrame && gameFrame.requestFullscreen) {
+            gameFrame.requestFullscreen().catch(err => {
+                console.error('Error attempting to enable fullscreen:', err);
+            });
+        } else {
+            console.error('Fullscreen not supported or iframe not found');
+        }
+    } else {
+        document.exitFullscreen();
+    }
+}
+
+async function openInNewTab() {
+    if (currentGame && currentGame.id) {
+        try {
+            const newWindow = window.open("about:blank", "_blank");
+            const url = `https://cdn.jsdelivr.net/gh/rosinxsosa/rosin@main/games/${currentGame.id}.html?t=${Date.now()}`;
+            const response = await fetch(url);
+            if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+            let html = await response.text();
+
+            if (newWindow) {
+                newWindow.document.open();
+                newWindow.document.write(html);
+                newWindow.document.close();
+            }
+        } catch (error) {
+            alert('Failed to open game in new tab: ' + error);
+        }
+    }
+}
+
+function handleSearch(query) {
+    const searchTerm = query.toLowerCase().trim();
+    const searchResults = document.getElementById('searchResults');
+
+    if (searchTerm === '') {
+        searchResults.classList.remove('active');
+        searchResults.innerHTML = '';
+        return;
+    }
+
+    const filteredGames = allGames.filter(game =>
+        game.name.toLowerCase().includes(searchTerm) ||
+        game.category.toLowerCase().includes(searchTerm) ||
+        game.description.toLowerCase().includes(searchTerm)
+    );
+
+    if (filteredGames.length === 0) {
+        searchResults.innerHTML = `
+            <div class="search-no-results">
+                <i data-lucide="search-x" width="32" height="32"></i>
+                <p style="margin-top: 10px;">No games found</p>
+            </div>
+        `;
+        searchResults.classList.add('active');
+        lucide.createIcons();
+        return;
+    }
+
+    const maxResults = 50;
+    const displayGames = filteredGames.slice(0, maxResults);
+    const hasMore = filteredGames.length > maxResults;
+
+    searchResults.innerHTML = `
+        <div class="search-results-header">
+            Found ${filteredGames.length} game${filteredGames.length !== 1 ? 's' : ''}${hasMore ? ` (showing first ${maxResults})` : ''}
+        </div>
+        ${displayGames.map(game => `
+            <div class="search-result-item" onclick="openGame(${game.id}); closeSearch();">
+                <img src="${game.image}" alt="${game.name}" class="search-result-image" onerror="this.src='https://via.placeholder.com/80x60/667eea/ffffff?text=Game'">
+                <div class="search-result-info">
+                    <div class="search-result-name">${game.name}</div>
+                    <div class="search-result-category">
+                        <i data-lucide="${categoryIcons[game.category] || 'gamepad-2'}" width="12" height="12"></i>
+                        <span>${game.category}</span>
+                    </div>
+                </div>
+                <i data-lucide="play-circle" width="18" height="18" style="opacity: 0.5;"></i>
+            </div>
+        `).join('')}
+    `;
+
+    searchResults.classList.add('active');
+    lucide.createIcons();
+}
+
+function closeSearch() {
+    const searchResults = document.getElementById('searchResults');
+    const searchInput = document.getElementById('searchInput');
+    searchResults.classList.remove('active');
+    searchInput.value = '';
+}
+
+function getRandomGame() {
+    if (allGames.length === 0) return null;
+    const randomIndex = Math.floor(Math.random() * allGames.length);
+    return allGames[randomIndex];
+}
+
+function updateRandomGamePreview() {
+    currentRandomGame = getRandomGame();
+    if (currentRandomGame) {
+        const previewImg = document.getElementById('randomGamePreview');
+        previewImg.src = currentRandomGame.image;
+    }
+}
+
+function openRandomGame() {
+    if (currentRandomGame) {
+        openGame(currentRandomGame.id);
+    }
+}
+
+function startRandomGameRotation() {
+    updateRandomGamePreview();
+    randomGameInterval = setInterval(updateRandomGamePreview, 3000);
+}
+
+document.addEventListener('click', function(event) {
+    const searchContainer = document.querySelector('.search-container');
+    const searchResults = document.getElementById('searchResults');
+
+    if (searchContainer && !searchContainer.contains(event.target)) {
+        searchResults.classList.remove('active');
+    }
+});
+
+lucide.createIcons();
+</script>
+</body>
+</html>
